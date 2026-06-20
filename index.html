@@ -765,6 +765,31 @@ function Settings({ settings, setSettings, account }){
           ログアウト
         </button>
       </div>
+
+      <div className="setting-card">
+        <div className="field" style={{marginBottom:6}}>
+          <label>ほかのアプリ</label>
+        </div>
+        { [
+          { name:'玄関（ポータル）', roma:'Genkan',   url:'https://nakamuar.github.io/',         hex:'#8A6BA1' },
+          { name:'整え',          roma:'Totonoe',  url:'https://nakamuar.github.io/totonoe/', hex:'#A85A3A' },
+          { name:'言の葉',        roma:'Kotonoha', url:'https://nakamuar.github.io/kotonoha/',hex:'#5E8C6A' },
+          { name:'言の葉×LPIC',   roma:'LPIC',     url:'https://lpic-study.vercel.app/',      hex:'#2C4A6B' },
+        ].map(a => (
+          <a key={a.url} href={a.url}
+             style={{display:'flex',alignItems:'center',justifyContent:'space-between',
+                     textDecoration:'none',color:'var(--sumi)',
+                     borderTop:'1px solid var(--line)',borderLeft:'3px solid '+a.hex,
+                     paddingLeft:12,paddingRight:4,paddingTop:12,paddingBottom:12}}>
+            <span>
+              <span style={{fontSize:15,letterSpacing:'.04em'}}>{a.name}</span>
+              <span style={{fontSize:11,color:'var(--sumi-soft)',letterSpacing:'.1em',marginLeft:8}}>{a.roma}</span>
+            </span>
+            <span style={{color:'var(--sumi-soft)'}}>→</span>
+          </a>
+        )) }
+        <div className="note" style={{marginBottom:0}}>各アプリは同じGoogleアカウントでログインできます。</div>
+      </div>
     </div>
   );
 }

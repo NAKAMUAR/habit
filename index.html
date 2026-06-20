@@ -234,8 +234,14 @@
     padding:14px 16px;margin-bottom:18px;}
   .study-qual-name{font-size:15px;font-weight:600;letter-spacing:.04em;margin-bottom:6px;}
   .study-overview-text{font-size:12px;color:var(--sumi-soft);line-height:1.75;}
+  .study-progress{height:6px;background:var(--line);border-radius:99px;margin-top:12px;overflow:hidden;}
+  .study-progress-bar{height:100%;background:var(--kenko);border-radius:99px;transition:width .3s;}
   .study-section{margin:18px 0 10px;}
   .study-section-head{font-size:13.5px;font-weight:600;letter-spacing:.06em;margin:0 2px 10px;}
+  .study-exam{display:flex;gap:10px;background:var(--paper);border:1px solid var(--line);
+    border-radius:10px;padding:10px 13px;margin-bottom:7px;}
+  .study-exam-k{flex:0 0 64px;font-size:12px;font-weight:600;color:var(--sumi);letter-spacing:.04em;padding-top:1px;}
+  .study-exam-v{flex:1;font-size:11.5px;color:var(--sumi-soft);line-height:1.7;}
   .study-mat{background:var(--paper);border:1px solid var(--line);border-radius:10px;
     padding:11px 13px;margin-bottom:7px;}
   .study-mat-name{font-size:13px;line-height:1.45;}
@@ -244,6 +250,20 @@
     padding:10px 13px;margin-bottom:9px;font-size:11.5px;color:var(--sumi);line-height:1.85;}
   .study-meta-lbl{display:inline-block;min-width:38px;color:var(--sumi-soft);
     font-size:10.5px;letter-spacing:.08em;margin-right:8px;}
+  .study-timebreak{background:#EEF3EE;border:1px solid #D5E3D7;border-radius:10px;
+    padding:10px 13px;margin-bottom:9px;}
+  .study-tb-head{font-size:11.5px;font-weight:600;color:var(--kenko);letter-spacing:.04em;margin-bottom:6px;}
+  .study-tb-row{display:flex;justify-content:space-between;font-size:11.5px;color:var(--sumi);
+    line-height:1.9;border-top:1px dashed #D5E3D7;padding-top:3px;}
+  .study-tb-row:first-of-type{border-top:none;padding-top:0;}
+  .study-tb-time{color:var(--kenko);font-weight:600;}
+  .study-caution{background:#FAF3E8;border:1px solid #EAD8B8;border-radius:10px;
+    padding:10px 13px;margin-bottom:11px;}
+  .study-caution-head{font-size:11.5px;font-weight:600;color:#9A7B3A;letter-spacing:.04em;margin-bottom:5px;}
+  .study-caution-item{font-size:11.5px;color:var(--sumi);line-height:1.8;}
+  .study-block{margin-bottom:6px;}
+  .study-block-label{font-size:12px;font-weight:600;color:var(--sumi);letter-spacing:.03em;
+    margin:13px 2px 8px;padding-left:9px;border-left:3px solid var(--line-strong);}
   .study-tip{font-size:12px;color:var(--sumi);line-height:1.8;padding:0 2px;}
 
   .shop-tier{margin-bottom:4px;}
@@ -404,88 +424,204 @@ const QUALS = [
 let _tid = 1; const tk = (text, hint) => ({ id:'t'+(_tid++), text, hint:hint||'' });
 const STUDY_PLANS = {
   fe: {
-    overview: '通年CBT方式（自分で受験日を予約）。科目A 60問90分 + 科目B 20問100分。各60点で合格。短期集中なら1日2〜3時間×8週間が目安。',
+    overview: '通年CBT方式（好きな日を自分で予約）。科目A 60問90分 ＋ 科目B 20問100分。両方とも1000点満点中600点で合格。プログラミング未経験でも、正しい順番で過去問を回せば1〜2ヶ月の短期集中で十分狙えます。',
+    examInfo: [
+      { k:'科目A', v:'60問 / 90分。4択。IT全般の知識を広く浅く。過去問の流用が多い＝ここは暗記と演習で稼ぐパート。' },
+      { k:'科目B', v:'20問 / 100分。うち約16問がアルゴリズム（擬似言語）、約4問が情報セキュリティ。配点が重く、合否を分ける本丸。' },
+      { k:'合格点', v:'科目A・科目Bともに600点/1000点（おおむね6割）。片方だけ高くてもダメで、両方6割が必要。' },
+      { k:'申込', v:'プロメトリックのサイトで会場と日時を予約。学習開始時に「8週間後」で仮予約してしまうのがおすすめ。' },
+    ],
     materials: [
-      { name:'キタミ式イラストIT塾 基本情報技術者（技術評論社）', detail:'メインの教科書。初心者向けにイラストで解説。最新年度版を1冊。' },
-      { name:'基本情報技術者試験ドットコム「過去問道場」', detail:'無料Web。最重要。スマホで隙間時間に回せる。' },
-      { name:'うかる！基本情報技術者 科目B・アルゴリズム編（日経BP）', detail:'科目Bの擬似言語対策。合否を分ける科目なので必須。' },
-      { name:'YouTube「まさるの勉強部屋」', detail:'任意。動画で理解したい人向け。通勤時の聞き流しにも。' },
+      { name:'キタミ式イラストIT塾 基本情報技術者（技術評論社）', detail:'メインの教科書。文章が少なくイラストで直感的に分かるので、未経験者の1冊目に最適。最新年度版を選ぶ。' },
+      { name:'基本情報技術者試験ドットコム「過去問道場」', detail:'無料Web。本試験で一番大事な教材。分野別・年度別に出題でき、スマホで隙間時間に回せる。これを回し切れば科目Aは受かる。' },
+      { name:'うかる！基本情報技術者 科目B・アルゴリズム編（日経BP）', detail:'科目Bの擬似言語対策。トレースのやり方が丁寧。プログラミング未経験なら必ず手元に置く。' },
+      { name:'YouTube「まさるの勉強部屋」「基本情報技術者試験対策」系チャンネル', detail:'任意。本を読むのが辛い時の理解補助。通勤中の聞き流しにも。深入りはしない。' },
     ],
     tips: [
-      '科目Aは過去問の使い回しが多い → 過去問道場5周が最強の得点源',
-      '科目Bは「擬似言語に慣れる」のが全て。1日1問でも毎日トレースする',
-      '計算問題（2進数・稼働率・確率）は捨てない。確実な得点源',
-      '暗記カード（AnkiまたはNotion）で頻出用語を毎日5分回す',
-      '受験日は学習開始時に予約して逆算スケジュールにする',
+      '勉強時間の黄金比は「インプット3：アウトプット7」。本を読むより問題を解く時間を多くする',
+      '科目Aは同じ過去問が何度も出る → 過去問道場を3〜5周すれば見た瞬間に答えが分かるようになる',
+      '科目Bは「毎日コードに触れる」が全て。1日1問でいいので絶対に空白日を作らない',
+      '計算問題（2進数・稼働率・確率）は逃げない。出題パターンが決まっていて、慣れれば確実な得点源',
+      '間違えた問題は「なぜ間違えたか」を一言メモ。翌日その1行を見返すだけで定着が段違い',
+      '完璧主義をやめる。6割で受かる試験。捨て分野（経営・法務の細部など）を作る勇気も大事',
     ],
     phases: [
       {
         phase:1,
         title:'インプット — 全体像をつかむ',
         period:'Week 1〜2（14日間）',
-        daily:'1日2.5時間（テキスト1.5h ＋ 章末問題1h）',
-        goal:'キタミ式を通読し、各分野の用語を「聞いたことある」状態にする',
-        tasks:[
-          tk('キタミ式：ハードウェア・基礎理論（2進数・論理回路・CPU・メモリ）','計算問題が頻出。手を動かして基数変換を解く'),
-          tk('キタミ式：ソフトウェア・OS（プロセス・タスク管理・ファイル管理）',''),
-          tk('キタミ式：データベース（SQL基本構文・正規化・トランザクション）','SELECT/JOIN/GROUP BYは写経して覚える'),
-          tk('キタミ式：ネットワーク（OSI参照モデル・TCP/IP・サブネット）','IPアドレス計算は必出'),
-          tk('キタミ式：セキュリティ（暗号方式・認証・攻撃手法）','科目Bにも出るので丁寧に'),
-          tk('キタミ式：システム開発（ウォーターフォール・アジャイル・UML）',''),
-          tk('キタミ式：マネジメント・ストラテジ（PM・サービスマネジメント・経営）','暗記中心。深追いしない'),
-          tk('各章末の確認問題をすべて解く（間違えたらテキストに戻る）',''),
+        daily:'1日 約2.5時間',
+        timeBreak:[
+          { label:'テキスト精読', time:'90分' },
+          { label:'章末問題＋過去問道場', time:'60分' },
+        ],
+        goal:'キタミ式を1周し、専門用語に「見覚えがある」状態を作る。理解は7割でOK。',
+        caution:[
+          '1周目から完璧を目指さない。分からない所は付箋を貼って飛ばし、2周目以降で固める',
+          'ノートを綺麗に作り込まない。テキストへの直接書き込み＋用語の殴り書きで十分',
+          '分からない計算問題は今は飛ばしてOK。Phase 2で過去問と一緒に潰す',
+          'この段階から「過去問道場を毎日5問」を習慣化。早く問題形式に慣れるほど後が楽',
+        ],
+        blocks:[
+          {
+            label:'Week 1 前半：コンピュータの基礎（テクノロジ系の土台）',
+            tasks:[
+              tk('2進数・16進数・基数変換を手を動かして解く','まずここ。電卓に頼らず紙で10問。試験の計算問題の土台になる'),
+              tk('補数・固定小数点・浮動小数点・誤差',''),
+              tk('論理演算と論理回路（AND/OR/NOT/XOR・真理値表）','真理値表を自分で書けるように'),
+              tk('CPUの仕組み（レジスタ・クロック・命令実行サイクル）',''),
+              tk('メモリと記憶装置（キャッシュ・主記憶・仮想記憶・RAID）','キャッシュのヒット率計算は頻出'),
+            ],
+          },
+          {
+            label:'Week 1 後半：ソフトウェアとシステム構成',
+            tasks:[
+              tk('OSの役割・プロセス/タスク管理・スケジューリング',''),
+              tk('ファイル管理・入出力・記憶階層',''),
+              tk('システム構成（クライアントサーバ・冗長化）と稼働率計算','直列・並列の稼働率の公式は必ず覚える'),
+              tk('性能指標（スループット・レスポンスタイム・ベンチマーク）',''),
+            ],
+          },
+          {
+            label:'Week 2 前半：データベースとネットワーク',
+            tasks:[
+              tk('DBの基礎・正規化（第1〜第3正規形）・E-R図',''),
+              tk('SQL（SELECT / WHERE / JOIN / GROUP BY / 副問合せ）を写経','読むだけでなく実際に書き写すと定着する'),
+              tk('トランザクション・ACID特性・排他制御・デッドロック',''),
+              tk('ネットワーク（OSI 7階層・TCP/IP・主要プロトコル）',''),
+              tk('IPアドレス・サブネットマスク・CIDRの計算','2進数が分かっていれば解ける。必出なので必ず手を動かす'),
+            ],
+          },
+          {
+            label:'Week 2 後半：セキュリティ・開発・マネジメント・ストラテジ',
+            tasks:[
+              tk('暗号方式（共通鍵・公開鍵・ハイブリッド）とデジタル署名・認証','科目Bにも直結する最重要分野。丁寧に'),
+              tk('攻撃手法とセキュリティ対策（マルウェア・不正アクセス・対策技術）',''),
+              tk('システム開発（ウォーターフォール・アジャイル）・テスト技法・UML',''),
+              tk('マネジメント（プロジェクト管理・WBS・アローダイアグラム・サービスマネジメント）','アローダイアグラムの最早/最遅は計算問題で出る'),
+              tk('ストラテジ（経営・会計・法務・標準化）','暗記中心。深追いせず、用語と意味だけ押さえる'),
+            ],
+          },
         ],
       },
       {
         phase:2,
         title:'科目A 過去問演習 — 得点源を固める',
         period:'Week 3〜4（14日間）',
-        daily:'1日2.5時間（過去問25問1h ＋ 復習・暗記1.5h）',
-        goal:'過去問道場の科目Aで安定して70%以上を取る',
-        tasks:[
-          tk('過去問道場で直近5回分（R5春〜R3春など）の科目Aを実施','分野別ではなく回ごとに通しで'),
-          tk('間違えた問題は解説を読み、ノート（またはNotion）に1行メモ',''),
-          tk('計算問題（基数変換・稼働率・処理時間）を集中演習','過去問道場「分野指定」で計算系を50問'),
-          tk('セキュリティ用語・ネットワーク用語の暗記カード作成（30〜50枚）',''),
-          tk('科目Aの正答率を週ごとに記録（目標：1週目60% → 2週目70%）',''),
-          tk('苦手分野を1つに絞って深掘り（テキスト該当章を再読）',''),
+        daily:'1日 約2.5時間',
+        timeBreak:[
+          { label:'過去問演習（25問前後）', time:'50分' },
+          { label:'答え合わせ・解説熟読・暗記', time:'100分' },
+        ],
+        goal:'過去問道場の科目Aで安定して75%以上を取れるようにする。',
+        caution:[
+          '「解く時間」より「復習の時間」を長く取る。間違えた問題こそ伸びしろ',
+          '正解した問題も「なぜその答えか」を説明できるか確認。まぐれ当たりを潰す',
+          '計算問題は絶対に捨てない。パターンが決まっているので、解き方を覚えれば毎回得点できる',
+          '通勤・休憩などの隙間時間はスマホの過去問道場でこまめに積み上げる',
+        ],
+        blocks:[
+          {
+            label:'Week 3：分野別に弱点を潰す',
+            tasks:[
+              tk('計算問題を集中演習（基数変換・稼働率・処理時間・確率・ヒット率）50問','過去問道場の「分野を指定して出題」を活用'),
+              tk('データベース・ネットワーク・セキュリティを分野別に各30問',''),
+              tk('頻出用語の暗記カードを作成（30〜50枚）し毎日5分回す','Anki・単語帳アプリ・紙どれでもOK。毎日触るのが大事'),
+              tk('間違えた問題はテキストの該当ページに戻って読み直す',''),
+            ],
+          },
+          {
+            label:'Week 4：年度ごとに通しで演習',
+            tasks:[
+              tk('直近の過去問を1回分まるごと通しで解く（時間を計る）×4〜5回分','分野バラバラの本番感覚に慣れる'),
+              tk('間違えた問題を「弱点ノート」に1行メモ→翌日見返す',''),
+              tk('正答率を1回ごとに記録（目標：60% → 75%へ右肩上がり）','数字で伸びが見えるとモチベが続く'),
+              tk('それでも苦手な分野を1つだけ選び、テキストで再インプット','苦手を全部潰そうとしない。1つに絞る'),
+            ],
+          },
         ],
       },
       {
         phase:3,
         title:'科目B 対策 — アルゴリズムとセキュリティ',
         period:'Week 5〜6（14日間）',
-        daily:'1日2.5時間（アルゴリズム書籍1h ＋ 演習1.5h）',
-        goal:'擬似言語のトレースが時間内にできるようになる',
-        tasks:[
-          tk('「うかる！科目B」基本構文（代入・条件分岐・繰り返し）を読む','コード横にトレース表を書く癖をつける'),
-          tk('配列・連結リスト・スタック・キューの操作を擬似言語で書ける','図を描いてポインタ移動を可視化'),
-          tk('整列（バブル・選択・クイック）と探索（線形・二分）をトレース','回数と比較対象を表に書き出す'),
-          tk('再帰関数・木構造の探索（DFS/BFS）を理解','フィボナッチや階乗で再帰の動きを追う'),
-          tk('IPA公式サンプル問題（科目B 20問）を時間を計って解く','100分以内が目標'),
-          tk('情報セキュリティ4問（科目Bの定番）の過去サンプルを集中演習','インシデント対応・アクセス制御がよく出る'),
+        daily:'1日 約2.5時間',
+        timeBreak:[
+          { label:'参考書・解説で解法インプット', time:'60分' },
+          { label:'トレース演習（手書き）', time:'90分' },
+        ],
+        goal:'擬似言語のコードを「トレース表」を書いて時間内に追えるようにする。',
+        caution:[
+          'ここが最大の山場。配点が重く、多くの人が落ちるのも科目B。最も時間をかける',
+          'コードは頭の中で追わない。必ず紙に「変数の値の変化を1行ずつ」書き出す（トレース表）',
+          'プログラミング未経験なら、まず擬似言語の文法（書き方のルール）に慣れることが最優先',
+          '焦って先へ進まない。1日1〜2問でいいので、毎日必ずコードに触れる',
+        ],
+        blocks:[
+          {
+            label:'Week 5：擬似言語の文法と基本データ構造',
+            tasks:[
+              tk('擬似言語の書き方（代入・四則演算・比較・条件分岐 if・繰り返し for/while）に慣れる','IPA公式の「擬似言語の記述形式」PDFに一度目を通す'),
+              tk('配列の操作（添字・要素の走査・最大/最小/合計）をトレース','添字が0始まりか1始まりかを毎回確認する癖を'),
+              tk('スタック・キュー・連結リストの操作を図に描いて理解','箱と矢印の絵を描いてポインタの動きを可視化'),
+              tk('整列アルゴリズム（バブル・選択・挿入）を1ステップずつ追う','「何回比較・交換したか」を表に書き出す'),
+              tk('探索アルゴリズム（線形探索・二分探索）をトレース',''),
+            ],
+          },
+          {
+            label:'Week 6：応用アルゴリズムと情報セキュリティ',
+            tasks:[
+              tk('再帰関数（階乗・フィボナッチ）の呼び出しの流れを追う','呼び出しの入れ子をツリー状に描くと理解しやすい'),
+              tk('木構造の探索（深さ優先DFS・幅優先BFS）と簡単なグラフ',''),
+              tk('文字列処理・ビット演算の典型問題',''),
+              tk('IPA公式サンプル問題・過去問の科目B（アルゴリズム）を時間を計って演習','1問あたり5分を目標に'),
+              tk('情報セキュリティの科目B問題（4問相当）を集中演習','インシデント対応・アクセス制御・マルウェア対応が定番。長文を正確に読む練習'),
+            ],
+          },
         ],
       },
       {
         phase:4,
         title:'総仕上げ — 本番形式で安定させる',
         period:'Week 7〜8（14日間）',
-        daily:'1日3時間（模試2h ＋ 復習1h）',
-        goal:'本番と同じ時間配分で合格点を3回連続で取る',
-        tasks:[
-          tk('科目A 過去問を本番通り90分で通し演習 ×3回',''),
-          tk('科目B 過去問を本番通り100分で通し演習 ×3回','時間切れに注意。1問5分以内が目安'),
-          tk('間違えた問題だけを抽出して総復習（弱点ノートを作る）',''),
-          tk('情報セキュリティと擬似言語を最終確認','合否を分ける2分野'),
-          tk('受験会場・持ち物・本人確認書類を確認','CBT会場は早めに到着'),
-          tk('試験前日：詰め込まず早寝。当日朝に弱点ノートだけ見る',''),
-          tk('受験 → 結果メモ（合否に関わらず学んだことを記録）',''),
+        daily:'1日 約3時間',
+        timeBreak:[
+          { label:'本番形式の模試（通し演習）', time:'120分' },
+          { label:'復習・弱点ノート見直し', time:'60分' },
+        ],
+        goal:'本番と同じ時間配分で、科目A・Bともに合格点を3回連続で取る。',
+        caution:[
+          '新しい教材には手を出さない。今まで使った教材の復習に徹するのが一番伸びる',
+          '必ず本番と同じ時間で解く（科目A 90分・科目B 100分）。時間配分の練習が最重要',
+          '科目Bは1問に時間を使いすぎない。分からなければ飛ばして戻る判断も練習する',
+          '前日は詰め込まない。睡眠を優先し、当日のコンディションを整えるのが得点に直結する',
+        ],
+        blocks:[
+          {
+            label:'Week 7：本番形式の模試と弱点補強',
+            tasks:[
+              tk('科目A を本番通り90分で通し演習 ×2〜3回',''),
+              tk('科目B を本番通り100分で通し演習 ×2〜3回','時間切れに注意。1問5分以内のペース感を体に入れる'),
+              tk('間違えた問題だけを抽出して「弱点ノート」に集約',''),
+              tk('正答率が6割を切る分野があれば、その分野だけ再演習','合格は両科目6割。穴を6割まで底上げするのが優先'),
+            ],
+          },
+          {
+            label:'Week 8：最終調整と受験',
+            tasks:[
+              tk('弱点ノートを毎日見返して総復習','新規より復習。見たことある問題を確実に取れる状態に'),
+              tk('情報セキュリティと擬似言語を最終確認','合否を分ける2分野。直前に必ず触れておく'),
+              tk('受験会場の場所・持ち物・本人確認書類を確認','CBT会場には余裕をもって到着できるよう下調べ'),
+              tk('試験前日：詰め込まず早寝。当日朝は弱点ノートだけ軽く見る',''),
+              tk('受験当日 → 終わったら結果と学びを記録','合否に関わらず、振り返りが次に活きる'),
+            ],
+          },
         ],
       },
     ],
   },
-  lpic: { overview:'準備中。基本情報の合格後に着手する想定です。', materials:[], tips:[], phases:[] },
-  aws:  { overview:'準備中。LPIC合格後に着手する想定です。',     materials:[], tips:[], phases:[] },
+  lpic: { overview:'準備中。基本情報の合格後に着手する想定です。', examInfo:[], materials:[], tips:[], phases:[] },
+  aws:  { overview:'準備中。LPIC合格後に着手する想定です。',     examInfo:[], materials:[], tips:[], phases:[] },
 };
 const seedStudy = () => ({ qual:'fe', done:{} });
 
@@ -926,17 +1062,19 @@ function Settings({ settings, setSettings, account }){
 function Study({ study, setStudyQual, toggleStudyTask }){
   const qual = (study && study.qual) || 'fe';
   const done = (study && study.done) || {};
-  const plan = STUDY_PLANS[qual] || { phases:[], materials:[], tips:[], overview:'' };
+  const plan = STUDY_PLANS[qual] || { phases:[], materials:[], tips:[], overview:'', examInfo:[] };
   const qualInfo = QUALS.find(q=>q.id===qual) || QUALS[0];
 
-  const allTasks = plan.phases.flatMap(p=>p.tasks);
+  const phaseTasks = (p) => (p.blocks ? p.blocks.flatMap(b=>b.tasks) : (p.tasks||[]));
+  const allTasks = plan.phases.flatMap(phaseTasks);
   const doneCount = allTasks.filter(t=>done[t.id]).length;
+  const pct = allTasks.length ? Math.round(doneCount/allTasks.length*100) : 0;
 
   return (
     <div className="screen">
       <div className="topbar">
         <div className="title">学習ロードマップ</div>
-        <div className="date">{ allTasks.length>0 ? `${doneCount}/${allTasks.length} 完了` : '準備中' }</div>
+        <div className="date">{ allTasks.length>0 ? `${doneCount}/${allTasks.length}・${pct}%` : '準備中' }</div>
       </div>
 
       <div className="study-tabs">
@@ -952,7 +1090,21 @@ function Study({ study, setStudyQual, toggleStudyTask }){
       <div className="study-overview">
         <div className="study-qual-name">{qualInfo.name}</div>
         <div className="study-overview-text">{plan.overview}</div>
+        { allTasks.length>0 &&
+          <div className="study-progress"><div className="study-progress-bar" style={{width:pct+'%'}}></div></div> }
       </div>
+
+      { plan.examInfo && plan.examInfo.length>0 && (
+        <div className="study-section">
+          <div className="study-section-head">📝 試験の基本</div>
+          { plan.examInfo.map((e,i)=>(
+            <div className="study-exam" key={i}>
+              <div className="study-exam-k">{e.k}</div>
+              <div className="study-exam-v">{e.v}</div>
+            </div>
+          )) }
+        </div>
+      ) }
 
       { plan.materials.length>0 && (
         <div className="study-section">
@@ -967,30 +1119,59 @@ function Study({ study, setStudyQual, toggleStudyTask }){
       ) }
 
       { plan.phases.map(p=>{
-        const pDone = p.tasks.filter(t=>done[t.id]).length;
+        const tasks = phaseTasks(p);
+        const pDone = tasks.filter(t=>done[t.id]).length;
+        const blocks = p.blocks || (p.tasks ? [{ label:null, tasks:p.tasks }] : []);
         return (
           <div className="shop-tier" key={p.phase}>
             <div className="shop-tier-head">
               <div className="t">Phase {p.phase}　{p.title}</div>
-              <div className="p">{pDone}/{p.tasks.length}</div>
+              <div className="p">{pDone}/{tasks.length}</div>
             </div>
             <div className="study-meta">
               <div><span className="study-meta-lbl">期間</span>{p.period}</div>
               <div><span className="study-meta-lbl">1日</span>{p.daily}</div>
               <div><span className="study-meta-lbl">目標</span>{p.goal}</div>
             </div>
-            { p.tasks.map(t=>{
-              const isDone = !!done[t.id];
-              return (
-                <div key={t.id} className={'shop-item'+(isDone?' bought':'')}>
-                  <button className={'check'+(isDone?' on':'')} onClick={()=>toggleStudyTask(t.id)} aria-label="完了">{ isDone?'✓':'' }</button>
-                  <div className="body">
-                    <div className="nm">{t.text}</div>
-                    { t.hint && <div className="dt">{t.hint}</div> }
+
+            { p.timeBreak && p.timeBreak.length>0 && (
+              <div className="study-timebreak">
+                <div className="study-tb-head">⏱ 1日の時間配分の例</div>
+                { p.timeBreak.map((t,i)=>(
+                  <div className="study-tb-row" key={i}>
+                    <span className="study-tb-label">{t.label}</span>
+                    <span className="study-tb-time">{t.time}</span>
                   </div>
-                </div>
-              );
-            }) }
+                )) }
+              </div>
+            ) }
+
+            { p.caution && p.caution.length>0 && (
+              <div className="study-caution">
+                <div className="study-caution-head">⚠ 初心者が気を付けること</div>
+                { p.caution.map((c,i)=>(
+                  <div className="study-caution-item" key={i}>・{c}</div>
+                )) }
+              </div>
+            ) }
+
+            { blocks.map((b,bi)=>(
+              <div className="study-block" key={bi}>
+                { b.label && <div className="study-block-label">{b.label}</div> }
+                { b.tasks.map(t=>{
+                  const isDone = !!done[t.id];
+                  return (
+                    <div key={t.id} className={'shop-item'+(isDone?' bought':'')}>
+                      <button className={'check'+(isDone?' on':'')} onClick={()=>toggleStudyTask(t.id)} aria-label="完了">{ isDone?'✓':'' }</button>
+                      <div className="body">
+                        <div className="nm">{t.text}</div>
+                        { t.hint && <div className="dt">{t.hint}</div> }
+                      </div>
+                    </div>
+                  );
+                }) }
+              </div>
+            )) }
           </div>
         );
       }) }

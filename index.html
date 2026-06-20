@@ -55,7 +55,7 @@
   }
 
   window.HabitCloud = {
-    KEYS: ['habits','logs','settings','shopping','study'],
+    KEYS: ['habits','logs','settings','shopping','study','schedule'],
     onAuth(cb){ return onAuthStateChanged(auth, cb); },
     async signInWithGoogle(){
       try { const r = await signInWithPopup(auth, provider); return r.user; }
@@ -305,6 +305,25 @@
     letter-spacing:.03em;margin-bottom:4px;}
   .study-trouble-d, .study-method-d{font-size:11.5px;color:var(--sumi-soft);line-height:1.7;}
 
+  /* 予定（スケジュール） */
+  .plan-banner{background:#EEF3EE;border:1px solid #D5E3D7;border-radius:10px;
+    padding:11px 13px;font-size:11.5px;color:var(--sumi-soft);line-height:1.7;margin-bottom:16px;}
+  .plan-noti.ok{color:var(--kenko);font-weight:600;}
+  .plan-noti-btn{display:block;margin-top:8px;background:var(--kenko);color:#fff;border:none;
+    border-radius:8px;padding:8px 14px;font-family:inherit;font-size:12px;cursor:pointer;}
+  .plan-item{display:flex;align-items:stretch;gap:11px;background:var(--paper);
+    border:1px solid var(--line);border-left:4px solid var(--naimen);border-radius:10px;
+    padding:11px 12px;margin-bottom:8px;}
+  .plan-time{flex:0 0 58px;text-align:center;display:flex;flex-direction:column;justify-content:center;}
+  .plan-hm{font-size:15px;font-weight:600;letter-spacing:.02em;}
+  .plan-alarm{font-size:9.5px;color:var(--sumi-soft);margin-top:3px;line-height:1.2;}
+  .plan-body{flex:1;min-width:0;cursor:pointer;display:flex;flex-direction:column;justify-content:center;}
+  .plan-title{font-size:14px;line-height:1.4;}
+  .plan-meta{font-size:11px;color:var(--sumi-soft);line-height:1.55;margin-top:3px;}
+  .plan-actions{flex:0 0 auto;display:flex;align-items:center;}
+  .plan-ics{background:var(--washi);border:1px solid var(--line);border-radius:9px;
+    width:40px;height:40px;font-size:18px;cursor:pointer;}
+
   /* モード切替 */
   .study-mode{display:flex;gap:6px;background:var(--paper);border:1px solid var(--line);
     border-radius:999px;padding:4px;margin-bottom:16px;}
@@ -391,7 +410,7 @@ const store = {
 const load = (k, fb) => { const v = store.get(k); if(v==null) return fb; try { return JSON.parse(v); } catch(e){ return fb; } };
 
 /* ---------- クラウド同期（Firebase / Firestore） ---------- */
-const SYNC_KEYS = ['habits','logs','settings','shopping','study'];
+const SYNC_KEYS = ['habits','logs','settings','shopping','study','schedule'];
 let _cloudUid = null, _cloudProfile = null, _loadedUid = null, _syncTimer = null;
 function setCloudUser(uid, profile){ _cloudUid = uid; _cloudProfile = profile; }
 function snapshotAll(){ const o={}; SYNC_KEYS.forEach(k=>{ const v=store.get(k); if(v!=null){ try{ o[k]=JSON.parse(v); }catch(e){} } }); return o; }
@@ -795,6 +814,59 @@ const QUIZ = {
   aws: [],
 };
 
+/* ---------- 予定（スケジュール） ---------- */
+const REPEATS = [
+  { v:'none',    l:'繰り返さない' },
+  { v:'daily',   l:'毎日' },
+  { v:'weekday', l:'平日（月〜金）' },
+  { v:'weekly',  l:'毎週' },
+];
+const ALARMS = [
+  { v:-1, l:'アラームなし' },
+  { v:0,  l:'時刻ちょうど' },
+  { v:5,  l:'5分前' },
+  { v:10, l:'10分前' },
+  { v:30, l:'30分前' },
+  { v:60, l:'1時間前' },
+  { v:1440, l:'1日前' },
+];
+const repeatLabel = v => (REPEATS.find(r=>r.v===v)||REPEATS[0]).l;
+const alarmLabel  = v => (ALARMS.find(a=>a.v===v)||ALARMS[0]).l;
+
+/* .ics（iCalendar）生成 — Apple/Googleカレンダーにアラーム付きで登録 */
+function buildICS(ev){
+  const dt = (date,time)=>{ const [y,mo,d]=date.split('-'); const [h,mi]=(time||'09:00').split(':'); return `${y}${mo}${d}T${h}${mi}00`; };
+  const stamp = (()=>{ const d=new Date(); return `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`; })();
+  const esc = s => String(s||'').replace(/\\/g,'\\\\').replace(/\n/g,'\\n').replace(/,/g,'\\,').replace(/;/g,'\\;');
+  const rrule = { daily:'FREQ=DAILY', weekday:'FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR', weekly:'FREQ=WEEKLY' }[ev.repeat];
+  const L = [
+    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//習慣の暦//schedule//JP','CALSCALE:GREGORIAN',
+    'BEGIN:VEVENT',
+    `UID:${ev.id}@habit-koyomi`,
+    `DTSTAMP:${stamp}`,
+    `DTSTART:${dt(ev.date, ev.time)}`,
+    `DURATION:PT${ev.durationMin||30}M`,
+    `SUMMARY:${esc(ev.title)}`,
+  ];
+  if(ev.note) L.push(`DESCRIPTION:${esc(ev.note)}`);
+  if(rrule)   L.push(`RRULE:${rrule}`);
+  if(ev.alarm>=0){
+    L.push('BEGIN:VALARM','ACTION:DISPLAY',`DESCRIPTION:${esc(ev.title)}`,
+           `TRIGGER:-PT${ev.alarm|0}M`,'END:VALARM');
+  }
+  L.push('END:VEVENT','END:VCALENDAR');
+  return L.join('\r\n');
+}
+function downloadICS(ev){
+  const ics = buildICS(ev);
+  const blob = new Blob([ics], { type:'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = (ev.title||'予定').replace(/[\\/:*?"<>|]/g,'_') + '.ics';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url), 4000);
+}
+
 /* =================================================================== */
 function App({ account }){
   const [habits, setHabits]   = useState(() => load('habits', null) || seedHabits());
@@ -803,14 +875,17 @@ function App({ account }){
   const [tab, setTab]         = useState('home');
   const [shopping, setShopping] = useState(() => load('shopping', null) || seedShopping());
   const [study, setStudy]     = useState(() => load('study', null) || seedStudy());
+  const [schedule, setSchedule] = useState(() => load('schedule', []));
   const [editing, setEditing] = useState(null);      // habitオブジェクト or {new:true}
   const [shopEditing, setShopEditing] = useState(null);
+  const [planEditing, setPlanEditing] = useState(null); // 予定の編集 or {new:true}
 
   useEffect(()=>{ save('habits', habits); }, [habits]);
   useEffect(()=>{ save('logs', logs); }, [logs]);
   useEffect(()=>{ save('settings', settings); }, [settings]);
   useEffect(()=>{ save('shopping', shopping); }, [shopping]);
   useEffect(()=>{ save('study', study); }, [study]);
+  useEffect(()=>{ save('schedule', schedule); }, [schedule]);
 
   const toggleLog = (hid, date) => {
     const k = logKey(hid, date);
@@ -842,13 +917,51 @@ function App({ account }){
     return {...s, quiz:q};
   });
 
+  const savePlan = (data) => {
+    if(data.id){ setSchedule(ss => ss.map(x => x.id===data.id ? {...x, ...data} : x)); }
+    else { setSchedule(ss => [...ss, {...data, id:'e'+Date.now()}]); }
+    setPlanEditing(null);
+  };
+  const deletePlan = (id) => { setSchedule(ss => ss.filter(x=>x.id!==id)); setPlanEditing(null); };
+
+  // アプリを開いている間の補助通知（ベストエフォート）
+  useEffect(()=>{
+    const fired = {};
+    const tick = ()=>{
+      if(!('Notification' in window) || Notification.permission!=='granted') return;
+      const now = new Date(); const ds = ymd(now); const wd = now.getDay();
+      schedule.forEach(ev=>{
+        if(!ev.time || ev.alarm<0) return;
+        // 繰り返し条件
+        const okDay = ev.repeat==='daily' ? true
+          : ev.repeat==='weekday' ? (wd>=1 && wd<=5)
+          : ev.repeat==='weekly' ? (ev.date && new Date(ev.date+'T00:00').getDay()===wd)
+          : ev.date===ds;
+        if(!okDay) return;
+        const [h,mi] = ev.time.split(':').map(Number);
+        const trigger = new Date(now); trigger.setHours(h, mi, 0, 0);
+        trigger.setMinutes(trigger.getMinutes() - (ev.alarm||0));
+        const diff = (now - trigger)/1000; // 秒
+        const key = ev.id+'|'+ds+'|'+ev.time;
+        if(diff>=0 && diff<60 && !fired[key]){
+          fired[key] = true;
+          try { new Notification(ev.title, { body:(ev.time+(ev.note?'　'+ev.note:'')) }); } catch(e){}
+        }
+      });
+    };
+    const t = setInterval(tick, 20000); tick();
+    return ()=>clearInterval(t);
+  }, [schedule]);
+
   const ctx = { habits, logs, settings, setSettings, isDone, toggleLog, toggleActive, setEditing,
                 shopping, toggleBought, deleteShopItem,
-                study, setStudyQual, toggleStudyTask, setQuizResult, account };
+                study, setStudyQual, toggleStudyTask, setQuizResult,
+                schedule, setPlanEditing, deletePlan, account };
 
   return (
     <React.Fragment>
       { tab==='home'    && <Home {...ctx} /> }
+      { tab==='plan'    && <Schedule {...ctx} /> }
       { tab==='habits'  && <Habits {...ctx} /> }
       { tab==='shop'    && <Shopping {...ctx} /> }
       { tab==='study'   && <Study {...ctx} /> }
@@ -858,12 +971,17 @@ function App({ account }){
         <button className="fab" onClick={()=>setEditing({ new:true })}>＋ 習慣を追加</button> }
       { tab==='shop' &&
         <button className="fab" onClick={()=>setShopEditing({ new:true })}>＋ 品目を追加</button> }
+      { tab==='plan' &&
+        <button className="fab" onClick={()=>setPlanEditing({ new:true })}>＋ 予定を追加</button> }
 
       { editing &&
         <HabitForm habit={editing.new ? null : editing}
                    onSave={saveHabit} onDelete={deleteHabit} onClose={()=>setEditing(null)} /> }
       { shopEditing &&
         <ShoppingForm onSave={addShopItem} onClose={()=>setShopEditing(null)} /> }
+      { planEditing &&
+        <PlanForm plan={planEditing.new ? null : planEditing}
+                  onSave={savePlan} onDelete={deletePlan} onClose={()=>setPlanEditing(null)} /> }
 
       <TabBar tab={tab} setTab={setTab} />
     </React.Fragment>
@@ -1445,6 +1563,134 @@ function QuizFilter({ filter, setFilter, results, all }){
   );
 }
 
+/* ---------- 予定（スケジュール） ---------- */
+function Schedule({ schedule, setPlanEditing, deletePlan }){
+  const [notify, setNotify] = useState(
+    ('Notification' in window) ? Notification.permission : 'unsupported');
+
+  const askNotify = ()=>{
+    if(!('Notification' in window)) return;
+    Notification.requestPermission().then(p=>setNotify(p));
+  };
+
+  const sorted = useMemo(()=>{
+    const key = ev => (ev.repeat && ev.repeat!=='none')
+      ? '0000-00-00 '+(ev.time||'99:99')          // 繰り返しは先頭にまとめる
+      : (ev.date||'9999-12-31')+' '+(ev.time||'99:99');
+    return schedule.slice().sort((a,b)=> key(a).localeCompare(key(b)));
+  }, [schedule]);
+
+  const fmtDate = (ev)=>{
+    if(ev.repeat && ev.repeat!=='none') return repeatLabel(ev.repeat);
+    if(!ev.date) return '日付未設定';
+    const d = new Date(ev.date+'T00:00');
+    return `${d.getMonth()+1}月${d.getDate()}日（${WD[d.getDay()]}）`;
+  };
+
+  return (
+    <div className="screen">
+      <div className="topbar"><div className="title">予定</div>
+        <div className="date">{schedule.length} 件</div></div>
+
+      <div className="plan-banner">
+        確実なアラームは、各予定の「カレンダーに追加」から Apple／Google カレンダーに登録してください（OSが通知します）。
+        { notify==='granted'
+          ? <span className="plan-noti ok">　アプリ内通知：オン</span>
+          : notify==='unsupported'
+            ? null
+            : <button className="plan-noti-btn" onClick={askNotify}>アプリ内通知を許可</button> }
+      </div>
+
+      { schedule.length===0
+        ? <div className="empty">予定がありません。<br/>右下の「＋ 予定を追加」から登録してください。</div>
+        : sorted.map(ev=>(
+            <div key={ev.id} className="plan-item">
+              <div className="plan-time">
+                <div className="plan-hm">{ev.time || '—'}</div>
+                { ev.alarm>=0 && <div className="plan-alarm">🔔{ev.alarm===0?'':alarmLabel(ev.alarm)}</div> }
+              </div>
+              <div className="plan-body" onClick={()=>setPlanEditing(ev)}>
+                <div className="plan-title">{ev.title}</div>
+                <div className="plan-meta">{fmtDate(ev)}{ ev.note ? '　'+ev.note : '' }</div>
+              </div>
+              <div className="plan-actions">
+                <button className="plan-ics" onClick={()=>downloadICS(ev)} aria-label="カレンダーに追加">📅</button>
+              </div>
+            </div>
+        )) }
+
+      { schedule.length>0 &&
+        <div className="note">「📅」をタップすると、その予定をアラーム付きでカレンダーアプリに登録できます。予定をタップすると編集できます。</div> }
+    </div>
+  );
+}
+
+function PlanForm({ plan, onSave, onDelete, onClose }){
+  const [title, setTitle] = useState(plan?.title || '');
+  const [date, setDate]   = useState(plan?.date || todayStr());
+  const [time, setTime]   = useState(plan?.time || '09:00');
+  const [repeat, setRepeat] = useState(plan?.repeat || 'none');
+  const [alarm, setAlarm] = useState(plan ? (plan.alarm ?? 10) : 10);
+  const [note, setNote]   = useState(plan?.note || '');
+
+  const submit = ()=>{
+    if(!title.trim()) return;
+    onSave({ id:plan?.id, title:title.trim(), date, time, repeat, alarm:Number(alarm), note, durationMin:30 });
+  };
+
+  return (
+    <div className="modal-bg" onClick={onClose}>
+      <div className="modal" onClick={e=>e.stopPropagation()}>
+        <h3>{ plan ? '予定を編集' : '予定を追加' }</h3>
+
+        <div className="field">
+          <label>タイトル</label>
+          <input type="text" value={title} onChange={e=>setTitle(e.target.value)} placeholder="例：歯医者の予約" />
+        </div>
+
+        <div className="row2">
+          <div className="field">
+            <label>日付</label>
+            <input type="date" value={date} onChange={e=>setDate(e.target.value)} />
+          </div>
+          <div className="field">
+            <label>時刻</label>
+            <input type="time" value={time} onChange={e=>setTime(e.target.value)} />
+          </div>
+        </div>
+
+        <div className="field">
+          <label>繰り返し</label>
+          <select value={repeat} onChange={e=>setRepeat(e.target.value)}>
+            { REPEATS.map(r=><option key={r.v} value={r.v}>{r.l}</option>) }
+          </select>
+        </div>
+
+        <div className="field">
+          <label>アラーム</label>
+          <select value={alarm} onChange={e=>setAlarm(e.target.value)}>
+            { ALARMS.map(a=><option key={a.v} value={a.v}>{a.l}</option>) }
+          </select>
+        </div>
+
+        <div className="field">
+          <label>メモ（任意）</label>
+          <textarea value={note} onChange={e=>setNote(e.target.value)} placeholder="場所や持ち物など"></textarea>
+        </div>
+
+        <div className="form-actions">
+          <button className="btn-sub" onClick={onClose}>やめる</button>
+          <button className="btn-main" onClick={submit}>保存する</button>
+        </div>
+
+        { plan &&
+          <button className="btn-del" onClick={()=>{ if(confirm('この予定を削除しますか？')) onDelete(plan.id); }}>
+            この予定を削除する</button> }
+      </div>
+    </div>
+  );
+}
+
 function Shopping({ shopping, toggleBought, deleteShopItem }){
   const bought = shopping.filter(s=>s.bought).length;
   return (
@@ -1517,6 +1763,7 @@ function ShoppingForm({ onSave, onClose }){
 function TabBar({ tab, setTab }){
   const tabs = [
     { k:'home',    i:'⛩', l:'今日' },
+    { k:'plan',    i:'◷', l:'予定' },
     { k:'habits',  i:'❏', l:'管理' },
     { k:'shop',    i:'☖', l:'買い物' },
     { k:'study',   i:'✦', l:'学習' },

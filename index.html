@@ -305,6 +305,51 @@
     letter-spacing:.03em;margin-bottom:4px;}
   .study-trouble-d, .study-method-d{font-size:11.5px;color:var(--sumi-soft);line-height:1.7;}
 
+  /* モード切替 */
+  .study-mode{display:flex;gap:6px;background:var(--paper);border:1px solid var(--line);
+    border-radius:999px;padding:4px;margin-bottom:16px;}
+  .study-mode button{flex:1;background:none;border:none;padding:8px 0;border-radius:999px;
+    font-family:inherit;font-size:12.5px;letter-spacing:.06em;color:var(--sumi-soft);cursor:pointer;}
+  .study-mode button.on{background:var(--sumi);color:var(--washi);}
+
+  /* クイズ */
+  .quiz-filter{display:flex;gap:6px;margin-bottom:14px;}
+  .quiz-filter button{flex:1;background:var(--paper);border:1px solid var(--line);
+    color:var(--sumi-soft);padding:7px 0;border-radius:8px;font-family:inherit;font-size:11.5px;cursor:pointer;}
+  .quiz-filter button.on{background:var(--sumi);color:var(--washi);border-color:var(--sumi);}
+  .quiz-progress{font-size:11.5px;color:var(--sumi-soft);margin:0 2px 8px;letter-spacing:.04em;}
+  .quiz-topic{color:var(--kenko);}
+  .quiz-card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:15px 16px;}
+  .quiz-source{font-size:10.5px;color:var(--sumi-soft);letter-spacing:.04em;margin-bottom:8px;}
+  .quiz-q{font-size:13.5px;line-height:1.75;color:var(--sumi);margin-bottom:14px;}
+  .quiz-choices{display:flex;flex-direction:column;gap:8px;}
+  .quiz-choice{display:flex;align-items:flex-start;gap:10px;text-align:left;width:100%;
+    background:var(--washi);border:1px solid var(--line);border-radius:9px;padding:11px 12px;
+    font-family:inherit;font-size:12.5px;line-height:1.55;color:var(--sumi);cursor:pointer;}
+  .quiz-choice:disabled{cursor:default;}
+  .quiz-letter{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:var(--line);
+    color:var(--sumi);font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:600;}
+  .quiz-choice-text{flex:1;padding-top:1px;}
+  .quiz-choice.correct{background:#E9F0EA;border-color:var(--kenko);}
+  .quiz-choice.correct .quiz-letter{background:var(--kenko);color:#fff;}
+  .quiz-choice.wrong{background:#F5E7EA;border-color:var(--gaiken);}
+  .quiz-choice.wrong .quiz-letter{background:var(--gaiken);color:#fff;}
+  .quiz-choice.dim{opacity:.55;}
+  .quiz-result{margin-top:13px;border-radius:12px;padding:14px 16px;border:1px solid var(--line);}
+  .quiz-result.ok{background:#E9F0EA;border-color:#CFE0D2;}
+  .quiz-result.ng{background:#F5E7EA;border-color:#EBD2D8;}
+  .quiz-verdict{font-size:13.5px;font-weight:600;letter-spacing:.04em;margin-bottom:8px;}
+  .quiz-result.ok .quiz-verdict{color:var(--kenko);}
+  .quiz-result.ng .quiz-verdict{color:var(--gaiken);}
+  .quiz-explain{font-size:12px;color:var(--sumi);line-height:1.8;}
+  .quiz-grade{margin-top:13px;border-top:1px dashed var(--line-strong);padding-top:11px;}
+  .quiz-grade-label{font-size:11px;color:var(--sumi-soft);margin-bottom:8px;}
+  .quiz-grade-btns{display:flex;gap:8px;}
+  .quiz-grade-btns .qg{flex:1;border:none;border-radius:9px;padding:11px 0;font-family:inherit;
+    font-size:12px;letter-spacing:.03em;cursor:pointer;color:#fff;}
+  .quiz-grade-btns .qg.ok{background:var(--kenko);}
+  .quiz-grade-btns .qg.review{background:var(--line-strong);color:var(--sumi);}
+
   .shop-tier{margin-bottom:4px;}
   .shop-tier-head{display:flex;align-items:baseline;justify-content:space-between;margin:20px 2px 8px;}
   .shop-tier-head .t{font-size:14.5px;font-weight:600;letter-spacing:.06em;}
@@ -722,7 +767,33 @@ const STUDY_PLANS = {
   lpic: { overview:'準備中。基本情報の合格後に着手する想定です。', cycle:null, subjectFlows:[], monthly:[], examInfo:[], materials:[], troubleshoot:null, output:null, tips:[], phases:[] },
   aws:  { overview:'準備中。LPIC合格後に着手する想定です。',     cycle:null, subjectFlows:[], monthly:[], examInfo:[], materials:[], troubleshoot:null, output:null, tips:[], phases:[] },
 };
-const seedStudy = () => ({ qual:'fe', done:{} });
+const seedStudy = () => ({ qual:'fe', done:{}, quiz:{} });
+
+/* ---------- 問題演習データ（IPA過去問。解説は要点を自作） ---------- */
+const QUIZ = {
+  fe: [
+    {
+      id:'q-feh30s79',
+      topic:'ストラテジ系・法務（著作権）',
+      source:'FE 平成30年春 問79',
+      q:'A社は，B社と著作物の権利に関する特段の取決めをせず，A社の要求仕様に基づいて，販売管理システムのプログラム作成をB社に委託した。この場合のプログラム著作権の原始的帰属はどれか。',
+      choices:['A社とB社が話し合って決定する。','A社とB社の共有となる。','A社に帰属する。','B社に帰属する。'],
+      answer:3,
+      explain:'著作権は原則として「実際に著作物（プログラム）を創作した者」に発生する。契約で著作権の帰属を特に取り決めていない場合、たとえ発注者（A社）が仕様を出していても、実際に作成した受託者（B社）に著作権が原始的に帰属する。発注者へ移すには契約での明示が必要。よって正解はエ。',
+    },
+    {
+      id:'q-fer0620',
+      topic:'ストラテジ系・法務（知的財産権）',
+      source:'FE 令和6年 問20',
+      q:'日本において，産業財産権と総称される四つの権利はどれか。',
+      choices:['意匠権，実用新案権，商標権，特許権','意匠権，実用新案権，著作権，特許権','意匠権，商標権，著作権，特許権','実用新案権，商標権，著作権，特許権'],
+      answer:0,
+      explain:'産業財産権は「特許権・実用新案権・意匠権・商標権」の4つで、いずれも特許庁へ出願・登録して得る権利。著作権はこれらと異なり創作した時点で自動的に発生する権利で、産業財産権には含まれない。著作権を含むイ・ウ・エは誤り。よって正解はア。',
+    },
+  ],
+  lpic: [],
+  aws: [],
+};
 
 /* =================================================================== */
 function App({ account }){
@@ -765,10 +836,15 @@ function App({ account }){
     if(d[taskId]) delete d[taskId]; else d[taskId] = true;
     return {...s, done:d};
   });
+  const setQuizResult = (qid, result) => setStudy(s => {
+    const q = {...(s.quiz||{})};
+    if(result==null) delete q[qid]; else q[qid] = result;
+    return {...s, quiz:q};
+  });
 
   const ctx = { habits, logs, settings, setSettings, isDone, toggleLog, toggleActive, setEditing,
                 shopping, toggleBought, deleteShopItem,
-                study, setStudyQual, toggleStudyTask, account };
+                study, setStudyQual, toggleStudyTask, setQuizResult, account };
 
   return (
     <React.Fragment>
@@ -1158,22 +1234,26 @@ function Settings({ settings, setSettings, account }){
 
 /* ---------- 買い物リスト ---------- */
 /* ---------- 資格学習ロードマップ ---------- */
-function Study({ study, setStudyQual, toggleStudyTask }){
+function Study({ study, setStudyQual, toggleStudyTask, setQuizResult }){
   const qual = (study && study.qual) || 'fe';
   const done = (study && study.done) || {};
   const plan = STUDY_PLANS[qual] || { phases:[], materials:[], tips:[], overview:'', examInfo:[] };
   const qualInfo = QUALS.find(q=>q.id===qual) || QUALS[0];
+  const [mode, setMode] = useState('plan');
 
   const phaseTasks = (p) => (p.blocks ? p.blocks.flatMap(b=>b.tasks) : (p.tasks||[]));
   const allTasks = plan.phases.flatMap(phaseTasks);
   const doneCount = allTasks.filter(t=>done[t.id]).length;
   const pct = allTasks.length ? Math.round(doneCount/allTasks.length*100) : 0;
+  const quizCount = (QUIZ[qual] || []).length;
 
   return (
     <div className="screen">
       <div className="topbar">
-        <div className="title">学習ロードマップ</div>
-        <div className="date">{ allTasks.length>0 ? `${doneCount}/${allTasks.length}・${pct}%` : '準備中' }</div>
+        <div className="title">{ mode==='plan' ? '学習ロードマップ' : '問題演習' }</div>
+        <div className="date">{ mode==='plan'
+            ? (allTasks.length>0 ? `${doneCount}/${allTasks.length}・${pct}%` : '準備中')
+            : `${quizCount}問` }</div>
       </div>
 
       <div className="study-tabs">
@@ -1185,6 +1265,16 @@ function Study({ study, setStudyQual, toggleStudyTask }){
           </button>
         )) }
       </div>
+
+      <div className="study-mode">
+        <button className={mode==='plan'?'on':''} onClick={()=>setMode('plan')}>ロードマップ</button>
+        <button className={mode==='quiz'?'on':''} onClick={()=>setMode('quiz')}>問題演習</button>
+      </div>
+
+      { mode==='quiz' ? (
+        <Quiz qual={qual} study={study} setQuizResult={setQuizResult} />
+      ) : (
+      <React.Fragment>
 
       <div className="study-overview">
         <div className="study-qual-name">{qualInfo.name}</div>
@@ -1363,6 +1453,110 @@ function Study({ study, setStudyQual, toggleStudyTask }){
       ) }
 
       <div className="note">スケジュールはあくまで目安。仕事や生活に合わせて週単位で前後させてOK。大事なのは「過去問を毎日触る」を切らさないこと。</div>
+
+      </React.Fragment>
+      ) }
+    </div>
+  );
+}
+
+/* ---------- 問題演習（クイズ） ---------- */
+function Quiz({ qual, study, setQuizResult }){
+  const all = QUIZ[qual] || [];
+  const results = (study && study.quiz) || {};
+  const [filter, setFilter] = useState('all'); // all | unanswered | review
+  const [idx, setIdx] = useState(0);
+  const [picked, setPicked] = useState(null);  // 選んだ選択肢のindex
+
+  const pool = all.filter(q=>{
+    if(filter==='unanswered') return !results[q.id];
+    if(filter==='review')     return results[q.id]==='review';
+    return true;
+  });
+
+  React.useEffect(()=>{ setIdx(0); setPicked(null); }, [filter, qual]);
+
+  if(all.length===0){
+    return <div className="note" style={{marginTop:24}}>この資格の問題はまだ登録されていません。問題のスクリーンショットを送ってもらえれば追加できます。</div>;
+  }
+  if(pool.length===0){
+    return (
+      <div>
+        <QuizFilter filter={filter} setFilter={setFilter} results={results} all={all} />
+        <div className="note" style={{marginTop:20}}>
+          { filter==='review' ? '「要復習」の問題はありません。よくできています。' : '該当する問題がありません。' }
+        </div>
+      </div>
+    );
+  }
+
+  const cur = pool[Math.min(idx, pool.length-1)];
+  const answered = picked!==null;
+  const correct = answered && picked===cur.answer;
+  const LETTERS = ['ア','イ','ウ','エ','オ'];
+
+  const choose = (i)=>{ if(!answered) setPicked(i); };
+  const grade = (result)=>{
+    setQuizResult(cur.id, result);
+    setPicked(null);
+    setIdx(i => i+1 >= pool.length ? 0 : i+1);
+  };
+
+  return (
+    <div>
+      <QuizFilter filter={filter} setFilter={setFilter} results={results} all={all} />
+
+      <div className="quiz-progress">{Math.min(idx+1,pool.length)} / {pool.length}　<span className="quiz-topic">{cur.topic}</span></div>
+
+      <div className="quiz-card">
+        <div className="quiz-source">{cur.source}</div>
+        <div className="quiz-q">{cur.q}</div>
+        <div className="quiz-choices">
+          { cur.choices.map((c,i)=>{
+            let cls = 'quiz-choice';
+            if(answered){
+              if(i===cur.answer) cls += ' correct';
+              else if(i===picked) cls += ' wrong';
+              else cls += ' dim';
+            }
+            return (
+              <button key={i} className={cls} onClick={()=>choose(i)} disabled={answered}>
+                <span className="quiz-letter">{LETTERS[i]}</span>
+                <span className="quiz-choice-text">{c}</span>
+              </button>
+            );
+          }) }
+        </div>
+      </div>
+
+      { answered && (
+        <div className={'quiz-result '+(correct?'ok':'ng')}>
+          <div className="quiz-verdict">{ correct ? '◯ 正解' : '✕ 不正解' }（正解：{LETTERS[cur.answer]}）</div>
+          <div className="quiz-explain">{cur.explain}</div>
+          <div className="quiz-grade">
+            <div className="quiz-grade-label">記憶定着のため、手応えで仕分けしましょう：</div>
+            <div className="quiz-grade-btns">
+              <button className="qg ok" onClick={()=>grade('ok')}>自信あり（卒業）</button>
+              <button className="qg review" onClick={()=>grade('review')}>迷った・勘 → 要復習</button>
+            </div>
+          </div>
+        </div>
+      ) }
+
+      { !answered &&
+        <div className="note" style={{marginTop:14}}>選択肢をタップして解答します。たまたま当たった問題は「要復習」に入れておくのが伸びるコツ。</div> }
+    </div>
+  );
+}
+
+function QuizFilter({ filter, setFilter, results, all }){
+  const cReview = all.filter(q=>results[q.id]==='review').length;
+  const cUnans  = all.filter(q=>!results[q.id]).length;
+  return (
+    <div className="quiz-filter">
+      <button className={filter==='all'?'on':''} onClick={()=>setFilter('all')}>すべて {all.length}</button>
+      <button className={filter==='unanswered'?'on':''} onClick={()=>setFilter('unanswered')}>未挑戦 {cUnans}</button>
+      <button className={filter==='review'?'on':''} onClick={()=>setFilter('review')}>要復習 {cReview}</button>
     </div>
   );
 }

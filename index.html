@@ -266,6 +266,45 @@
     margin:13px 2px 8px;padding-left:9px;border-left:3px solid var(--line-strong);}
   .study-tip{font-size:12px;color:var(--sumi);line-height:1.8;padding:0 2px;}
 
+  /* 学習サイクル */
+  .study-cycle-desc{font-size:11.5px;color:var(--sumi-soft);line-height:1.7;margin:0 2px 10px;}
+  .study-cycle{display:flex;flex-direction:column;align-items:center;}
+  .study-cycle-step{background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    padding:9px 12px;width:100%;max-width:300px;text-align:center;position:relative;}
+  .study-cycle-num{position:absolute;left:10px;top:50%;transform:translateY(-50%);
+    width:22px;height:22px;border-radius:50%;background:var(--sumi);color:var(--washi);
+    font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:600;}
+  .study-cycle-t{font-size:13px;font-weight:600;letter-spacing:.04em;}
+  .study-cycle-d{font-size:11px;color:var(--sumi-soft);line-height:1.5;margin-top:3px;}
+  .study-cycle-arrow{font-size:14px;color:var(--line-strong);line-height:1;margin:3px 0;}
+
+  /* 科目別フロー */
+  .study-flow{background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    padding:12px 13px 14px;margin-bottom:10px;}
+  .study-flow-head{font-size:12.5px;font-weight:600;letter-spacing:.04em;
+    color:var(--sumi);margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid var(--line);}
+  .study-flow-step{font-size:11.5px;color:var(--sumi);line-height:1.5;
+    padding:6px 10px;background:var(--washi);border-radius:7px;}
+  .study-flow-arrow{font-size:12px;color:var(--line-strong);text-align:center;line-height:1;margin:3px 0;}
+
+  /* 月別計画 */
+  .study-monthly-note{font-size:11px;color:var(--sumi-soft);line-height:1.7;margin:0 2px 8px;}
+  .study-monthly{display:flex;gap:10px;background:var(--paper);border:1px solid var(--line);
+    border-radius:10px;padding:10px 13px;margin-bottom:6px;}
+  .study-monthly-m{flex:0 0 58px;font-size:12px;font-weight:600;color:var(--sumi);
+    letter-spacing:.04em;padding-top:1px;}
+  .study-monthly-body{flex:1;}
+  .study-monthly-target{font-size:12px;color:var(--sumi);line-height:1.45;}
+  .study-monthly-hours{font-size:11px;color:var(--kenko);font-weight:600;margin-top:2px;}
+
+  /* 解説が分からない対処法 / アウトプット */
+  .study-trouble-intro{font-size:11.5px;color:var(--sumi-soft);line-height:1.7;margin:0 2px 10px;}
+  .study-trouble, .study-method{background:var(--paper);border:1px solid var(--line);
+    border-radius:10px;padding:11px 13px;margin-bottom:7px;}
+  .study-trouble-t, .study-method-t{font-size:12.5px;font-weight:600;color:var(--sumi);
+    letter-spacing:.03em;margin-bottom:4px;}
+  .study-trouble-d, .study-method-d{font-size:11.5px;color:var(--sumi-soft);line-height:1.7;}
+
   .shop-tier{margin-bottom:4px;}
   .shop-tier-head{display:flex;align-items:baseline;justify-content:space-between;margin:20px 2px 8px;}
   .shop-tier-head .t{font-size:14.5px;font-weight:600;letter-spacing:.06em;}
@@ -424,25 +463,85 @@ const QUALS = [
 let _tid = 1; const tk = (text, hint) => ({ id:'t'+(_tid++), text, hint:hint||'' });
 const STUDY_PLANS = {
   fe: {
-    overview: '通年CBT方式（好きな日を自分で予約）。科目A 60問90分 ＋ 科目B 20問100分。両方とも1000点満点中600点で合格。プログラミング未経験でも、正しい順番で過去問を回せば1〜2ヶ月の短期集中で十分狙えます。',
+    overview: '通年CBT方式（好きな日を自分で予約）。科目A 60問90分 ＋ 科目B 20問100分。両方とも1000点満点中600点で合格。完全な初心者なら1日1〜1.5時間×3〜4ヶ月（合計150〜200時間）が現実的な目安。短期集中なら1日2〜3時間×8週間でも狙えます。',
+    cycle: {
+      title:'すべての学習に共通する基本サイクル',
+      desc:'科目A・Bともに、最初から完璧を目指さず、このサイクルをひたすら回すのが最短ルート。',
+      steps:[
+        { n:1, t:'なんとなく理解', d:'1周目で覚えようとしない。全体像をつかむだけでOK' },
+        { n:2, t:'問題を解く',     d:'分からなくても手を動かして埋める' },
+        { n:3, t:'間違いを確認',  d:'なぜ違うか／なぜ正解かを解説で確認' },
+        { n:4, t:'もう一度解く',  d:'間隔を空けて再挑戦。3回連続で正解できたら卒業' },
+      ],
+    },
+    subjectFlows:[
+      {
+        subject:'科目A（知識問題）の進め方',
+        steps:[
+          'テキストをざっと1周（細部は覚えなくてOK）',
+          '過去問道場で解く',
+          '間違えた所の解説・テキストを確認',
+          '間違えた問題だけ再度解く',
+          '正答率7割を超えるまで反復',
+        ],
+      },
+      {
+        subject:'科目B（アルゴリズム・セキュリティ）の進め方',
+        steps:[
+          '擬似言語のルール・基本をなんとなく理解',
+          'やさしい問題を解く（紙にトレース）',
+          '間違い・分からなかった所の解説を見る',
+          '同じ問題を自力でもう一度トレース',
+          '慣れてきたら難しい問題へレベルUP',
+        ],
+      },
+    ],
+    monthly:[
+      { m:'1ヶ月目', target:'科目A インプット（テキスト1周）', hours:'約40時間' },
+      { m:'2ヶ月目', target:'科目A 過去問演習',                hours:'約50時間' },
+      { m:'3ヶ月目', target:'科目B（アルゴリズム・セキュリティ）対策', hours:'約60時間' },
+      { m:'4ヶ月目', target:'科目A・B 総仕上げ・模試',         hours:'約30時間' },
+    ],
     examInfo: [
       { k:'科目A', v:'60問 / 90分。4択。IT全般の知識を広く浅く。過去問の流用が多い＝ここは暗記と演習で稼ぐパート。' },
       { k:'科目B', v:'20問 / 100分。うち約16問がアルゴリズム（擬似言語）、約4問が情報セキュリティ。配点が重く、合否を分ける本丸。' },
       { k:'合格点', v:'科目A・科目Bともに600点/1000点（おおむね6割）。片方だけ高くてもダメで、両方6割が必要。' },
-      { k:'申込', v:'プロメトリックのサイトで会場と日時を予約。学習開始時に「8週間後」で仮予約してしまうのがおすすめ。' },
+      { k:'申込', v:'プロメトリックのサイトで会場と日時を予約。学習開始時に逆算して受験日を仮予約してしまうのがおすすめ。' },
     ],
     materials: [
-      { name:'キタミ式イラストIT塾 基本情報技術者（技術評論社）', detail:'メインの教科書。文章が少なくイラストで直感的に分かるので、未経験者の1冊目に最適。最新年度版を選ぶ。' },
-      { name:'基本情報技術者試験ドットコム「過去問道場」', detail:'無料Web。本試験で一番大事な教材。分野別・年度別に出題でき、スマホで隙間時間に回せる。これを回し切れば科目Aは受かる。' },
-      { name:'うかる！基本情報技術者 科目B・アルゴリズム編（日経BP）', detail:'科目Bの擬似言語対策。トレースのやり方が丁寧。プログラミング未経験なら必ず手元に置く。' },
-      { name:'YouTube「まさるの勉強部屋」「基本情報技術者試験対策」系チャンネル', detail:'任意。本を読むのが辛い時の理解補助。通勤中の聞き流しにも。深入りはしない。' },
+      { name:'メインテキスト：『キタミ式イラストIT塾 基本情報技術者』(技術評論社)', detail:'イラスト中心で初心者の1冊目に最適。文章で理解したい人は『かやのき先生の基本情報技術者教室』も同等におすすめ。どちらか1冊で十分。' },
+      { name:'過去問サイト：「基本情報技術者試験ドットコム 過去問道場」', detail:'無料Web。本試験で一番大事な教材。分野別・年度別に出題可、スマホで隙間時間に回せる。「間違えた問題だけ復習」機能あり。科目Aはこれだけで十分対策できると言われるほど。' },
+      { name:'科目B専用：『うかる！基本情報技術者 科目B・アルゴリズム編』(日経BP)', detail:'擬似言語のトレース方法が丁寧。『出るとこだけ！基本情報技術者[科目B]』も候補。プログラミング未経験なら必ず1冊。' },
+      { name:'YouTube（任意）：「まさるの勉強部屋」など解説チャンネル', detail:'文字の解説が分からない時の救世主。動きのあるアルゴリズム・ネットワークは動画が圧倒的に理解しやすい。' },
     ],
+    troubleshoot: {
+      title:'IT初心者向け：解説が分からないときの対処法',
+      intro:'解説の意味が分からないのは能力の問題ではなく、ある程度の前提知識がある人向けに書かれているから。つまずいて当然と思って大丈夫。',
+      steps:[
+        { t:'① 原因を切り分ける', d:'「用語そのものが分からない」のか「理屈・つながりが分からない」のかを判別。前者なら用語検索、後者なら別の説明（動画など）に切り替えるのが早い。' },
+        { t:'② 用語を1つずつ検索', d:'「○○ とは わかりやすく」「○○ 初心者」で検索。ただし深追い禁止。目の前の問題を理解するのに必要な範囲だけにとどめる（完璧主義が遠回りの原因）。' },
+        { t:'③ 文字でダメなら動画に切り替え', d:'YouTubeで「基本情報 ○○ 解説」。特にアルゴリズム・ネットワークなど「動き」のある分野は、文字より動画が圧倒的に理解しやすい。' },
+        { t:'④ それでもダメなら一旦飛ばす', d:'付箋して先に進む。1問に何時間も悩むより全体を進めた方が効率的。先の単元を学んでから戻ると「あ、こういうことか」と分かることが本当に多い。' },
+        { t:'⑤ 聞ける環境を持っておく', d:'AIに「この解説の意味が分からないので、もっと簡単に説明して」と聞くのが最速。Yahoo!知恵袋・X・勉強系コミュニティも活用。' },
+      ],
+    },
+    output: {
+      title:'アウトプットと記憶定着（4択問題で勘に頼らないコツ）',
+      intro:'正解できた数ではなく「自信を持って説明できる問題が増えた数」を成長の指標にする。',
+      methods:[
+        { t:'◎○△✕の4段階で自己採点', d:'◎=自信あり正解/○=迷ったが正解/△=たまたま当たった/✕=不正解。△は✕と同じ扱いで復習対象に入れるのが最大のコツ。過去問道場の「チェック」機能を活用。' },
+        { t:'他の選択肢が「なぜ違うか」まで説明できるか', d:'4択は不正解の3つにも知識が詰まっている。「なぜ違うか／どういう時なら正解になるか」まで確認すると、1問から実質4問分の知識が得られる。' },
+        { t:'人に教えるつもりで声に出す／書く', d:'解説を閉じて「答えは○○で、理由は△△だから」とスラスラ言えれば理解完了。詰まればそこが弱点。ラーニング・ピラミッドでも最も記憶に残る方法。' },
+        { t:'間隔反復で日を空けて復習', d:'翌日 → 3日後 → 1週間後と間隔を空けて解き直す。過去問道場の「間違えた問題だけ出題」機能で自然に実現できる。3回連続正解で卒業。' },
+        { t:'自分の言葉で1行メモ', d:'解説の丸写しではなく「要するに○○ってこと」と自分の言葉に変換。試験直前に見返すだけの「自分専用の弱点ノート」になる。' },
+      ],
+    },
     tips: [
       '勉強時間の黄金比は「インプット3：アウトプット7」。本を読むより問題を解く時間を多くする',
       '科目Aは同じ過去問が何度も出る → 過去問道場を3〜5周すれば見た瞬間に答えが分かるようになる',
       '科目Bは「毎日コードに触れる」が全て。1日1問でいいので絶対に空白日を作らない',
       '計算問題（2進数・稼働率・確率）は逃げない。出題パターンが決まっていて、慣れれば確実な得点源',
-      '間違えた問題は「なぜ間違えたか」を一言メモ。翌日その1行を見返すだけで定着が段違い',
+      '科目Bはセキュリティ4問で確実に取り、アルゴリズムで上積みする戦略が安全',
       '完璧主義をやめる。6割で受かる試験。捨て分野（経営・法務の細部など）を作る勇気も大事',
     ],
     phases: [
@@ -620,8 +719,8 @@ const STUDY_PLANS = {
       },
     ],
   },
-  lpic: { overview:'準備中。基本情報の合格後に着手する想定です。', examInfo:[], materials:[], tips:[], phases:[] },
-  aws:  { overview:'準備中。LPIC合格後に着手する想定です。',     examInfo:[], materials:[], tips:[], phases:[] },
+  lpic: { overview:'準備中。基本情報の合格後に着手する想定です。', cycle:null, subjectFlows:[], monthly:[], examInfo:[], materials:[], troubleshoot:null, output:null, tips:[], phases:[] },
+  aws:  { overview:'準備中。LPIC合格後に着手する想定です。',     cycle:null, subjectFlows:[], monthly:[], examInfo:[], materials:[], troubleshoot:null, output:null, tips:[], phases:[] },
 };
 const seedStudy = () => ({ qual:'fe', done:{} });
 
@@ -1094,6 +1193,58 @@ function Study({ study, setStudyQual, toggleStudyTask }){
           <div className="study-progress"><div className="study-progress-bar" style={{width:pct+'%'}}></div></div> }
       </div>
 
+      { plan.cycle && (
+        <div className="study-section">
+          <div className="study-section-head">🔁 {plan.cycle.title}</div>
+          <div className="study-cycle-desc">{plan.cycle.desc}</div>
+          <div className="study-cycle">
+            { plan.cycle.steps.map((s,i)=>(
+              <React.Fragment key={s.n}>
+                <div className="study-cycle-step">
+                  <div className="study-cycle-num">{s.n}</div>
+                  <div className="study-cycle-t">{s.t}</div>
+                  <div className="study-cycle-d">{s.d}</div>
+                </div>
+                { i < plan.cycle.steps.length-1 && <div className="study-cycle-arrow">↓</div> }
+              </React.Fragment>
+            )) }
+          </div>
+        </div>
+      ) }
+
+      { plan.subjectFlows && plan.subjectFlows.length>0 && (
+        <div className="study-section">
+          <div className="study-section-head">🧭 科目別の進め方フロー</div>
+          { plan.subjectFlows.map((f,i)=>(
+            <div className="study-flow" key={i}>
+              <div className="study-flow-head">{f.subject}</div>
+              { f.steps.map((s,j)=>(
+                <React.Fragment key={j}>
+                  <div className="study-flow-step">{s}</div>
+                  { j < f.steps.length-1 && <div className="study-flow-arrow">↓</div> }
+                </React.Fragment>
+              )) }
+            </div>
+          )) }
+        </div>
+      ) }
+
+      { plan.monthly && plan.monthly.length>0 && (
+        <div className="study-section">
+          <div className="study-section-head">📅 月別の学習計画（標準ペース）</div>
+          <div className="study-monthly-note">1日1〜1.5時間で進める場合の目安。短期集中なら下の8週間プランへ。</div>
+          { plan.monthly.map((m,i)=>(
+            <div className="study-monthly" key={i}>
+              <div className="study-monthly-m">{m.m}</div>
+              <div className="study-monthly-body">
+                <div className="study-monthly-target">{m.target}</div>
+                <div className="study-monthly-hours">{m.hours}</div>
+              </div>
+            </div>
+          )) }
+        </div>
+      ) }
+
       { plan.examInfo && plan.examInfo.length>0 && (
         <div className="study-section">
           <div className="study-section-head">📝 試験の基本</div>
@@ -1175,6 +1326,32 @@ function Study({ study, setStudyQual, toggleStudyTask }){
           </div>
         );
       }) }
+
+      { plan.troubleshoot && (
+        <div className="study-section">
+          <div className="study-section-head">❓ {plan.troubleshoot.title}</div>
+          <div className="study-trouble-intro">{plan.troubleshoot.intro}</div>
+          { plan.troubleshoot.steps.map((s,i)=>(
+            <div className="study-trouble" key={i}>
+              <div className="study-trouble-t">{s.t}</div>
+              <div className="study-trouble-d">{s.d}</div>
+            </div>
+          )) }
+        </div>
+      ) }
+
+      { plan.output && (
+        <div className="study-section">
+          <div className="study-section-head">🎯 {plan.output.title}</div>
+          <div className="study-trouble-intro">{plan.output.intro}</div>
+          { plan.output.methods.map((m,i)=>(
+            <div className="study-method" key={i}>
+              <div className="study-method-t">{m.t}</div>
+              <div className="study-method-d">{m.d}</div>
+            </div>
+          )) }
+        </div>
+      ) }
 
       { plan.tips.length>0 && (
         <div className="study-section">

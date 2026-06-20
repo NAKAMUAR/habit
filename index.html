@@ -849,9 +849,7 @@ function App({ account }){
   return (
     <React.Fragment>
       { tab==='home'    && <Home {...ctx} /> }
-      { tab==='weekly'  && <Weekly {...ctx} /> }
       { tab==='habits'  && <Habits {...ctx} /> }
-      { tab==='stats'   && <Stats {...ctx} /> }
       { tab==='shop'    && <Shopping {...ctx} /> }
       { tab==='study'   && <Study {...ctx} /> }
       { tab==='settings'&& <Settings {...ctx} /> }
@@ -873,20 +871,14 @@ function App({ account }){
 }
 
 /* ---------- ホーム ---------- */
-function Home({ habits, isDone, toggleLog, setEditing }){
-  const date = todayStr();
+function Home({ habits, setEditing }){
   const list = useMemo(()=>{
-    return habits.filter(h=>h.isActive)
-      .slice()
+    return habits.slice()
       .sort((a,b)=>{
         const ta=a.recommendedTime||'99:99', tb=b.recommendedTime||'99:99';
         return ta.localeCompare(tb);
       });
   }, [habits]);
-
-  const total = list.length;
-  const done = list.filter(h=>isDone(h.id, date)).length;
-  const pct = total? done/total : 0;
 
   const today = new Date();
   const dateLabel = `${today.getMonth()+1}月${today.getDate()}日（${WD[today.getDay()]}）`;
@@ -898,88 +890,20 @@ function Home({ habits, isDone, toggleLog, setEditing }){
         <div className="date">{dateLabel}</div>
       </div>
 
-      <div className="achieve">
-        <div className="ring">
-          <svg width="64" height="64">
-            <circle cx="32" cy="32" r="27" fill="none" stroke="#E4DBC9" strokeWidth="6"/>
-            <circle cx="32" cy="32" r="27" fill="none" stroke="#2B2722" strokeWidth="6"
-              strokeLinecap="round" strokeDasharray={2*Math.PI*27}
-              strokeDashoffset={2*Math.PI*27*(1-pct)} />
-          </svg>
-          <div className="num">{done}/{total}</div>
-        </div>
-        <div>
-          <div className="lbl">今日の達成</div>
-          <div className="big">{ total===0 ? '習慣がありません'
-            : done===total ? 'すべて達成しました' : `あと ${total-done} つ` }</div>
-        </div>
-      </div>
-
-      { total===0
-        ? <div className="empty">有効な習慣がありません。<br/>「習慣管理」から追加・有効化してください。</div>
+      { list.length===0
+        ? <div className="empty">習慣がありません。<br/>「習慣管理」から追加してください。</div>
         : list.map(hb => {
-            const c = catOf(hb.categoryId); const d = isDone(hb.id, date);
+            const c = catOf(hb.categoryId);
             return (
-              <div key={hb.id} className={"tanzaku"+(d?' done':'')} style={{borderLeftColor:c.hex}}>
+              <div key={hb.id} className="tanzaku" style={{borderLeftColor:c.hex}} onClick={()=>setEditing(hb)}>
                 <div className="time">{hb.recommendedTime || '—'}</div>
                 <div className="body">
                   <div className="name">{hb.title}</div>
                   <div className="cat">{c.name}{ hb.frequencyType==='weekly' ? ` ・週${hb.frequencyCount}回` : '' }</div>
                 </div>
-                <button className={"check"+(d?' on':'')} onClick={()=>toggleLog(hb.id, date)}
-                  style={ d ? {} : {borderColor:c.hex} } aria-label="完了">{ d ? '✓' : '' }</button>
               </div>
             );
         }) }
-    </div>
-  );
-}
-
-/* ---------- 週間ビュー（直近7日） ---------- */
-function Weekly({ habits, isDone }){
-  const days = useMemo(()=>{ const base=new Date(); return Array.from({length:7},(_,i)=>addDays(base, i-6)); }, []);
-  const today = todayStr();
-  const list = habits.filter(h=>h.isActive);
-
-  return (
-    <div className="screen">
-      <div className="topbar"><div className="title">週間の記録</div>
-        <div className="date">直近7日間</div></div>
-
-      { list.length===0
-        ? <div className="empty">有効な習慣がありません。</div>
-        : <div className="grid-wrap">
-            <table className="week">
-              <thead>
-                <tr>
-                  <th className="hname">習慣</th>
-                  { days.map((d,i)=>{
-                    const isToday = ymd(d)===today;
-                    return <th key={i} className={isToday?'today-col':''}>
-                      {WD[d.getDay()]}<br/><span style={{color:'#9c948a'}}>{d.getDate()}</span></th>;
-                  }) }
-                </tr>
-              </thead>
-              <tbody>
-                { list.map(hb=>{
-                  const c=catOf(hb.categoryId);
-                  return (
-                    <tr key={hb.id}>
-                      <td className="hname">{hb.title}</td>
-                      { days.map((d,i)=>{
-                        const ds=ymd(d); const done=isDone(hb.id, ds); const isToday=ds===today;
-                        return <td key={i} className={isToday?'today-col':''}>
-                          <div className="cell" style={ done
-                            ? {background:c.hex, borderColor:c.hex}
-                            : {} }></div></td>;
-                      }) }
-                    </tr>
-                  );
-                }) }
-              </tbody>
-            </table>
-          </div> }
-      <div className="note">色のついたマスがその日に達成した記録です。横にスクロールできます。</div>
     </div>
   );
 }
@@ -1013,49 +937,12 @@ function calcRate(hb, isDone){
   }
 }
 
-function Stats({ habits, isDone }){
-  const list = habits.filter(h=>h.isActive);
-  return (
-    <div className="screen">
-      <div className="topbar"><div className="title">継続のしるし</div>
-        <div className="date">達成率は直近30日</div></div>
-      { list.length===0
-        ? <div className="empty">有効な習慣がありません。</div>
-        : CATS.map(c=>{
-            const items=list.filter(h=>h.categoryId===c.id);
-            if(items.length===0) return null;
-            return (
-              <React.Fragment key={c.id}>
-                <div className="section-label" style={{color:c.hex}}>{c.name}</div>
-                { items.map(hb=>{
-                  const streak = hb.frequencyType==='daily'
-                    ? calcDailyStreak(hb.id, isDone)
-                    : calcWeeklyStreak(hb.id, hb.frequencyCount||1, isDone);
-                  const unit = hb.frequencyType==='daily' ? '日' : '週';
-                  const rate = calcRate(hb, isDone).toFixed(1);
-                  return (
-                    <div key={hb.id} className="stat-row" style={{borderLeftColor:c.hex}}>
-                      <div className="name">{hb.title}</div>
-                      <div className="nums">
-                        <div><div className="k">連続</div><div className="v">{streak}<small>{unit}</small></div></div>
-                        <div><div className="k">達成率</div><div className="v">{rate}<small>%</small></div></div>
-                      </div>
-                    </div>
-                  );
-                }) }
-              </React.Fragment>
-            );
-        }) }
-    </div>
-  );
-}
-
 /* ---------- 習慣管理 ---------- */
-function Habits({ habits, toggleActive, setEditing }){
+function Habits({ habits, setEditing }){
   return (
     <div className="screen">
       <div className="topbar"><div className="title">習慣の管理</div>
-        <div className="date">{habits.filter(h=>h.isActive).length} / {habits.length} 有効</div></div>
+        <div className="date">{habits.length} 件</div></div>
       { CATS.map(c=>{
         const items=habits.filter(h=>h.categoryId===c.id);
         if(items.length===0) return null;
@@ -1063,10 +950,7 @@ function Habits({ habits, toggleActive, setEditing }){
           <React.Fragment key={c.id}>
             <div className="section-label" style={{color:c.hex}}>{c.name}</div>
             { items.map(hb=>(
-              <div key={hb.id} className={"habit-row"+(hb.isActive?'':' off')} style={{borderLeftColor:c.hex}}>
-                <button className={"toggle"+(hb.isActive?' on':'')} onClick={()=>toggleActive(hb.id)}
-                  style={ hb.isActive ? {background:c.hex} : {} } aria-label="有効切替">
-                  <span className="knob"></span></button>
+              <div key={hb.id} className="habit-row" style={{borderLeftColor:c.hex}}>
                 <div className="body" onClick={()=>setEditing(hb)}>
                   <div className="name">{hb.title}</div>
                   <div className="meta">
@@ -1080,7 +964,7 @@ function Habits({ habits, toggleActive, setEditing }){
           </React.Fragment>
         );
       }) }
-      <div className="note">左のスイッチで「お休み中／実行中」を切り替えられます。まずは少数から始め、慣れたら増やしていく使い方がおすすめです。</div>
+      <div className="note">習慣をタップすると編集できます。右下の「＋ 習慣を追加」から新しく追加できます。</div>
     </div>
   );
 }
@@ -1633,9 +1517,7 @@ function ShoppingForm({ onSave, onClose }){
 function TabBar({ tab, setTab }){
   const tabs = [
     { k:'home',    i:'⛩', l:'今日' },
-    { k:'weekly',  i:'▦', l:'週間' },
     { k:'habits',  i:'❏', l:'管理' },
-    { k:'stats',   i:'❀', l:'記録' },
     { k:'shop',    i:'☖', l:'買い物' },
     { k:'study',   i:'✦', l:'学習' },
     { k:'settings',i:'⚙', l:'設定' },

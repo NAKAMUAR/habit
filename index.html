@@ -55,7 +55,7 @@
   }
 
   window.HabitCloud = {
-    KEYS: ['habits','logs','settings','shopping'],
+    KEYS: ['habits','logs','settings','shopping','study'],
     onAuth(cb){ return onAuthStateChanged(auth, cb); },
     async signInWithGoogle(){
       try { const r = await signInWithPopup(auth, provider); return r.user; }
@@ -224,6 +224,28 @@
   .note{font-size:12px;color:var(--sumi-soft);line-height:1.8;margin-top:8px;}
 
   /* 買い物 */
+  /* 学習ロードマップ */
+  .study-tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .study-tab{flex:0 0 auto;background:var(--paper);border:1px solid var(--line);
+    color:var(--sumi-soft);padding:8px 14px;border-radius:999px;font-size:12.5px;
+    letter-spacing:.04em;cursor:pointer;font-family:inherit;white-space:nowrap;}
+  .study-tab.active{background:var(--sumi);color:var(--washi);border-color:var(--sumi);}
+  .study-overview{background:var(--paper);border:1px solid var(--line);border-radius:12px;
+    padding:14px 16px;margin-bottom:18px;}
+  .study-qual-name{font-size:15px;font-weight:600;letter-spacing:.04em;margin-bottom:6px;}
+  .study-overview-text{font-size:12px;color:var(--sumi-soft);line-height:1.75;}
+  .study-section{margin:18px 0 10px;}
+  .study-section-head{font-size:13.5px;font-weight:600;letter-spacing:.06em;margin:0 2px 10px;}
+  .study-mat{background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    padding:11px 13px;margin-bottom:7px;}
+  .study-mat-name{font-size:13px;line-height:1.45;}
+  .study-mat-detail{font-size:11.5px;color:var(--sumi-soft);line-height:1.65;margin-top:5px;}
+  .study-meta{background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    padding:10px 13px;margin-bottom:9px;font-size:11.5px;color:var(--sumi);line-height:1.85;}
+  .study-meta-lbl{display:inline-block;min-width:38px;color:var(--sumi-soft);
+    font-size:10.5px;letter-spacing:.08em;margin-right:8px;}
+  .study-tip{font-size:12px;color:var(--sumi);line-height:1.8;padding:0 2px;}
+
   .shop-tier{margin-bottom:4px;}
   .shop-tier-head{display:flex;align-items:baseline;justify-content:space-between;margin:20px 2px 8px;}
   .shop-tier-head .t{font-size:14.5px;font-weight:600;letter-spacing:.06em;}
@@ -265,7 +287,7 @@ const store = {
 const load = (k, fb) => { const v = store.get(k); if(v==null) return fb; try { return JSON.parse(v); } catch(e){ return fb; } };
 
 /* ---------- クラウド同期（Firebase / Firestore） ---------- */
-const SYNC_KEYS = ['habits','logs','settings','shopping'];
+const SYNC_KEYS = ['habits','logs','settings','shopping','study'];
 let _cloudUid = null, _cloudProfile = null, _loadedUid = null, _syncTimer = null;
 function setCloudUser(uid, profile){ _cloudUid = uid; _cloudProfile = profile; }
 function snapshotAll(){ const o={}; SYNC_KEYS.forEach(k=>{ const v=store.get(k); if(v!=null){ try{ o[k]=JSON.parse(v); }catch(e){} } }); return o; }
@@ -373,6 +395,100 @@ const seedShopping = () => { _sid = 1; return [
   ss(4,'アロマ・香り・装飾小物','家にいる心地よさ'),
 ];};
 
+/* ---------- 資格学習プラン ---------- */
+const QUALS = [
+  { id:'fe',   name:'基本情報技術者試験', short:'基本情報', accent:'#5E8C6A' },
+  { id:'lpic', name:'LPIC-1',           short:'LPIC',   accent:'#2C4A6B' },
+  { id:'aws',  name:'AWS CLF (クラウドプラクティショナー)', short:'AWS', accent:'#C77E8E' },
+];
+let _tid = 1; const tk = (text, hint) => ({ id:'t'+(_tid++), text, hint:hint||'' });
+const STUDY_PLANS = {
+  fe: {
+    overview: '通年CBT方式（自分で受験日を予約）。科目A 60問90分 + 科目B 20問100分。各60点で合格。短期集中なら1日2〜3時間×8週間が目安。',
+    materials: [
+      { name:'キタミ式イラストIT塾 基本情報技術者（技術評論社）', detail:'メインの教科書。初心者向けにイラストで解説。最新年度版を1冊。' },
+      { name:'基本情報技術者試験ドットコム「過去問道場」', detail:'無料Web。最重要。スマホで隙間時間に回せる。' },
+      { name:'うかる！基本情報技術者 科目B・アルゴリズム編（日経BP）', detail:'科目Bの擬似言語対策。合否を分ける科目なので必須。' },
+      { name:'YouTube「まさるの勉強部屋」', detail:'任意。動画で理解したい人向け。通勤時の聞き流しにも。' },
+    ],
+    tips: [
+      '科目Aは過去問の使い回しが多い → 過去問道場5周が最強の得点源',
+      '科目Bは「擬似言語に慣れる」のが全て。1日1問でも毎日トレースする',
+      '計算問題（2進数・稼働率・確率）は捨てない。確実な得点源',
+      '暗記カード（AnkiまたはNotion）で頻出用語を毎日5分回す',
+      '受験日は学習開始時に予約して逆算スケジュールにする',
+    ],
+    phases: [
+      {
+        phase:1,
+        title:'インプット — 全体像をつかむ',
+        period:'Week 1〜2（14日間）',
+        daily:'1日2.5時間（テキスト1.5h ＋ 章末問題1h）',
+        goal:'キタミ式を通読し、各分野の用語を「聞いたことある」状態にする',
+        tasks:[
+          tk('キタミ式：ハードウェア・基礎理論（2進数・論理回路・CPU・メモリ）','計算問題が頻出。手を動かして基数変換を解く'),
+          tk('キタミ式：ソフトウェア・OS（プロセス・タスク管理・ファイル管理）',''),
+          tk('キタミ式：データベース（SQL基本構文・正規化・トランザクション）','SELECT/JOIN/GROUP BYは写経して覚える'),
+          tk('キタミ式：ネットワーク（OSI参照モデル・TCP/IP・サブネット）','IPアドレス計算は必出'),
+          tk('キタミ式：セキュリティ（暗号方式・認証・攻撃手法）','科目Bにも出るので丁寧に'),
+          tk('キタミ式：システム開発（ウォーターフォール・アジャイル・UML）',''),
+          tk('キタミ式：マネジメント・ストラテジ（PM・サービスマネジメント・経営）','暗記中心。深追いしない'),
+          tk('各章末の確認問題をすべて解く（間違えたらテキストに戻る）',''),
+        ],
+      },
+      {
+        phase:2,
+        title:'科目A 過去問演習 — 得点源を固める',
+        period:'Week 3〜4（14日間）',
+        daily:'1日2.5時間（過去問25問1h ＋ 復習・暗記1.5h）',
+        goal:'過去問道場の科目Aで安定して70%以上を取る',
+        tasks:[
+          tk('過去問道場で直近5回分（R5春〜R3春など）の科目Aを実施','分野別ではなく回ごとに通しで'),
+          tk('間違えた問題は解説を読み、ノート（またはNotion）に1行メモ',''),
+          tk('計算問題（基数変換・稼働率・処理時間）を集中演習','過去問道場「分野指定」で計算系を50問'),
+          tk('セキュリティ用語・ネットワーク用語の暗記カード作成（30〜50枚）',''),
+          tk('科目Aの正答率を週ごとに記録（目標：1週目60% → 2週目70%）',''),
+          tk('苦手分野を1つに絞って深掘り（テキスト該当章を再読）',''),
+        ],
+      },
+      {
+        phase:3,
+        title:'科目B 対策 — アルゴリズムとセキュリティ',
+        period:'Week 5〜6（14日間）',
+        daily:'1日2.5時間（アルゴリズム書籍1h ＋ 演習1.5h）',
+        goal:'擬似言語のトレースが時間内にできるようになる',
+        tasks:[
+          tk('「うかる！科目B」基本構文（代入・条件分岐・繰り返し）を読む','コード横にトレース表を書く癖をつける'),
+          tk('配列・連結リスト・スタック・キューの操作を擬似言語で書ける','図を描いてポインタ移動を可視化'),
+          tk('整列（バブル・選択・クイック）と探索（線形・二分）をトレース','回数と比較対象を表に書き出す'),
+          tk('再帰関数・木構造の探索（DFS/BFS）を理解','フィボナッチや階乗で再帰の動きを追う'),
+          tk('IPA公式サンプル問題（科目B 20問）を時間を計って解く','100分以内が目標'),
+          tk('情報セキュリティ4問（科目Bの定番）の過去サンプルを集中演習','インシデント対応・アクセス制御がよく出る'),
+        ],
+      },
+      {
+        phase:4,
+        title:'総仕上げ — 本番形式で安定させる',
+        period:'Week 7〜8（14日間）',
+        daily:'1日3時間（模試2h ＋ 復習1h）',
+        goal:'本番と同じ時間配分で合格点を3回連続で取る',
+        tasks:[
+          tk('科目A 過去問を本番通り90分で通し演習 ×3回',''),
+          tk('科目B 過去問を本番通り100分で通し演習 ×3回','時間切れに注意。1問5分以内が目安'),
+          tk('間違えた問題だけを抽出して総復習（弱点ノートを作る）',''),
+          tk('情報セキュリティと擬似言語を最終確認','合否を分ける2分野'),
+          tk('受験会場・持ち物・本人確認書類を確認','CBT会場は早めに到着'),
+          tk('試験前日：詰め込まず早寝。当日朝に弱点ノートだけ見る',''),
+          tk('受験 → 結果メモ（合否に関わらず学んだことを記録）',''),
+        ],
+      },
+    ],
+  },
+  lpic: { overview:'準備中。基本情報の合格後に着手する想定です。', materials:[], tips:[], phases:[] },
+  aws:  { overview:'準備中。LPIC合格後に着手する想定です。',     materials:[], tips:[], phases:[] },
+};
+const seedStudy = () => ({ qual:'fe', done:{} });
+
 /* =================================================================== */
 function App({ account }){
   const [habits, setHabits]   = useState(() => load('habits', null) || seedHabits());
@@ -380,6 +496,7 @@ function App({ account }){
   const [settings, setSettings] = useState(() => load('settings', { name:'わたし', wakeTime:'07:00', sleepTime:'23:00' }));
   const [tab, setTab]         = useState('home');
   const [shopping, setShopping] = useState(() => load('shopping', null) || seedShopping());
+  const [study, setStudy]     = useState(() => load('study', null) || seedStudy());
   const [editing, setEditing] = useState(null);      // habitオブジェクト or {new:true}
   const [shopEditing, setShopEditing] = useState(null);
 
@@ -387,6 +504,7 @@ function App({ account }){
   useEffect(()=>{ save('logs', logs); }, [logs]);
   useEffect(()=>{ save('settings', settings); }, [settings]);
   useEffect(()=>{ save('shopping', shopping); }, [shopping]);
+  useEffect(()=>{ save('study', study); }, [study]);
 
   const toggleLog = (hid, date) => {
     const k = logKey(hid, date);
@@ -406,8 +524,16 @@ function App({ account }){
   const addShopItem = (data) => { setShopping(ss => [...ss, { id:'c'+Date.now(), tier:Number(data.tier), name:data.name, detail:data.detail||'', bought:false }]); setShopEditing(null); };
   const deleteShopItem = (id) => setShopping(ss => ss.filter(x=>x.id!==id));
 
+  const setStudyQual = (qual) => setStudy(s => ({...s, qual}));
+  const toggleStudyTask = (taskId) => setStudy(s => {
+    const d = {...(s.done||{})};
+    if(d[taskId]) delete d[taskId]; else d[taskId] = true;
+    return {...s, done:d};
+  });
+
   const ctx = { habits, logs, settings, setSettings, isDone, toggleLog, toggleActive, setEditing,
-                shopping, toggleBought, deleteShopItem, account };
+                shopping, toggleBought, deleteShopItem,
+                study, setStudyQual, toggleStudyTask, account };
 
   return (
     <React.Fragment>
@@ -416,6 +542,7 @@ function App({ account }){
       { tab==='habits'  && <Habits {...ctx} /> }
       { tab==='stats'   && <Stats {...ctx} /> }
       { tab==='shop'    && <Shopping {...ctx} /> }
+      { tab==='study'   && <Study {...ctx} /> }
       { tab==='settings'&& <Settings {...ctx} /> }
 
       { tab==='habits' &&
@@ -795,6 +922,93 @@ function Settings({ settings, setSettings, account }){
 }
 
 /* ---------- 買い物リスト ---------- */
+/* ---------- 資格学習ロードマップ ---------- */
+function Study({ study, setStudyQual, toggleStudyTask }){
+  const qual = (study && study.qual) || 'fe';
+  const done = (study && study.done) || {};
+  const plan = STUDY_PLANS[qual] || { phases:[], materials:[], tips:[], overview:'' };
+  const qualInfo = QUALS.find(q=>q.id===qual) || QUALS[0];
+
+  const allTasks = plan.phases.flatMap(p=>p.tasks);
+  const doneCount = allTasks.filter(t=>done[t.id]).length;
+
+  return (
+    <div className="screen">
+      <div className="topbar">
+        <div className="title">学習ロードマップ</div>
+        <div className="date">{ allTasks.length>0 ? `${doneCount}/${allTasks.length} 完了` : '準備中' }</div>
+      </div>
+
+      <div className="study-tabs">
+        { QUALS.map(q=>(
+          <button key={q.id}
+            className={'study-tab'+(qual===q.id?' active':'')}
+            onClick={()=>setStudyQual(q.id)}>
+            {q.short}
+          </button>
+        )) }
+      </div>
+
+      <div className="study-overview">
+        <div className="study-qual-name">{qualInfo.name}</div>
+        <div className="study-overview-text">{plan.overview}</div>
+      </div>
+
+      { plan.materials.length>0 && (
+        <div className="study-section">
+          <div className="study-section-head">📚 おすすめ教材</div>
+          { plan.materials.map((m,i)=>(
+            <div className="study-mat" key={i}>
+              <div className="study-mat-name">{m.name}</div>
+              { m.detail && <div className="study-mat-detail">{m.detail}</div> }
+            </div>
+          )) }
+        </div>
+      ) }
+
+      { plan.phases.map(p=>{
+        const pDone = p.tasks.filter(t=>done[t.id]).length;
+        return (
+          <div className="shop-tier" key={p.phase}>
+            <div className="shop-tier-head">
+              <div className="t">Phase {p.phase}　{p.title}</div>
+              <div className="p">{pDone}/{p.tasks.length}</div>
+            </div>
+            <div className="study-meta">
+              <div><span className="study-meta-lbl">期間</span>{p.period}</div>
+              <div><span className="study-meta-lbl">1日</span>{p.daily}</div>
+              <div><span className="study-meta-lbl">目標</span>{p.goal}</div>
+            </div>
+            { p.tasks.map(t=>{
+              const isDone = !!done[t.id];
+              return (
+                <div key={t.id} className={'shop-item'+(isDone?' bought':'')}>
+                  <button className={'check'+(isDone?' on':'')} onClick={()=>toggleStudyTask(t.id)} aria-label="完了">{ isDone?'✓':'' }</button>
+                  <div className="body">
+                    <div className="nm">{t.text}</div>
+                    { t.hint && <div className="dt">{t.hint}</div> }
+                  </div>
+                </div>
+              );
+            }) }
+          </div>
+        );
+      }) }
+
+      { plan.tips.length>0 && (
+        <div className="study-section">
+          <div className="study-section-head">💡 得点アップのコツ</div>
+          { plan.tips.map((t,i)=>(
+            <div className="study-tip" key={i}>・{t}</div>
+          )) }
+        </div>
+      ) }
+
+      <div className="note">スケジュールはあくまで目安。仕事や生活に合わせて週単位で前後させてOK。大事なのは「過去問を毎日触る」を切らさないこと。</div>
+    </div>
+  );
+}
+
 function Shopping({ shopping, toggleBought, deleteShopItem }){
   const bought = shopping.filter(s=>s.bought).length;
   return (
@@ -871,6 +1085,7 @@ function TabBar({ tab, setTab }){
     { k:'habits',  i:'❏', l:'管理' },
     { k:'stats',   i:'❀', l:'記録' },
     { k:'shop',    i:'☖', l:'買い物' },
+    { k:'study',   i:'✦', l:'学習' },
     { k:'settings',i:'⚙', l:'設定' },
   ];
   return (

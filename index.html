@@ -55,7 +55,7 @@
   }
 
   window.HabitCloud = {
-    KEYS: ['habits','logs','settings','shopping'],
+    KEYS: ['habits','logs','settings','shopping','study'],
     onAuth(cb){ return onAuthStateChanged(auth, cb); },
     async signInWithGoogle(){
       try { const r = await signInWithPopup(auth, provider); return r.user; }
@@ -224,6 +224,132 @@
   .note{font-size:12px;color:var(--sumi-soft);line-height:1.8;margin-top:8px;}
 
   /* 買い物 */
+  /* 学習ロードマップ */
+  .study-tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .study-tab{flex:0 0 auto;background:var(--paper);border:1px solid var(--line);
+    color:var(--sumi-soft);padding:8px 14px;border-radius:999px;font-size:12.5px;
+    letter-spacing:.04em;cursor:pointer;font-family:inherit;white-space:nowrap;}
+  .study-tab.active{background:var(--sumi);color:var(--washi);border-color:var(--sumi);}
+  .study-overview{background:var(--paper);border:1px solid var(--line);border-radius:12px;
+    padding:14px 16px;margin-bottom:18px;}
+  .study-qual-name{font-size:15px;font-weight:600;letter-spacing:.04em;margin-bottom:6px;}
+  .study-overview-text{font-size:12px;color:var(--sumi-soft);line-height:1.75;}
+  .study-progress{height:6px;background:var(--line);border-radius:99px;margin-top:12px;overflow:hidden;}
+  .study-progress-bar{height:100%;background:var(--kenko);border-radius:99px;transition:width .3s;}
+  .study-section{margin:18px 0 10px;}
+  .study-section-head{font-size:13.5px;font-weight:600;letter-spacing:.06em;margin:0 2px 10px;}
+  .study-exam{display:flex;gap:10px;background:var(--paper);border:1px solid var(--line);
+    border-radius:10px;padding:10px 13px;margin-bottom:7px;}
+  .study-exam-k{flex:0 0 64px;font-size:12px;font-weight:600;color:var(--sumi);letter-spacing:.04em;padding-top:1px;}
+  .study-exam-v{flex:1;font-size:11.5px;color:var(--sumi-soft);line-height:1.7;}
+  .study-mat{background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    padding:11px 13px;margin-bottom:7px;}
+  .study-mat-name{font-size:13px;line-height:1.45;}
+  .study-mat-detail{font-size:11.5px;color:var(--sumi-soft);line-height:1.65;margin-top:5px;}
+  .study-meta{background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    padding:10px 13px;margin-bottom:9px;font-size:11.5px;color:var(--sumi);line-height:1.85;}
+  .study-meta-lbl{display:inline-block;min-width:38px;color:var(--sumi-soft);
+    font-size:10.5px;letter-spacing:.08em;margin-right:8px;}
+  .study-timebreak{background:#EEF3EE;border:1px solid #D5E3D7;border-radius:10px;
+    padding:10px 13px;margin-bottom:9px;}
+  .study-tb-head{font-size:11.5px;font-weight:600;color:var(--kenko);letter-spacing:.04em;margin-bottom:6px;}
+  .study-tb-row{display:flex;justify-content:space-between;font-size:11.5px;color:var(--sumi);
+    line-height:1.9;border-top:1px dashed #D5E3D7;padding-top:3px;}
+  .study-tb-row:first-of-type{border-top:none;padding-top:0;}
+  .study-tb-time{color:var(--kenko);font-weight:600;}
+  .study-caution{background:#FAF3E8;border:1px solid #EAD8B8;border-radius:10px;
+    padding:10px 13px;margin-bottom:11px;}
+  .study-caution-head{font-size:11.5px;font-weight:600;color:#9A7B3A;letter-spacing:.04em;margin-bottom:5px;}
+  .study-caution-item{font-size:11.5px;color:var(--sumi);line-height:1.8;}
+  .study-block{margin-bottom:6px;}
+  .study-block-label{font-size:12px;font-weight:600;color:var(--sumi);letter-spacing:.03em;
+    margin:13px 2px 8px;padding-left:9px;border-left:3px solid var(--line-strong);}
+  .study-tip{font-size:12px;color:var(--sumi);line-height:1.8;padding:0 2px;}
+
+  /* 学習サイクル */
+  .study-cycle-desc{font-size:11.5px;color:var(--sumi-soft);line-height:1.7;margin:0 2px 10px;}
+  .study-cycle{display:flex;flex-direction:column;align-items:center;}
+  .study-cycle-step{background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    padding:9px 12px;width:100%;max-width:300px;text-align:center;position:relative;}
+  .study-cycle-num{position:absolute;left:10px;top:50%;transform:translateY(-50%);
+    width:22px;height:22px;border-radius:50%;background:var(--sumi);color:var(--washi);
+    font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:600;}
+  .study-cycle-t{font-size:13px;font-weight:600;letter-spacing:.04em;}
+  .study-cycle-d{font-size:11px;color:var(--sumi-soft);line-height:1.5;margin-top:3px;}
+  .study-cycle-arrow{font-size:14px;color:var(--line-strong);line-height:1;margin:3px 0;}
+
+  /* 科目別フロー */
+  .study-flow{background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    padding:12px 13px 14px;margin-bottom:10px;}
+  .study-flow-head{font-size:12.5px;font-weight:600;letter-spacing:.04em;
+    color:var(--sumi);margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid var(--line);}
+  .study-flow-step{font-size:11.5px;color:var(--sumi);line-height:1.5;
+    padding:6px 10px;background:var(--washi);border-radius:7px;}
+  .study-flow-arrow{font-size:12px;color:var(--line-strong);text-align:center;line-height:1;margin:3px 0;}
+
+  /* 月別計画 */
+  .study-monthly-note{font-size:11px;color:var(--sumi-soft);line-height:1.7;margin:0 2px 8px;}
+  .study-monthly{display:flex;gap:10px;background:var(--paper);border:1px solid var(--line);
+    border-radius:10px;padding:10px 13px;margin-bottom:6px;}
+  .study-monthly-m{flex:0 0 58px;font-size:12px;font-weight:600;color:var(--sumi);
+    letter-spacing:.04em;padding-top:1px;}
+  .study-monthly-body{flex:1;}
+  .study-monthly-target{font-size:12px;color:var(--sumi);line-height:1.45;}
+  .study-monthly-hours{font-size:11px;color:var(--kenko);font-weight:600;margin-top:2px;}
+
+  /* 解説が分からない対処法 / アウトプット */
+  .study-trouble-intro{font-size:11.5px;color:var(--sumi-soft);line-height:1.7;margin:0 2px 10px;}
+  .study-trouble, .study-method{background:var(--paper);border:1px solid var(--line);
+    border-radius:10px;padding:11px 13px;margin-bottom:7px;}
+  .study-trouble-t, .study-method-t{font-size:12.5px;font-weight:600;color:var(--sumi);
+    letter-spacing:.03em;margin-bottom:4px;}
+  .study-trouble-d, .study-method-d{font-size:11.5px;color:var(--sumi-soft);line-height:1.7;}
+
+  /* モード切替 */
+  .study-mode{display:flex;gap:6px;background:var(--paper);border:1px solid var(--line);
+    border-radius:999px;padding:4px;margin-bottom:16px;}
+  .study-mode button{flex:1;background:none;border:none;padding:8px 0;border-radius:999px;
+    font-family:inherit;font-size:12.5px;letter-spacing:.06em;color:var(--sumi-soft);cursor:pointer;}
+  .study-mode button.on{background:var(--sumi);color:var(--washi);}
+
+  /* クイズ */
+  .quiz-filter{display:flex;gap:6px;margin-bottom:14px;}
+  .quiz-filter button{flex:1;background:var(--paper);border:1px solid var(--line);
+    color:var(--sumi-soft);padding:7px 0;border-radius:8px;font-family:inherit;font-size:11.5px;cursor:pointer;}
+  .quiz-filter button.on{background:var(--sumi);color:var(--washi);border-color:var(--sumi);}
+  .quiz-progress{font-size:11.5px;color:var(--sumi-soft);margin:0 2px 8px;letter-spacing:.04em;}
+  .quiz-topic{color:var(--kenko);}
+  .quiz-card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:15px 16px;}
+  .quiz-source{font-size:10.5px;color:var(--sumi-soft);letter-spacing:.04em;margin-bottom:8px;}
+  .quiz-q{font-size:13.5px;line-height:1.75;color:var(--sumi);margin-bottom:14px;}
+  .quiz-choices{display:flex;flex-direction:column;gap:8px;}
+  .quiz-choice{display:flex;align-items:flex-start;gap:10px;text-align:left;width:100%;
+    background:var(--washi);border:1px solid var(--line);border-radius:9px;padding:11px 12px;
+    font-family:inherit;font-size:12.5px;line-height:1.55;color:var(--sumi);cursor:pointer;}
+  .quiz-choice:disabled{cursor:default;}
+  .quiz-letter{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:var(--line);
+    color:var(--sumi);font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:600;}
+  .quiz-choice-text{flex:1;padding-top:1px;}
+  .quiz-choice.correct{background:#E9F0EA;border-color:var(--kenko);}
+  .quiz-choice.correct .quiz-letter{background:var(--kenko);color:#fff;}
+  .quiz-choice.wrong{background:#F5E7EA;border-color:var(--gaiken);}
+  .quiz-choice.wrong .quiz-letter{background:var(--gaiken);color:#fff;}
+  .quiz-choice.dim{opacity:.55;}
+  .quiz-result{margin-top:13px;border-radius:12px;padding:14px 16px;border:1px solid var(--line);}
+  .quiz-result.ok{background:#E9F0EA;border-color:#CFE0D2;}
+  .quiz-result.ng{background:#F5E7EA;border-color:#EBD2D8;}
+  .quiz-verdict{font-size:13.5px;font-weight:600;letter-spacing:.04em;margin-bottom:8px;}
+  .quiz-result.ok .quiz-verdict{color:var(--kenko);}
+  .quiz-result.ng .quiz-verdict{color:var(--gaiken);}
+  .quiz-explain{font-size:12px;color:var(--sumi);line-height:1.8;}
+  .quiz-grade{margin-top:13px;border-top:1px dashed var(--line-strong);padding-top:11px;}
+  .quiz-grade-label{font-size:11px;color:var(--sumi-soft);margin-bottom:8px;}
+  .quiz-grade-btns{display:flex;gap:8px;}
+  .quiz-grade-btns .qg{flex:1;border:none;border-radius:9px;padding:11px 0;font-family:inherit;
+    font-size:12px;letter-spacing:.03em;cursor:pointer;color:#fff;}
+  .quiz-grade-btns .qg.ok{background:var(--kenko);}
+  .quiz-grade-btns .qg.review{background:var(--line-strong);color:var(--sumi);}
+
   .shop-tier{margin-bottom:4px;}
   .shop-tier-head{display:flex;align-items:baseline;justify-content:space-between;margin:20px 2px 8px;}
   .shop-tier-head .t{font-size:14.5px;font-weight:600;letter-spacing:.06em;}
@@ -265,7 +391,7 @@ const store = {
 const load = (k, fb) => { const v = store.get(k); if(v==null) return fb; try { return JSON.parse(v); } catch(e){ return fb; } };
 
 /* ---------- クラウド同期（Firebase / Firestore） ---------- */
-const SYNC_KEYS = ['habits','logs','settings','shopping'];
+const SYNC_KEYS = ['habits','logs','settings','shopping','study'];
 let _cloudUid = null, _cloudProfile = null, _loadedUid = null, _syncTimer = null;
 function setCloudUser(uid, profile){ _cloudUid = uid; _cloudProfile = profile; }
 function snapshotAll(){ const o={}; SYNC_KEYS.forEach(k=>{ const v=store.get(k); if(v!=null){ try{ o[k]=JSON.parse(v); }catch(e){} } }); return o; }
@@ -373,6 +499,302 @@ const seedShopping = () => { _sid = 1; return [
   ss(4,'アロマ・香り・装飾小物','家にいる心地よさ'),
 ];};
 
+/* ---------- 資格学習プラン ---------- */
+const QUALS = [
+  { id:'fe',   name:'基本情報技術者試験', short:'基本情報', accent:'#5E8C6A' },
+  { id:'lpic', name:'LPIC-1',           short:'LPIC',   accent:'#2C4A6B' },
+  { id:'aws',  name:'AWS CLF (クラウドプラクティショナー)', short:'AWS', accent:'#C77E8E' },
+];
+let _tid = 1; const tk = (text, hint) => ({ id:'t'+(_tid++), text, hint:hint||'' });
+const STUDY_PLANS = {
+  fe: {
+    overview: '通年CBT方式（好きな日を自分で予約）。科目A 60問90分 ＋ 科目B 20問100分。両方とも1000点満点中600点で合格。完全な初心者なら1日1〜1.5時間×3〜4ヶ月（合計150〜200時間）が現実的な目安。短期集中なら1日2〜3時間×8週間でも狙えます。',
+    cycle: {
+      title:'すべての学習に共通する基本サイクル',
+      desc:'科目A・Bともに、最初から完璧を目指さず、このサイクルをひたすら回すのが最短ルート。',
+      steps:[
+        { n:1, t:'なんとなく理解', d:'1周目で覚えようとしない。全体像をつかむだけでOK' },
+        { n:2, t:'問題を解く',     d:'分からなくても手を動かして埋める' },
+        { n:3, t:'間違いを確認',  d:'なぜ違うか／なぜ正解かを解説で確認' },
+        { n:4, t:'もう一度解く',  d:'間隔を空けて再挑戦。3回連続で正解できたら卒業' },
+      ],
+    },
+    subjectFlows:[
+      {
+        subject:'科目A（知識問題）の進め方',
+        steps:[
+          'テキストをざっと1周（細部は覚えなくてOK）',
+          '過去問道場で解く',
+          '間違えた所の解説・テキストを確認',
+          '間違えた問題だけ再度解く',
+          '正答率7割を超えるまで反復',
+        ],
+      },
+      {
+        subject:'科目B（アルゴリズム・セキュリティ）の進め方',
+        steps:[
+          '擬似言語のルール・基本をなんとなく理解',
+          'やさしい問題を解く（紙にトレース）',
+          '間違い・分からなかった所の解説を見る',
+          '同じ問題を自力でもう一度トレース',
+          '慣れてきたら難しい問題へレベルUP',
+        ],
+      },
+    ],
+    monthly:[
+      { m:'1ヶ月目', target:'科目A インプット（テキスト1周）', hours:'約40時間' },
+      { m:'2ヶ月目', target:'科目A 過去問演習',                hours:'約50時間' },
+      { m:'3ヶ月目', target:'科目B（アルゴリズム・セキュリティ）対策', hours:'約60時間' },
+      { m:'4ヶ月目', target:'科目A・B 総仕上げ・模試',         hours:'約30時間' },
+    ],
+    examInfo: [
+      { k:'科目A', v:'60問 / 90分。4択。IT全般の知識を広く浅く。過去問の流用が多い＝ここは暗記と演習で稼ぐパート。' },
+      { k:'科目B', v:'20問 / 100分。うち約16問がアルゴリズム（擬似言語）、約4問が情報セキュリティ。配点が重く、合否を分ける本丸。' },
+      { k:'合格点', v:'科目A・科目Bともに600点/1000点（おおむね6割）。片方だけ高くてもダメで、両方6割が必要。' },
+      { k:'申込', v:'プロメトリックのサイトで会場と日時を予約。学習開始時に逆算して受験日を仮予約してしまうのがおすすめ。' },
+    ],
+    materials: [
+      { name:'メインテキスト：『キタミ式イラストIT塾 基本情報技術者』(技術評論社)', detail:'イラスト中心で初心者の1冊目に最適。文章で理解したい人は『かやのき先生の基本情報技術者教室』も同等におすすめ。どちらか1冊で十分。' },
+      { name:'過去問サイト：「基本情報技術者試験ドットコム 過去問道場」', detail:'無料Web。本試験で一番大事な教材。分野別・年度別に出題可、スマホで隙間時間に回せる。「間違えた問題だけ復習」機能あり。科目Aはこれだけで十分対策できると言われるほど。' },
+      { name:'科目B専用：『うかる！基本情報技術者 科目B・アルゴリズム編』(日経BP)', detail:'擬似言語のトレース方法が丁寧。『出るとこだけ！基本情報技術者[科目B]』も候補。プログラミング未経験なら必ず1冊。' },
+      { name:'YouTube（任意）：「まさるの勉強部屋」など解説チャンネル', detail:'文字の解説が分からない時の救世主。動きのあるアルゴリズム・ネットワークは動画が圧倒的に理解しやすい。' },
+    ],
+    troubleshoot: {
+      title:'IT初心者向け：解説が分からないときの対処法',
+      intro:'解説の意味が分からないのは能力の問題ではなく、ある程度の前提知識がある人向けに書かれているから。つまずいて当然と思って大丈夫。',
+      steps:[
+        { t:'① 原因を切り分ける', d:'「用語そのものが分からない」のか「理屈・つながりが分からない」のかを判別。前者なら用語検索、後者なら別の説明（動画など）に切り替えるのが早い。' },
+        { t:'② 用語を1つずつ検索', d:'「○○ とは わかりやすく」「○○ 初心者」で検索。ただし深追い禁止。目の前の問題を理解するのに必要な範囲だけにとどめる（完璧主義が遠回りの原因）。' },
+        { t:'③ 文字でダメなら動画に切り替え', d:'YouTubeで「基本情報 ○○ 解説」。特にアルゴリズム・ネットワークなど「動き」のある分野は、文字より動画が圧倒的に理解しやすい。' },
+        { t:'④ それでもダメなら一旦飛ばす', d:'付箋して先に進む。1問に何時間も悩むより全体を進めた方が効率的。先の単元を学んでから戻ると「あ、こういうことか」と分かることが本当に多い。' },
+        { t:'⑤ 聞ける環境を持っておく', d:'AIに「この解説の意味が分からないので、もっと簡単に説明して」と聞くのが最速。Yahoo!知恵袋・X・勉強系コミュニティも活用。' },
+      ],
+    },
+    output: {
+      title:'アウトプットと記憶定着（4択問題で勘に頼らないコツ）',
+      intro:'正解できた数ではなく「自信を持って説明できる問題が増えた数」を成長の指標にする。',
+      methods:[
+        { t:'◎○△✕の4段階で自己採点', d:'◎=自信あり正解/○=迷ったが正解/△=たまたま当たった/✕=不正解。△は✕と同じ扱いで復習対象に入れるのが最大のコツ。過去問道場の「チェック」機能を活用。' },
+        { t:'他の選択肢が「なぜ違うか」まで説明できるか', d:'4択は不正解の3つにも知識が詰まっている。「なぜ違うか／どういう時なら正解になるか」まで確認すると、1問から実質4問分の知識が得られる。' },
+        { t:'人に教えるつもりで声に出す／書く', d:'解説を閉じて「答えは○○で、理由は△△だから」とスラスラ言えれば理解完了。詰まればそこが弱点。ラーニング・ピラミッドでも最も記憶に残る方法。' },
+        { t:'間隔反復で日を空けて復習', d:'翌日 → 3日後 → 1週間後と間隔を空けて解き直す。過去問道場の「間違えた問題だけ出題」機能で自然に実現できる。3回連続正解で卒業。' },
+        { t:'自分の言葉で1行メモ', d:'解説の丸写しではなく「要するに○○ってこと」と自分の言葉に変換。試験直前に見返すだけの「自分専用の弱点ノート」になる。' },
+      ],
+    },
+    tips: [
+      '勉強時間の黄金比は「インプット3：アウトプット7」。本を読むより問題を解く時間を多くする',
+      '科目Aは同じ過去問が何度も出る → 過去問道場を3〜5周すれば見た瞬間に答えが分かるようになる',
+      '科目Bは「毎日コードに触れる」が全て。1日1問でいいので絶対に空白日を作らない',
+      '計算問題（2進数・稼働率・確率）は逃げない。出題パターンが決まっていて、慣れれば確実な得点源',
+      '科目Bはセキュリティ4問で確実に取り、アルゴリズムで上積みする戦略が安全',
+      '完璧主義をやめる。6割で受かる試験。捨て分野（経営・法務の細部など）を作る勇気も大事',
+    ],
+    phases: [
+      {
+        phase:1,
+        title:'インプット — 全体像をつかむ',
+        period:'Week 1〜2（14日間）',
+        daily:'1日 約2.5時間',
+        timeBreak:[
+          { label:'テキスト精読', time:'90分' },
+          { label:'章末問題＋過去問道場', time:'60分' },
+        ],
+        goal:'キタミ式を1周し、専門用語に「見覚えがある」状態を作る。理解は7割でOK。',
+        caution:[
+          '1周目から完璧を目指さない。分からない所は付箋を貼って飛ばし、2周目以降で固める',
+          'ノートを綺麗に作り込まない。テキストへの直接書き込み＋用語の殴り書きで十分',
+          '分からない計算問題は今は飛ばしてOK。Phase 2で過去問と一緒に潰す',
+          'この段階から「過去問道場を毎日5問」を習慣化。早く問題形式に慣れるほど後が楽',
+        ],
+        blocks:[
+          {
+            label:'Week 1 前半：コンピュータの基礎（テクノロジ系の土台）',
+            tasks:[
+              tk('2進数・16進数・基数変換を手を動かして解く','まずここ。電卓に頼らず紙で10問。試験の計算問題の土台になる'),
+              tk('補数・固定小数点・浮動小数点・誤差',''),
+              tk('論理演算と論理回路（AND/OR/NOT/XOR・真理値表）','真理値表を自分で書けるように'),
+              tk('CPUの仕組み（レジスタ・クロック・命令実行サイクル）',''),
+              tk('メモリと記憶装置（キャッシュ・主記憶・仮想記憶・RAID）','キャッシュのヒット率計算は頻出'),
+            ],
+          },
+          {
+            label:'Week 1 後半：ソフトウェアとシステム構成',
+            tasks:[
+              tk('OSの役割・プロセス/タスク管理・スケジューリング',''),
+              tk('ファイル管理・入出力・記憶階層',''),
+              tk('システム構成（クライアントサーバ・冗長化）と稼働率計算','直列・並列の稼働率の公式は必ず覚える'),
+              tk('性能指標（スループット・レスポンスタイム・ベンチマーク）',''),
+            ],
+          },
+          {
+            label:'Week 2 前半：データベースとネットワーク',
+            tasks:[
+              tk('DBの基礎・正規化（第1〜第3正規形）・E-R図',''),
+              tk('SQL（SELECT / WHERE / JOIN / GROUP BY / 副問合せ）を写経','読むだけでなく実際に書き写すと定着する'),
+              tk('トランザクション・ACID特性・排他制御・デッドロック',''),
+              tk('ネットワーク（OSI 7階層・TCP/IP・主要プロトコル）',''),
+              tk('IPアドレス・サブネットマスク・CIDRの計算','2進数が分かっていれば解ける。必出なので必ず手を動かす'),
+            ],
+          },
+          {
+            label:'Week 2 後半：セキュリティ・開発・マネジメント・ストラテジ',
+            tasks:[
+              tk('暗号方式（共通鍵・公開鍵・ハイブリッド）とデジタル署名・認証','科目Bにも直結する最重要分野。丁寧に'),
+              tk('攻撃手法とセキュリティ対策（マルウェア・不正アクセス・対策技術）',''),
+              tk('システム開発（ウォーターフォール・アジャイル）・テスト技法・UML',''),
+              tk('マネジメント（プロジェクト管理・WBS・アローダイアグラム・サービスマネジメント）','アローダイアグラムの最早/最遅は計算問題で出る'),
+              tk('ストラテジ（経営・会計・法務・標準化）','暗記中心。深追いせず、用語と意味だけ押さえる'),
+            ],
+          },
+        ],
+      },
+      {
+        phase:2,
+        title:'科目A 過去問演習 — 得点源を固める',
+        period:'Week 3〜4（14日間）',
+        daily:'1日 約2.5時間',
+        timeBreak:[
+          { label:'過去問演習（25問前後）', time:'50分' },
+          { label:'答え合わせ・解説熟読・暗記', time:'100分' },
+        ],
+        goal:'過去問道場の科目Aで安定して75%以上を取れるようにする。',
+        caution:[
+          '「解く時間」より「復習の時間」を長く取る。間違えた問題こそ伸びしろ',
+          '正解した問題も「なぜその答えか」を説明できるか確認。まぐれ当たりを潰す',
+          '計算問題は絶対に捨てない。パターンが決まっているので、解き方を覚えれば毎回得点できる',
+          '通勤・休憩などの隙間時間はスマホの過去問道場でこまめに積み上げる',
+        ],
+        blocks:[
+          {
+            label:'Week 3：分野別に弱点を潰す',
+            tasks:[
+              tk('計算問題を集中演習（基数変換・稼働率・処理時間・確率・ヒット率）50問','過去問道場の「分野を指定して出題」を活用'),
+              tk('データベース・ネットワーク・セキュリティを分野別に各30問',''),
+              tk('頻出用語の暗記カードを作成（30〜50枚）し毎日5分回す','Anki・単語帳アプリ・紙どれでもOK。毎日触るのが大事'),
+              tk('間違えた問題はテキストの該当ページに戻って読み直す',''),
+            ],
+          },
+          {
+            label:'Week 4：年度ごとに通しで演習',
+            tasks:[
+              tk('直近の過去問を1回分まるごと通しで解く（時間を計る）×4〜5回分','分野バラバラの本番感覚に慣れる'),
+              tk('間違えた問題を「弱点ノート」に1行メモ→翌日見返す',''),
+              tk('正答率を1回ごとに記録（目標：60% → 75%へ右肩上がり）','数字で伸びが見えるとモチベが続く'),
+              tk('それでも苦手な分野を1つだけ選び、テキストで再インプット','苦手を全部潰そうとしない。1つに絞る'),
+            ],
+          },
+        ],
+      },
+      {
+        phase:3,
+        title:'科目B 対策 — アルゴリズムとセキュリティ',
+        period:'Week 5〜6（14日間）',
+        daily:'1日 約2.5時間',
+        timeBreak:[
+          { label:'参考書・解説で解法インプット', time:'60分' },
+          { label:'トレース演習（手書き）', time:'90分' },
+        ],
+        goal:'擬似言語のコードを「トレース表」を書いて時間内に追えるようにする。',
+        caution:[
+          'ここが最大の山場。配点が重く、多くの人が落ちるのも科目B。最も時間をかける',
+          'コードは頭の中で追わない。必ず紙に「変数の値の変化を1行ずつ」書き出す（トレース表）',
+          'プログラミング未経験なら、まず擬似言語の文法（書き方のルール）に慣れることが最優先',
+          '焦って先へ進まない。1日1〜2問でいいので、毎日必ずコードに触れる',
+        ],
+        blocks:[
+          {
+            label:'Week 5：擬似言語の文法と基本データ構造',
+            tasks:[
+              tk('擬似言語の書き方（代入・四則演算・比較・条件分岐 if・繰り返し for/while）に慣れる','IPA公式の「擬似言語の記述形式」PDFに一度目を通す'),
+              tk('配列の操作（添字・要素の走査・最大/最小/合計）をトレース','添字が0始まりか1始まりかを毎回確認する癖を'),
+              tk('スタック・キュー・連結リストの操作を図に描いて理解','箱と矢印の絵を描いてポインタの動きを可視化'),
+              tk('整列アルゴリズム（バブル・選択・挿入）を1ステップずつ追う','「何回比較・交換したか」を表に書き出す'),
+              tk('探索アルゴリズム（線形探索・二分探索）をトレース',''),
+            ],
+          },
+          {
+            label:'Week 6：応用アルゴリズムと情報セキュリティ',
+            tasks:[
+              tk('再帰関数（階乗・フィボナッチ）の呼び出しの流れを追う','呼び出しの入れ子をツリー状に描くと理解しやすい'),
+              tk('木構造の探索（深さ優先DFS・幅優先BFS）と簡単なグラフ',''),
+              tk('文字列処理・ビット演算の典型問題',''),
+              tk('IPA公式サンプル問題・過去問の科目B（アルゴリズム）を時間を計って演習','1問あたり5分を目標に'),
+              tk('情報セキュリティの科目B問題（4問相当）を集中演習','インシデント対応・アクセス制御・マルウェア対応が定番。長文を正確に読む練習'),
+            ],
+          },
+        ],
+      },
+      {
+        phase:4,
+        title:'総仕上げ — 本番形式で安定させる',
+        period:'Week 7〜8（14日間）',
+        daily:'1日 約3時間',
+        timeBreak:[
+          { label:'本番形式の模試（通し演習）', time:'120分' },
+          { label:'復習・弱点ノート見直し', time:'60分' },
+        ],
+        goal:'本番と同じ時間配分で、科目A・Bともに合格点を3回連続で取る。',
+        caution:[
+          '新しい教材には手を出さない。今まで使った教材の復習に徹するのが一番伸びる',
+          '必ず本番と同じ時間で解く（科目A 90分・科目B 100分）。時間配分の練習が最重要',
+          '科目Bは1問に時間を使いすぎない。分からなければ飛ばして戻る判断も練習する',
+          '前日は詰め込まない。睡眠を優先し、当日のコンディションを整えるのが得点に直結する',
+        ],
+        blocks:[
+          {
+            label:'Week 7：本番形式の模試と弱点補強',
+            tasks:[
+              tk('科目A を本番通り90分で通し演習 ×2〜3回',''),
+              tk('科目B を本番通り100分で通し演習 ×2〜3回','時間切れに注意。1問5分以内のペース感を体に入れる'),
+              tk('間違えた問題だけを抽出して「弱点ノート」に集約',''),
+              tk('正答率が6割を切る分野があれば、その分野だけ再演習','合格は両科目6割。穴を6割まで底上げするのが優先'),
+            ],
+          },
+          {
+            label:'Week 8：最終調整と受験',
+            tasks:[
+              tk('弱点ノートを毎日見返して総復習','新規より復習。見たことある問題を確実に取れる状態に'),
+              tk('情報セキュリティと擬似言語を最終確認','合否を分ける2分野。直前に必ず触れておく'),
+              tk('受験会場の場所・持ち物・本人確認書類を確認','CBT会場には余裕をもって到着できるよう下調べ'),
+              tk('試験前日：詰め込まず早寝。当日朝は弱点ノートだけ軽く見る',''),
+              tk('受験当日 → 終わったら結果と学びを記録','合否に関わらず、振り返りが次に活きる'),
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  lpic: { overview:'準備中。基本情報の合格後に着手する想定です。', cycle:null, subjectFlows:[], monthly:[], examInfo:[], materials:[], troubleshoot:null, output:null, tips:[], phases:[] },
+  aws:  { overview:'準備中。LPIC合格後に着手する想定です。',     cycle:null, subjectFlows:[], monthly:[], examInfo:[], materials:[], troubleshoot:null, output:null, tips:[], phases:[] },
+};
+const seedStudy = () => ({ qual:'fe', done:{}, quiz:{} });
+
+/* ---------- 問題演習データ（IPA過去問。解説は要点を自作） ---------- */
+const QUIZ = {
+  fe: [
+    {
+      id:'q-feh30s79',
+      topic:'ストラテジ系・法務（著作権）',
+      source:'FE 平成30年春 問79',
+      q:'A社は，B社と著作物の権利に関する特段の取決めをせず，A社の要求仕様に基づいて，販売管理システムのプログラム作成をB社に委託した。この場合のプログラム著作権の原始的帰属はどれか。',
+      choices:['A社とB社が話し合って決定する。','A社とB社の共有となる。','A社に帰属する。','B社に帰属する。'],
+      answer:3,
+      explain:'著作権は原則として「実際に著作物（プログラム）を創作した者」に発生する。契約で著作権の帰属を特に取り決めていない場合、たとえ発注者（A社）が仕様を出していても、実際に作成した受託者（B社）に著作権が原始的に帰属する。発注者へ移すには契約での明示が必要。よって正解はエ。',
+    },
+    {
+      id:'q-fer0620',
+      topic:'ストラテジ系・法務（知的財産権）',
+      source:'FE 令和6年 問20',
+      q:'日本において，産業財産権と総称される四つの権利はどれか。',
+      choices:['意匠権，実用新案権，商標権，特許権','意匠権，実用新案権，著作権，特許権','意匠権，商標権，著作権，特許権','実用新案権，商標権，著作権，特許権'],
+      answer:0,
+      explain:'産業財産権は「特許権・実用新案権・意匠権・商標権」の4つで、いずれも特許庁へ出願・登録して得る権利。著作権はこれらと異なり創作した時点で自動的に発生する権利で、産業財産権には含まれない。著作権を含むイ・ウ・エは誤り。よって正解はア。',
+    },
+  ],
+  lpic: [],
+  aws: [],
+};
+
 /* =================================================================== */
 function App({ account }){
   const [habits, setHabits]   = useState(() => load('habits', null) || seedHabits());
@@ -380,6 +802,7 @@ function App({ account }){
   const [settings, setSettings] = useState(() => load('settings', { name:'わたし', wakeTime:'07:00', sleepTime:'23:00' }));
   const [tab, setTab]         = useState('home');
   const [shopping, setShopping] = useState(() => load('shopping', null) || seedShopping());
+  const [study, setStudy]     = useState(() => load('study', null) || seedStudy());
   const [editing, setEditing] = useState(null);      // habitオブジェクト or {new:true}
   const [shopEditing, setShopEditing] = useState(null);
 
@@ -387,6 +810,7 @@ function App({ account }){
   useEffect(()=>{ save('logs', logs); }, [logs]);
   useEffect(()=>{ save('settings', settings); }, [settings]);
   useEffect(()=>{ save('shopping', shopping); }, [shopping]);
+  useEffect(()=>{ save('study', study); }, [study]);
 
   const toggleLog = (hid, date) => {
     const k = logKey(hid, date);
@@ -406,8 +830,21 @@ function App({ account }){
   const addShopItem = (data) => { setShopping(ss => [...ss, { id:'c'+Date.now(), tier:Number(data.tier), name:data.name, detail:data.detail||'', bought:false }]); setShopEditing(null); };
   const deleteShopItem = (id) => setShopping(ss => ss.filter(x=>x.id!==id));
 
+  const setStudyQual = (qual) => setStudy(s => ({...s, qual}));
+  const toggleStudyTask = (taskId) => setStudy(s => {
+    const d = {...(s.done||{})};
+    if(d[taskId]) delete d[taskId]; else d[taskId] = true;
+    return {...s, done:d};
+  });
+  const setQuizResult = (qid, result) => setStudy(s => {
+    const q = {...(s.quiz||{})};
+    if(result==null) delete q[qid]; else q[qid] = result;
+    return {...s, quiz:q};
+  });
+
   const ctx = { habits, logs, settings, setSettings, isDone, toggleLog, toggleActive, setEditing,
-                shopping, toggleBought, deleteShopItem, account };
+                shopping, toggleBought, deleteShopItem,
+                study, setStudyQual, toggleStudyTask, setQuizResult, account };
 
   return (
     <React.Fragment>
@@ -416,6 +853,7 @@ function App({ account }){
       { tab==='habits'  && <Habits {...ctx} /> }
       { tab==='stats'   && <Stats {...ctx} /> }
       { tab==='shop'    && <Shopping {...ctx} /> }
+      { tab==='study'   && <Study {...ctx} /> }
       { tab==='settings'&& <Settings {...ctx} /> }
 
       { tab==='habits' &&
@@ -795,6 +1233,334 @@ function Settings({ settings, setSettings, account }){
 }
 
 /* ---------- 買い物リスト ---------- */
+/* ---------- 資格学習ロードマップ ---------- */
+function Study({ study, setStudyQual, toggleStudyTask, setQuizResult }){
+  const qual = (study && study.qual) || 'fe';
+  const done = (study && study.done) || {};
+  const plan = STUDY_PLANS[qual] || { phases:[], materials:[], tips:[], overview:'', examInfo:[] };
+  const qualInfo = QUALS.find(q=>q.id===qual) || QUALS[0];
+  const [mode, setMode] = useState('plan');
+
+  const phaseTasks = (p) => (p.blocks ? p.blocks.flatMap(b=>b.tasks) : (p.tasks||[]));
+  const allTasks = plan.phases.flatMap(phaseTasks);
+  const doneCount = allTasks.filter(t=>done[t.id]).length;
+  const pct = allTasks.length ? Math.round(doneCount/allTasks.length*100) : 0;
+  const quizCount = (QUIZ[qual] || []).length;
+
+  return (
+    <div className="screen">
+      <div className="topbar">
+        <div className="title">{ mode==='plan' ? '学習ロードマップ' : '問題演習' }</div>
+        <div className="date">{ mode==='plan'
+            ? (allTasks.length>0 ? `${doneCount}/${allTasks.length}・${pct}%` : '準備中')
+            : `${quizCount}問` }</div>
+      </div>
+
+      <div className="study-tabs">
+        { QUALS.map(q=>(
+          <button key={q.id}
+            className={'study-tab'+(qual===q.id?' active':'')}
+            onClick={()=>setStudyQual(q.id)}>
+            {q.short}
+          </button>
+        )) }
+      </div>
+
+      <div className="study-mode">
+        <button className={mode==='plan'?'on':''} onClick={()=>setMode('plan')}>ロードマップ</button>
+        <button className={mode==='quiz'?'on':''} onClick={()=>setMode('quiz')}>問題演習</button>
+      </div>
+
+      { mode==='quiz' ? (
+        <Quiz qual={qual} study={study} setQuizResult={setQuizResult} />
+      ) : (
+      <React.Fragment>
+
+      <div className="study-overview">
+        <div className="study-qual-name">{qualInfo.name}</div>
+        <div className="study-overview-text">{plan.overview}</div>
+        { allTasks.length>0 &&
+          <div className="study-progress"><div className="study-progress-bar" style={{width:pct+'%'}}></div></div> }
+      </div>
+
+      { plan.cycle && (
+        <div className="study-section">
+          <div className="study-section-head">🔁 {plan.cycle.title}</div>
+          <div className="study-cycle-desc">{plan.cycle.desc}</div>
+          <div className="study-cycle">
+            { plan.cycle.steps.map((s,i)=>(
+              <React.Fragment key={s.n}>
+                <div className="study-cycle-step">
+                  <div className="study-cycle-num">{s.n}</div>
+                  <div className="study-cycle-t">{s.t}</div>
+                  <div className="study-cycle-d">{s.d}</div>
+                </div>
+                { i < plan.cycle.steps.length-1 && <div className="study-cycle-arrow">↓</div> }
+              </React.Fragment>
+            )) }
+          </div>
+        </div>
+      ) }
+
+      { plan.subjectFlows && plan.subjectFlows.length>0 && (
+        <div className="study-section">
+          <div className="study-section-head">🧭 科目別の進め方フロー</div>
+          { plan.subjectFlows.map((f,i)=>(
+            <div className="study-flow" key={i}>
+              <div className="study-flow-head">{f.subject}</div>
+              { f.steps.map((s,j)=>(
+                <React.Fragment key={j}>
+                  <div className="study-flow-step">{s}</div>
+                  { j < f.steps.length-1 && <div className="study-flow-arrow">↓</div> }
+                </React.Fragment>
+              )) }
+            </div>
+          )) }
+        </div>
+      ) }
+
+      { plan.monthly && plan.monthly.length>0 && (
+        <div className="study-section">
+          <div className="study-section-head">📅 月別の学習計画（標準ペース）</div>
+          <div className="study-monthly-note">1日1〜1.5時間で進める場合の目安。短期集中なら下の8週間プランへ。</div>
+          { plan.monthly.map((m,i)=>(
+            <div className="study-monthly" key={i}>
+              <div className="study-monthly-m">{m.m}</div>
+              <div className="study-monthly-body">
+                <div className="study-monthly-target">{m.target}</div>
+                <div className="study-monthly-hours">{m.hours}</div>
+              </div>
+            </div>
+          )) }
+        </div>
+      ) }
+
+      { plan.examInfo && plan.examInfo.length>0 && (
+        <div className="study-section">
+          <div className="study-section-head">📝 試験の基本</div>
+          { plan.examInfo.map((e,i)=>(
+            <div className="study-exam" key={i}>
+              <div className="study-exam-k">{e.k}</div>
+              <div className="study-exam-v">{e.v}</div>
+            </div>
+          )) }
+        </div>
+      ) }
+
+      { plan.materials.length>0 && (
+        <div className="study-section">
+          <div className="study-section-head">📚 おすすめ教材</div>
+          { plan.materials.map((m,i)=>(
+            <div className="study-mat" key={i}>
+              <div className="study-mat-name">{m.name}</div>
+              { m.detail && <div className="study-mat-detail">{m.detail}</div> }
+            </div>
+          )) }
+        </div>
+      ) }
+
+      { plan.phases.map(p=>{
+        const tasks = phaseTasks(p);
+        const pDone = tasks.filter(t=>done[t.id]).length;
+        const blocks = p.blocks || (p.tasks ? [{ label:null, tasks:p.tasks }] : []);
+        return (
+          <div className="shop-tier" key={p.phase}>
+            <div className="shop-tier-head">
+              <div className="t">Phase {p.phase}　{p.title}</div>
+              <div className="p">{pDone}/{tasks.length}</div>
+            </div>
+            <div className="study-meta">
+              <div><span className="study-meta-lbl">期間</span>{p.period}</div>
+              <div><span className="study-meta-lbl">1日</span>{p.daily}</div>
+              <div><span className="study-meta-lbl">目標</span>{p.goal}</div>
+            </div>
+
+            { p.timeBreak && p.timeBreak.length>0 && (
+              <div className="study-timebreak">
+                <div className="study-tb-head">⏱ 1日の時間配分の例</div>
+                { p.timeBreak.map((t,i)=>(
+                  <div className="study-tb-row" key={i}>
+                    <span className="study-tb-label">{t.label}</span>
+                    <span className="study-tb-time">{t.time}</span>
+                  </div>
+                )) }
+              </div>
+            ) }
+
+            { p.caution && p.caution.length>0 && (
+              <div className="study-caution">
+                <div className="study-caution-head">⚠ 初心者が気を付けること</div>
+                { p.caution.map((c,i)=>(
+                  <div className="study-caution-item" key={i}>・{c}</div>
+                )) }
+              </div>
+            ) }
+
+            { blocks.map((b,bi)=>(
+              <div className="study-block" key={bi}>
+                { b.label && <div className="study-block-label">{b.label}</div> }
+                { b.tasks.map(t=>{
+                  const isDone = !!done[t.id];
+                  return (
+                    <div key={t.id} className={'shop-item'+(isDone?' bought':'')}>
+                      <button className={'check'+(isDone?' on':'')} onClick={()=>toggleStudyTask(t.id)} aria-label="完了">{ isDone?'✓':'' }</button>
+                      <div className="body">
+                        <div className="nm">{t.text}</div>
+                        { t.hint && <div className="dt">{t.hint}</div> }
+                      </div>
+                    </div>
+                  );
+                }) }
+              </div>
+            )) }
+          </div>
+        );
+      }) }
+
+      { plan.troubleshoot && (
+        <div className="study-section">
+          <div className="study-section-head">❓ {plan.troubleshoot.title}</div>
+          <div className="study-trouble-intro">{plan.troubleshoot.intro}</div>
+          { plan.troubleshoot.steps.map((s,i)=>(
+            <div className="study-trouble" key={i}>
+              <div className="study-trouble-t">{s.t}</div>
+              <div className="study-trouble-d">{s.d}</div>
+            </div>
+          )) }
+        </div>
+      ) }
+
+      { plan.output && (
+        <div className="study-section">
+          <div className="study-section-head">🎯 {plan.output.title}</div>
+          <div className="study-trouble-intro">{plan.output.intro}</div>
+          { plan.output.methods.map((m,i)=>(
+            <div className="study-method" key={i}>
+              <div className="study-method-t">{m.t}</div>
+              <div className="study-method-d">{m.d}</div>
+            </div>
+          )) }
+        </div>
+      ) }
+
+      { plan.tips.length>0 && (
+        <div className="study-section">
+          <div className="study-section-head">💡 得点アップのコツ</div>
+          { plan.tips.map((t,i)=>(
+            <div className="study-tip" key={i}>・{t}</div>
+          )) }
+        </div>
+      ) }
+
+      <div className="note">スケジュールはあくまで目安。仕事や生活に合わせて週単位で前後させてOK。大事なのは「過去問を毎日触る」を切らさないこと。</div>
+
+      </React.Fragment>
+      ) }
+    </div>
+  );
+}
+
+/* ---------- 問題演習（クイズ） ---------- */
+function Quiz({ qual, study, setQuizResult }){
+  const all = QUIZ[qual] || [];
+  const results = (study && study.quiz) || {};
+  const [filter, setFilter] = useState('all'); // all | unanswered | review
+  const [idx, setIdx] = useState(0);
+  const [picked, setPicked] = useState(null);  // 選んだ選択肢のindex
+
+  const pool = all.filter(q=>{
+    if(filter==='unanswered') return !results[q.id];
+    if(filter==='review')     return results[q.id]==='review';
+    return true;
+  });
+
+  React.useEffect(()=>{ setIdx(0); setPicked(null); }, [filter, qual]);
+
+  if(all.length===0){
+    return <div className="note" style={{marginTop:24}}>この資格の問題はまだ登録されていません。問題のスクリーンショットを送ってもらえれば追加できます。</div>;
+  }
+  if(pool.length===0){
+    return (
+      <div>
+        <QuizFilter filter={filter} setFilter={setFilter} results={results} all={all} />
+        <div className="note" style={{marginTop:20}}>
+          { filter==='review' ? '「要復習」の問題はありません。よくできています。' : '該当する問題がありません。' }
+        </div>
+      </div>
+    );
+  }
+
+  const cur = pool[Math.min(idx, pool.length-1)];
+  const answered = picked!==null;
+  const correct = answered && picked===cur.answer;
+  const LETTERS = ['ア','イ','ウ','エ','オ'];
+
+  const choose = (i)=>{ if(!answered) setPicked(i); };
+  const grade = (result)=>{
+    setQuizResult(cur.id, result);
+    setPicked(null);
+    setIdx(i => i+1 >= pool.length ? 0 : i+1);
+  };
+
+  return (
+    <div>
+      <QuizFilter filter={filter} setFilter={setFilter} results={results} all={all} />
+
+      <div className="quiz-progress">{Math.min(idx+1,pool.length)} / {pool.length}　<span className="quiz-topic">{cur.topic}</span></div>
+
+      <div className="quiz-card">
+        <div className="quiz-source">{cur.source}</div>
+        <div className="quiz-q">{cur.q}</div>
+        <div className="quiz-choices">
+          { cur.choices.map((c,i)=>{
+            let cls = 'quiz-choice';
+            if(answered){
+              if(i===cur.answer) cls += ' correct';
+              else if(i===picked) cls += ' wrong';
+              else cls += ' dim';
+            }
+            return (
+              <button key={i} className={cls} onClick={()=>choose(i)} disabled={answered}>
+                <span className="quiz-letter">{LETTERS[i]}</span>
+                <span className="quiz-choice-text">{c}</span>
+              </button>
+            );
+          }) }
+        </div>
+      </div>
+
+      { answered && (
+        <div className={'quiz-result '+(correct?'ok':'ng')}>
+          <div className="quiz-verdict">{ correct ? '◯ 正解' : '✕ 不正解' }（正解：{LETTERS[cur.answer]}）</div>
+          <div className="quiz-explain">{cur.explain}</div>
+          <div className="quiz-grade">
+            <div className="quiz-grade-label">記憶定着のため、手応えで仕分けしましょう：</div>
+            <div className="quiz-grade-btns">
+              <button className="qg ok" onClick={()=>grade('ok')}>自信あり（卒業）</button>
+              <button className="qg review" onClick={()=>grade('review')}>迷った・勘 → 要復習</button>
+            </div>
+          </div>
+        </div>
+      ) }
+
+      { !answered &&
+        <div className="note" style={{marginTop:14}}>選択肢をタップして解答します。たまたま当たった問題は「要復習」に入れておくのが伸びるコツ。</div> }
+    </div>
+  );
+}
+
+function QuizFilter({ filter, setFilter, results, all }){
+  const cReview = all.filter(q=>results[q.id]==='review').length;
+  const cUnans  = all.filter(q=>!results[q.id]).length;
+  return (
+    <div className="quiz-filter">
+      <button className={filter==='all'?'on':''} onClick={()=>setFilter('all')}>すべて {all.length}</button>
+      <button className={filter==='unanswered'?'on':''} onClick={()=>setFilter('unanswered')}>未挑戦 {cUnans}</button>
+      <button className={filter==='review'?'on':''} onClick={()=>setFilter('review')}>要復習 {cReview}</button>
+    </div>
+  );
+}
+
 function Shopping({ shopping, toggleBought, deleteShopItem }){
   const bought = shopping.filter(s=>s.bought).length;
   return (
@@ -871,6 +1637,7 @@ function TabBar({ tab, setTab }){
     { k:'habits',  i:'❏', l:'管理' },
     { k:'stats',   i:'❀', l:'記録' },
     { k:'shop',    i:'☖', l:'買い物' },
+    { k:'study',   i:'✦', l:'学習' },
     { k:'settings',i:'⚙', l:'設定' },
   ];
   return (

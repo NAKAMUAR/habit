@@ -446,6 +446,19 @@
   .cheat-n{font-size:12px;font-weight:600;color:var(--sumi);margin-bottom:3px;}
   .cheat-f{font-size:11.5px;color:var(--sumi-soft);line-height:1.65;}
 
+  /* 解説動画（テキスト内） */
+  .text-videos{margin-top:14px;}
+  .text-videos-head{font-size:12.5px;font-weight:600;color:var(--sumi);letter-spacing:.04em;margin-bottom:8px;}
+  .text-video{display:flex;align-items:center;gap:11px;background:var(--paper);border:1px solid var(--line);
+    border-left:4px solid #C00;border-radius:10px;padding:10px 13px;margin-bottom:6px;
+    text-decoration:none;color:inherit;cursor:pointer;}
+  .text-video:hover{background:#FBF7EE;}
+  .text-video-icon{flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:#C00;color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:14px;}
+  .text-video-body{flex:1;min-width:0;}
+  .text-video-title{font-size:12.5px;color:var(--sumi);line-height:1.4;}
+  .text-video-src{font-size:10.5px;color:var(--sumi-soft);margin-top:2px;letter-spacing:.04em;}
+
   /* 弱点ノート（テキスト内） */
   .text-notes{background:#FAF3E8;border:1px solid #EAD8B8;border-radius:10px;
     padding:12px 14px;margin-top:14px;}
@@ -976,6 +989,9 @@ const TEXTBOOK = {
         '2の補数＝ビット反転 + 1',
         '誤差4種（桁あふれ・情報落ち・丸め・桁落ち）は名前と現象を結びつける',
       ],
+      videos:[
+        { title:'02. 基数変換', url:'https://www.youtube.com/watch?v=acbZUSyqJks', src:'A試験_基礎理論' },
+      ],
     },
     ch2: {
       lead:'AND/OR/NOT/XORの真理値表が書ければ確実に解ける。式変形の道具としてド・モルガンの法則も覚える。',
@@ -991,6 +1007,10 @@ const TEXTBOOK = {
         'XOR＝違いがあれば1（パリティチェック・暗号の基本）',
         'ド・モルガン：否定を分配すると AND↔OR が入れ替わる',
         '小さな丸＝NOT。記号末尾の丸はその出力の否定を意味する',
+      ],
+      videos:[
+        { title:'06. 論理演算と論理回路', url:'https://www.youtube.com/watch?v=KdJ5CTgxZbM', src:'A試験_基礎理論' },
+        { title:'07. 論理演算の公式と問題演習', url:'https://www.youtube.com/watch?v=pW18A5-YhHI', src:'A試験_基礎理論' },
       ],
     },
     ch3: {
@@ -1008,6 +1028,10 @@ const TEXTBOOK = {
         '二分探索は O(log n) — 整列済みが前提',
         'O(n²) と O(n log n) の差は要素数が増えるほど劇的に開く',
       ],
+      videos:[
+        { title:'科目B アルゴリズム問題をたった1動画で対策', url:'https://www.youtube.com/watch?v=wFpyeWto8Og', src:'科目B 総まとめ' },
+        { title:'【B試験】アルゴリズム プレイリスト', url:'https://www.youtube.com/playlist?list=PLEuyFWEF8u0PlzYNtyJBGrbN-0IbJe-Ij', src:'プレイリスト' },
+      ],
     },
     ch4: {
       lead:'CPUの性能指標、記憶階層（速い順にレジスタ→キャッシュ→主記憶→補助記憶）、キャッシュの実効アクセス時間が頻出。',
@@ -1023,6 +1047,10 @@ const TEXTBOOK = {
         '記憶階層：速い順にレジスタ→キャッシュ→主記憶→補助記憶',
         '実効アクセス時間の公式は丸暗記する（必出）',
         'MIPS = クロック周波数(MHz) ÷ CPI',
+      ],
+      videos:[
+        { title:'07. メモリの高速化（キャッシュ）', url:'https://www.youtube.com/watch?v=boW3Qf1TWrk', src:'A試験_ハードウェア' },
+        { title:'【A試験】システム構成要素 プレイリスト', url:'https://www.youtube.com/playlist?list=PLEuyFWEF8u0NgOQ2ACx-R-gDa6PmKC37_', src:'プレイリスト' },
       ],
     },
     ch5: {
@@ -1040,6 +1068,9 @@ const TEXTBOOK = {
         '直列＝積で減る／並列＝1から「壊れる確率の積」を引く',
         '冗長化（並列）すると稼働率は劇的に上がる',
       ],
+      videos:[
+        { title:'03. 稼働率等の性能評価指標（過去問演習）', url:'https://www.youtube.com/watch?v=mUimTShkB3s', src:'A試験_システム構成要素' },
+      ],
     },
     ch6: {
       lead:'OSI参照モデル7層、TCP/UDPの違い、IPアドレス、代表プロトコルの役割が定番。サブネット計算は2進数の知識を使う。',
@@ -1055,6 +1086,11 @@ const TEXTBOOK = {
         'TCP＝信頼性／UDP＝速度',
         'DNS＝名前解決、DHCP＝IP配布、ARP＝IP→MAC',
         'IPv4は32ビット、サブネットマスクで境界を切る',
+      ],
+      videos:[
+        { title:'02. OSI基本参照モデルを理解する', url:'https://www.youtube.com/watch?v=o2TqCYxj-YA', src:'A試験_ネットワーク' },
+        { title:'03. TCP/IPモデルとIPアドレス', url:'https://www.youtube.com/watch?v=LNcqBWTJqBw', src:'A試験_ネットワーク' },
+        { title:'【A試験】ネットワーク プレイリスト', url:'https://www.youtube.com/playlist?list=PLEuyFWEF8u0Nb6K99biC17XPfrkEBHn_s', src:'プレイリスト' },
       ],
     },
     ch7: {
@@ -1074,6 +1110,12 @@ const TEXTBOOK = {
         '暗号化＝受信者の公開鍵／署名＝送信者の秘密鍵',
         '攻撃と対策はセットで覚える',
       ],
+      videos:[
+        { title:'01. 情報セキュリティの考え方', url:'https://www.youtube.com/watch?v=cfON3-kWCuM', src:'A/B試験_情報セキュリティ' },
+        { title:'02. サイバー攻撃とコンピューターウィルス', url:'https://www.youtube.com/watch?v=Aq2vmYV_0Dk', src:'A/B試験_情報セキュリティ' },
+        { title:'05. ネットワークセキュリティ', url:'https://www.youtube.com/watch?v=Hjz_UK2WoO8', src:'A/B試験_情報セキュリティ' },
+        { title:'【A/B試験】情報セキュリティ プレイリスト', url:'https://www.youtube.com/playlist?list=PLEuyFWEF8u0M4ds9ASg0Bg2iAwsEZi8Yk', src:'プレイリスト' },
+      ],
     },
     ch8: {
       lead:'関係データベースの基本概念とSQL、正規化、トランザクションのACID特性が出る。SQLは構文を写経して覚える。',
@@ -1091,6 +1133,10 @@ const TEXTBOOK = {
         '主キー＝一意・NULL不可。外部キー＝参照',
         'SQLは SELECT/WHERE/JOIN/GROUP BY が頻出',
         'ACID：原子性・一貫性・独立性・耐久性',
+      ],
+      videos:[
+        { title:'02. データベースの正規化(1)', url:'https://www.youtube.com/watch?v=jR2tc_x44WI', src:'A試験_データベース' },
+        { title:'03. データベースの正規化(2)', url:'https://www.youtube.com/watch?v=LDA3gdtmLYg', src:'A試験_データベース' },
       ],
     },
     ch9: {
@@ -1110,6 +1156,10 @@ const TEXTBOOK = {
         '損益分岐点 = 固定費 ÷ (1 − 変動費率)',
         '産業財産権4つに著作権は含まれない',
       ],
+      videos:[
+        { title:'06. 企業の財務会計（損益分岐点）', url:'https://www.youtube.com/watch?v=1TP07xMOkKI', src:'A試験_ストラテジ' },
+        { title:'03. 経営事業戦略とマーケティング', url:'https://www.youtube.com/watch?v=FWBNhZw7Yrg', src:'A試験_ストラテジ' },
+      ],
     },
     ch10: {
       lead:'科目Bは「擬似言語」というIPA独自の書き方でプログラムが出題される。文法はJava/Python等に近く、慣れれば必ず読める。トレース（変数の値を1行ずつ追う）が最強の武器。',
@@ -1125,6 +1175,10 @@ const TEXTBOOK = {
         'コードは頭で追わず、必ず紙にトレース表を書く',
         '配列の添字は0始まりか1始まりか、毎回確認',
         '条件分岐ではTrue/Falseの判定を明示的に書く',
+      ],
+      videos:[
+        { title:'科目B アルゴリズム問題をたった1動画で対策', url:'https://www.youtube.com/watch?v=wFpyeWto8Og', src:'科目B 総まとめ' },
+        { title:'【B試験】アルゴリズム プレイリスト', url:'https://www.youtube.com/playlist?list=PLEuyFWEF8u0PlzYNtyJBGrbN-0IbJe-Ij', src:'プレイリスト' },
       ],
     },
     ch11: {
@@ -1142,6 +1196,9 @@ const TEXTBOOK = {
         '連結リストは「ポインタの矢印を描き直す」絵で考える',
         '配列は走査・検索・集計の3パターンに分けて理解',
       ],
+      videos:[
+        { title:'【B試験】アルゴリズム プレイリスト', url:'https://www.youtube.com/playlist?list=PLEuyFWEF8u0PlzYNtyJBGrbN-0IbJe-Ij', src:'プレイリスト' },
+      ],
     },
     ch12: {
       lead:'整列（バブル・選択・挿入・クイック）と探索（線形・二分）の動作をトレースできることがゴール。計算量と特徴もセットで覚える。',
@@ -1157,6 +1214,10 @@ const TEXTBOOK = {
         'バブルソートは「1周で最大値が末尾に動く」絵を覚える',
         '二分探索は low / high / mid を表に書きながら追う',
         '再帰は終了条件と漸化式の2点を見つける',
+      ],
+      videos:[
+        { title:'科目B アルゴリズム問題をたった1動画で対策', url:'https://www.youtube.com/watch?v=wFpyeWto8Og', src:'科目B 総まとめ' },
+        { title:'【B試験】アルゴリズム プレイリスト', url:'https://www.youtube.com/playlist?list=PLEuyFWEF8u0PlzYNtyJBGrbN-0IbJe-Ij', src:'プレイリスト' },
       ],
     },
   },
@@ -3000,6 +3061,21 @@ function Textbook({ qual, study, setChapterNote }){
         <div className="text-keys">
           <div className="text-keys-head">✓ この章のキーポイント</div>
           { cur.keys.map((k,i)=>(<div className="text-key" key={i}>・{k}</div>)) }
+        </div>
+      ) }
+
+      { cur.videos && cur.videos.length>0 && (
+        <div className="text-videos">
+          <div className="text-videos-head">🎬 解説動画（YouTube）</div>
+          { cur.videos.map((v,i)=>(
+            <a className="text-video" key={i} href={v.url} target="_blank" rel="noopener noreferrer">
+              <div className="text-video-icon">▶</div>
+              <div className="text-video-body">
+                <div className="text-video-title">{v.title}</div>
+                <div className="text-video-src">{v.src}</div>
+              </div>
+            </a>
+          )) }
         </div>
       ) }
 

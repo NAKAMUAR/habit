@@ -9,6 +9,14 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="習慣の暦" />
 <meta name="application-name" content="習慣の暦" />
+<link rel="manifest" href="./manifest.json" />
+<script>
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', ()=>{
+      navigator.serviceWorker.register('./sw.js').catch(()=>{});
+    });
+  }
+</script>
 <link rel="apple-touch-icon" href="data:image/png;base64,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NWrKfx7P7LW1tY0bN+7PD91f06e3lsmUjs3wKDlxgI4wM0To97+/54npTxX4dQMAMMaMMV3TOAeDBg866aQTJ048efjwYeF4HDBGHdtxXO88sGNr4fxbx/KOzYO9fxFCkiQJsgwQMrPZFY0rZ8+aM3v23FWrVjHGIpGIp9E9XidCiDGWSqUmT5501+9+K4liaaaNSlEcAADGGEIoFIu+/MLLv7vrbsMwotFogYFzz0JYlmUYZiikDBo8aNzYo8YcNWbE8KE1NTWyqgIIAaWMkJ0aAgNvo41OofyrS5ggIEEAGAPOXdP8prl5+fLGRYsWL/hswerVawzdUEKKoiheDUohlycIglfrdMstN1959VRbNwklpTDP2p0SFQfoMOCRRPnXX311+213fPHll4lEAgBQePtf7wG1LNvrHpNIJAYMqDtkyCFD6w8dMHBgn969yhJl4XAkpMgYY7STSeeUEMIs29INI5VMNm9r2bhhY2PjqtWrV2/YsLGtrY0QqiiyoijeWxQYy/cUkEym6usPvfueu8Yec4yeSsICdyXqDkpXHB6EkEg0YprW/ff/+amnnuGce/VjhedWEILeQjriurbjuK7LGJckMRQKRaKRWDQWi0VDISUaicIdW4VxLauZlpXJZDPZrJbNGobhui4AUBRFWZYEQfDanxa+ctPzMAzDcF1ywQXn33rbLYl4PJvJlJT7uTulLg4AAGMMY6xEo5989PF///e9Xyz+IhqLSpK0t+lZ2AHoMEudreZ3udMQIQQhxhhjjBDGGHX+VacXUjidIZmhQ4f+8rZbTp74XVvXXdctQSdjF3qAOEDnEBONGqb17DPPPf749G3NLbF4rEAH0A/vlu/8b+fb7fLvvuE5yJlMpqys7EeXTbniisvjZTEtnenKGMy3oWeIw8PLoYRi8c0b1k+bNv21GTO9qaN3D0onid/p7mQyGUVRzjzrzOuuu/qQ+normyGElL7B6KQnicODEBIKKUJIXfbV0qeffubdd/43k8mEw2FJkvbKDygGXv9jxyG6poVUdeLEky6betmRY46ktm0aBsK4RxiMTnqeOEDHKKOqKpKk5cu+/vvfX33nnXebm5olSQqFQns1g9gveKaCc26apmXZVdWVp5wycfIF548eNRIwqmndmfH5NvRIcXh4ClBVFcnyN5s2v/vu/7311tvLli23LCvUEXvYNxeyEDrdW865bdumaUqS1NBQf/rp3zvjjNPqBg/ijtu9icBvTw8Wh4cnEVmWRVV1DP3zL76a9f7sf/7z47Vr19mWLUqiLMuCKHhbIHiDzj5rZef5DiHEtmzHdURRGjCgbvz4YyZOPHnMkUeGYlFimt56z54rC48eLw4Pb6BBCKmqCkRRS6WWLl32yaefLViwcM3qNe3t7ZRQLGBRlERRwP8+9vtpZZdjKKWEEMdxKKEI40SibNDgQWOPGnPMMUePHHlYvKICEGIaBqW0p0xG9sgBIo5OdmRKBUEJhYAgupbxzTdNjSsaly5bvrJx5fr1G1pbWzVN80JhEAIIEUIIIogg6tilGnLunYZ5/0OIREkMq2plZWXdgLr6+kMPGzFs6NChtX1rZVUFlNqG4RY5A9wtHGji8PD2B/WqOjpSZRgQN53OtG7f/k3ztqZvtjY3t2zf3ppKJrNa1rZtXTO8VBxjPBxWZVmORMJliURVZWXvXtV9ampq+vSuqq6Kx+NQlACn1LYd2/E2Hy3lEPi34cAUx850zm8hhALGgihiL5HmmQpKAaOEMuJ2bCjJuSAIGGOIMcAYAAgA8xJ1rks6V0UcMGNHHg58cexMZ9BzJz9jR95+Fw+jM1XfedC/svwHDSWd+Nnv7B4p9zvsoBKBHweUAxWwfwnEEeBLII4AXwJxBPgSiCPAl0AcAb4E4gjwJRBHgC+BOAJ8CcQR4EsgjgBfAnEE+BKII8CXQBwBvgTiCPAlEEeAL4E4AnwJxBHgSyCOAF8CcQT4EogjwJdAHAG+BOII8CUQR4AvgTgCfAnEEeBLII4AX/4f1nBZmoorkh4AAAAASUVORK5CYII=" />
 <link rel="icon" type="image/png" href="data:image/png;base64,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NWrKfx7P7LW1tY0bN+7PD91f06e3lsmUjs3wKDlxgI4wM0To97+/54npTxX4dQMAMMaMMV3TOAeDBg866aQTJ048efjwYeF4HDBGHdtxXO88sGNr4fxbx/KOzYO9fxFCkiQJsgwQMrPZFY0rZ8+aM3v23FWrVjHGIpGIp9E9XidCiDGWSqUmT5501+9+K4liaaaNSlEcAADGGEIoFIu+/MLLv7vrbsMwotFogYFzz0JYlmUYZiikDBo8aNzYo8YcNWbE8KE1NTWyqgIIAaWMkJ0aAgNvo41OofyrS5ggIEEAGAPOXdP8prl5+fLGRYsWL/hswerVawzdUEKKoiheDUohlycIglfrdMstN1959VRbNwklpTDP2p0SFQfoMOCRRPnXX311+213fPHll4lEAgBQePtf7wG1LNvrHpNIJAYMqDtkyCFD6w8dMHBgn969yhJl4XAkpMgYY7STSeeUEMIs29INI5VMNm9r2bhhY2PjqtWrV2/YsLGtrY0QqiiyoijeWxQYy/cUkEym6usPvfueu8Yec4yeSsICdyXqDkpXHB6EkEg0YprW/ff/+amnnuGce/VjhedWEILeQjriurbjuK7LGJckMRQKRaKRWDQWi0VDISUaicIdW4VxLauZlpXJZDPZrJbNGobhui4AUBRFWZYEQfDanxa+ctPzMAzDcF1ywQXn33rbLYl4PJvJlJT7uTulLg4AAGMMY6xEo5989PF///e9Xyz+IhqLSpK0t+lZ2AHoMEudreZ3udMQIQQhxhhjjBDGGHX+VacXUjidIZmhQ4f+8rZbTp74XVvXXdctQSdjF3qAOEDnEBONGqb17DPPPf749G3NLbF4rEAH0A/vlu/8b+fb7fLvvuE5yJlMpqys7EeXTbniisvjZTEtnenKGMy3oWeIw8PLoYRi8c0b1k+bNv21GTO9qaN3D0onid/p7mQyGUVRzjzrzOuuu/qQ+normyGElL7B6KQnicODEBIKKUJIXfbV0qeffubdd/43k8mEw2FJkvbKDygGXv9jxyG6poVUdeLEky6betmRY46ktm0aBsK4RxiMTnqeOEDHKKOqKpKk5cu+/vvfX33nnXebm5olSQqFQns1g9gveKaCc26apmXZVdWVp5wycfIF548eNRIwqmndmfH5NvRIcXh4ClBVFcnyN5s2v/vu/7311tvLli23LCvUEXvYNxeyEDrdW865bdumaUqS1NBQf/rp3zvjjNPqBg/ijtu9icBvTw8Wh4cnEVmWRVV1DP3zL76a9f7sf/7z47Vr19mWLUqiLMuCKHhbIHiDzj5rZef5DiHEtmzHdURRGjCgbvz4YyZOPHnMkUeGYlFimt56z54rC48eLw4Pb6BBCKmqCkRRS6WWLl32yaefLViwcM3qNe3t7ZRQLGBRlERRwP8+9vtpZZdjKKWEEMdxKKEI40SibNDgQWOPGnPMMUePHHlYvKICEGIaBqW0p0xG9sgBIo5OdmRKBUEJhYAgupbxzTdNjSsaly5bvrJx5fr1G1pbWzVN80JhEAIIEUIIIogg6tilGnLunYZ5/0OIREkMq2plZWXdgLr6+kMPGzFs6NChtX1rZVUFlNqG4RY5A9wtHGji8PD2B/WqOjpSZRgQN53OtG7f/k3ztqZvtjY3t2zf3ppKJrNa1rZtXTO8VBxjPBxWZVmORMJliURVZWXvXtV9ampq+vSuqq6Kx+NQlACn1LYd2/E2Hy3lEPi34cAUx850zm8hhALGgihiL5HmmQpKAaOEMuJ2bCjJuSAIGGOIMcAYAAgA8xJ1rks6V0UcMGNHHg58cexMZ9BzJz9jR95+Fw+jM1XfedC/svwHDSWd+Nnv7B4p9zvsoBKBHweUAxWwfwnEEeBLII4AXwJxBPgSiCPAl0AcAb4E4gjwJRBHgC+BOAJ8CcQR4EsgjgBfAnEE+BKII8CXQBwBvgTiCPAlEEeAL4E4AnwJxBHgSyCOAF8CcQT4EogjwJdAHAG+BOII8CUQR4AvgTgCfAnEEeBLII4AX/4f1nBZmoorkh4AAAAASUVORK5CYII=" />
 <title>習慣の暦 — 外見・健康・内面</title>
@@ -324,12 +332,129 @@
   .plan-ics{background:var(--washi);border:1px solid var(--line);border-radius:9px;
     width:40px;height:40px;font-size:18px;cursor:pointer;}
 
-  /* モード切替 */
+  /* モード切替（横スクロール） */
   .study-mode{display:flex;gap:6px;background:var(--paper);border:1px solid var(--line);
-    border-radius:999px;padding:4px;margin-bottom:16px;}
-  .study-mode button{flex:1;background:none;border:none;padding:8px 0;border-radius:999px;
-    font-family:inherit;font-size:12.5px;letter-spacing:.06em;color:var(--sumi-soft);cursor:pointer;}
+    border-radius:999px;padding:4px;margin-bottom:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .study-mode button{flex:0 0 auto;background:none;border:none;padding:8px 12px;border-radius:999px;
+    font-family:inherit;font-size:11.5px;letter-spacing:.04em;color:var(--sumi-soft);cursor:pointer;white-space:nowrap;}
   .study-mode button.on{background:var(--sumi);color:var(--washi);}
+
+  /* ダッシュボード */
+  .dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+  .dash-card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 16px;}
+  .dash-label{font-size:11px;color:var(--sumi-soft);letter-spacing:.06em;margin-bottom:6px;}
+  .dash-big{font-size:26px;font-weight:600;letter-spacing:.02em;color:var(--sumi);line-height:1.1;}
+  .dash-big small{font-size:13px;font-weight:400;color:var(--sumi-soft);margin-left:3px;}
+  .dash-sub{font-size:10.5px;color:var(--sumi-soft);margin-top:4px;line-height:1.5;}
+  .dash-pace{background:#FAF3E8;border:1px solid #EAD8B8;border-radius:10px;
+    padding:11px 13px;font-size:12px;color:var(--sumi);line-height:1.7;margin-bottom:16px;}
+  .dash-pace b{color:#9A7B3A;}
+  .dash-section-head{font-size:13px;font-weight:600;letter-spacing:.06em;margin:18px 2px 10px;}
+  .dash-chart{display:flex;gap:5px;align-items:flex-end;height:120px;background:var(--paper);
+    border:1px solid var(--line);border-radius:10px;padding:10px;}
+  .dash-bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+  .dash-bar-wrap{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center;}
+  .dash-bar{width:60%;background:var(--kenko);border-radius:3px 3px 0 0;min-height:2px;}
+  .dash-bar-lbl{font-size:9.5px;color:var(--sumi-soft);}
+  .dash-bar-min{font-size:9px;color:var(--sumi);}
+  .dash-weak{display:flex;align-items:center;gap:10px;background:var(--paper);
+    border:1px solid var(--line);border-radius:10px;padding:10px 13px;margin-bottom:6px;cursor:pointer;}
+  .dash-weak-name{flex:1;font-size:12px;line-height:1.4;}
+  .dash-weak-bar{flex:0 0 70px;height:6px;background:var(--line);border-radius:99px;overflow:hidden;}
+  .dash-weak-fill{height:100%;background:var(--gaiken);}
+  .dash-weak-rate{flex:0 0 auto;font-size:12px;font-weight:600;color:var(--gaiken);min-width:42px;text-align:right;}
+  .dash-weak-sub{font-size:10px;color:var(--sumi-soft);font-weight:400;}
+
+  /* ポモドーロ */
+  .pomo{background:var(--paper);border:1px solid var(--line);border-radius:12px;
+    padding:14px 16px;margin-bottom:8px;}
+  .pomo-head{font-size:12.5px;font-weight:600;letter-spacing:.04em;margin-bottom:10px;}
+  .pomo-mode{display:flex;gap:6px;margin-bottom:10px;}
+  .pomo-mode button{flex:1;background:var(--washi);border:1px solid var(--line);color:var(--sumi-soft);
+    padding:7px 0;border-radius:8px;font-family:inherit;font-size:11.5px;cursor:pointer;}
+  .pomo-mode button.on{background:var(--sumi);color:var(--washi);border-color:var(--sumi);}
+  .pomo-time{font-size:44px;font-weight:600;text-align:center;letter-spacing:.04em;margin:8px 0;
+    font-variant-numeric:tabular-nums;}
+  .pomo-time.focus{color:var(--kenko);}
+  .pomo-time.break{color:var(--naimen);}
+  .pomo-actions{display:flex;gap:8px;}
+  .pomo-btn{flex:1;border:none;border-radius:8px;padding:11px 0;font-family:inherit;
+    font-size:13px;letter-spacing:.04em;cursor:pointer;}
+  .pomo-btn.main{background:var(--sumi);color:var(--washi);}
+  .pomo-btn.sub{background:var(--paper);color:var(--sumi);border:1px solid var(--line-strong);}
+
+  /* 模擬試験 */
+  .mock-card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:14px;}
+  .mock-h{font-size:15px;font-weight:600;letter-spacing:.04em;margin-bottom:6px;}
+  .mock-p{font-size:11.5px;color:var(--sumi-soft);line-height:1.7;margin-bottom:12px;}
+  .mock-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+  .mock-row label{font-size:12px;color:var(--sumi);}
+  .mock-row select{background:var(--washi);border:1px solid var(--line);border-radius:8px;
+    padding:7px 10px;font-family:inherit;font-size:13px;}
+  .mock-start{display:block;width:100%;background:var(--sumi);color:var(--washi);border:none;
+    border-radius:10px;padding:12px 0;font-family:inherit;font-size:13px;letter-spacing:.06em;cursor:pointer;margin-top:6px;}
+  .mock-start:disabled{background:var(--line-strong);}
+  .mock-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+  .mock-progress{font-size:12px;color:var(--sumi-soft);letter-spacing:.04em;}
+  .mock-timer{font-size:14px;font-weight:600;color:var(--sumi);font-variant-numeric:tabular-nums;}
+  .mock-timer.warn{color:var(--gaiken);}
+  .mock-nav{display:flex;gap:8px;margin-top:14px;}
+  .mock-nav button{flex:1;background:var(--paper);border:1px solid var(--line-strong);color:var(--sumi);
+    border-radius:9px;padding:11px 0;font-family:inherit;font-size:13px;cursor:pointer;}
+  .mock-nav button:disabled{opacity:.4;cursor:default;}
+  .mock-nav button.next{background:var(--sumi);color:var(--washi);border-color:var(--sumi);}
+  .quiz-choice.picked{background:#E9F0EA;border-color:var(--kenko);}
+  .mock-result{border-radius:12px;padding:18px;margin-bottom:14px;text-align:center;}
+  .mock-result.pass{background:#E9F0EA;border:1px solid #CFE0D2;}
+  .mock-result.fail{background:#F5E7EA;border:1px solid #EBD2D8;}
+  .mock-result-h{font-size:16px;font-weight:600;margin-bottom:8px;}
+  .mock-result.pass .mock-result-h{color:var(--kenko);}
+  .mock-result.fail .mock-result-h{color:var(--gaiken);}
+  .mock-result-score{font-size:24px;font-weight:600;margin-bottom:6px;}
+  .mock-result-sub{font-size:11.5px;color:var(--sumi-soft);line-height:1.7;}
+  .mock-item{background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    padding:10px 13px;margin-bottom:6px;}
+  .mock-item.ok{border-left:4px solid var(--kenko);}
+  .mock-item.ng{border-left:4px solid var(--gaiken);}
+  .mock-item-h{font-size:12px;font-weight:600;color:var(--sumi);margin-bottom:3px;}
+  .mock-item-q{font-size:11px;color:var(--sumi-soft);line-height:1.5;margin-bottom:4px;}
+  .mock-item-r{font-size:11px;color:var(--sumi);}
+  .mock-add-review{background:var(--gaiken);color:#fff;border:none;border-radius:6px;
+    padding:5px 10px;font-family:inherit;font-size:10.5px;cursor:pointer;margin-top:6px;}
+
+  /* フラッシュカード */
+  .flash-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;
+    min-height:200px;padding:24px 20px;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;text-align:center;cursor:pointer;margin:6px 0 12px;
+    transition:background .2s;}
+  .flash-card.back{background:#EEF3EE;border-color:#D5E3D7;}
+  .flash-label{font-size:10.5px;color:var(--sumi-soft);letter-spacing:.1em;margin-bottom:14px;}
+  .flash-text{font-size:18px;line-height:1.6;color:var(--sumi);font-weight:600;}
+  .flash-card.back .flash-text{font-size:14px;font-weight:400;line-height:1.8;}
+  .flash-actions{display:flex;gap:8px;}
+  .flash-actions button{flex:1;border:none;border-radius:9px;padding:11px 0;
+    font-family:inherit;font-size:12.5px;cursor:pointer;}
+  .flash-flip{background:var(--paper);color:var(--sumi);border:1px solid var(--line-strong)!important;}
+  .flash-next{background:var(--sumi);color:var(--washi);}
+
+  /* チートシート */
+  .cheat-cat{margin-bottom:18px;}
+  .cheat-cat-h{font-size:13.5px;font-weight:600;letter-spacing:.04em;margin-bottom:8px;
+    padding-left:9px;border-left:3px solid var(--naimen);}
+  .cheat-item{background:var(--paper);border:1px solid var(--line);border-radius:9px;
+    padding:9px 12px;margin-bottom:5px;}
+  .cheat-n{font-size:12px;font-weight:600;color:var(--sumi);margin-bottom:3px;}
+  .cheat-f{font-size:11.5px;color:var(--sumi-soft);line-height:1.65;}
+
+  /* 弱点ノート（テキスト内） */
+  .text-notes{background:#FAF3E8;border:1px solid #EAD8B8;border-radius:10px;
+    padding:12px 14px;margin-top:14px;}
+  .text-notes-head{font-size:12px;font-weight:600;color:#9A7B3A;letter-spacing:.04em;margin-bottom:8px;}
+  .text-notes-area{width:100%;min-height:80px;background:var(--washi);border:1px solid var(--line);
+    border-radius:8px;padding:8px 10px;font-family:inherit;font-size:12px;line-height:1.7;
+    color:var(--sumi);resize:vertical;}
+  .text-notes-save{display:block;margin-top:8px;background:#9A7B3A;color:#fff;border:none;
+    border-radius:7px;padding:7px 14px;font-family:inherit;font-size:11.5px;cursor:pointer;}
 
   /* クイズ */
   /* 章フィルタ（クイズ・テキスト共用） */
@@ -1550,6 +1675,128 @@ const QUIZ = {
   aws: [],
 };
 
+/* ---------- 公式・暗記チートシート ---------- */
+const CHEATSHEET = {
+  fe: [
+    { cat:'計算公式（科目A頻出）', items:[
+      { n:'稼働率', f:'MTBF ÷ (MTBF + MTTR)' },
+      { n:'直列稼働率', f:'各装置の稼働率の積（必ず下がる）' },
+      { n:'並列稼働率', f:'1 −（1 − 各稼働率）の積（上がる）' },
+      { n:'実効アクセス時間', f:'ヒット率×キャッシュ時間 +（1−ヒット率）×主記憶時間' },
+      { n:'MIPS', f:'クロック周波数(MHz) ÷ CPI' },
+      { n:'損益分岐点売上高', f:'固定費 ÷ (1 − 変動費率)' },
+      { n:'ROI', f:'(利益 − 投資) ÷ 投資 × 100%' },
+      { n:'CIDR /N のホスト数', f:'2^(32−N) − 2（ネットワーク/ブロードキャストを除く）' },
+      { n:'2の補数', f:'全ビット反転 + 1（負数の表現）' },
+    ]},
+    { cat:'2進・16進 早見表', items:[
+      { n:'0〜7', f:'0000=0 0001=1 0010=2 0011=3 / 0100=4 0101=5 0110=6 0111=7' },
+      { n:'8〜F', f:'1000=8 1001=9 1010=A 1011=B / 1100=C 1101=D 1110=E 1111=F' },
+      { n:'8bit範囲', f:'符号なし 0〜255／符号付き(2の補数) −128〜+127' },
+      { n:'2の累乗', f:'2⁸=256, 2¹⁰=1024≒10³, 2²⁰≒10⁶, 2³⁰≒10⁹' },
+    ]},
+    { cat:'頻出英略語', items:[
+      { n:'CIA', f:'機密性(Confidentiality)・完全性(Integrity)・可用性(Availability)' },
+      { n:'ACID', f:'原子性(Atomicity)・一貫性・独立性・耐久性 = トランザクション特性' },
+      { n:'TCP/UDP', f:'TCP=信頼性(再送あり)／UDP=高速(コネクションレス)' },
+      { n:'SMTP/POP/IMAP', f:'SMTP=送信／POP=端末DL／IMAP=サーバ上で管理' },
+      { n:'DNS/DHCP/ARP', f:'DNS=名前⇄IP／DHCP=IP自動配布／ARP=IP→MAC' },
+      { n:'RAID', f:'0=ストライピング高速／1=ミラーリング冗長／5=分散パリティ' },
+      { n:'OSI 7層', f:'物理/データリンク/ネットワーク(IP)/トランスポート(TCP)/セッション/プレゼン/アプリ(HTTP)' },
+    ]},
+    { cat:'セキュリティ重要対応', items:[
+      { n:'暗号化', f:'共通鍵=高速・鍵配送が課題／公開鍵=遅いが配送に強い／実用はハイブリッド' },
+      { n:'デジタル署名', f:'送信者の秘密鍵で署名 → 公開鍵で検証（暗号化と鍵が逆）' },
+      { n:'SQLインジェクション', f:'対策＝プレースホルダ(バインド機構)' },
+      { n:'XSS', f:'対策＝出力時HTMLエスケープ（<>&"を変換）' },
+      { n:'CSRF', f:'対策＝トークン埋め込み・Refererチェック' },
+      { n:'リスク対応4種', f:'低減(修正)／移転(保険)／回避(中止)／受容(許容)' },
+    ]},
+    { cat:'アルゴリズム計算量', items:[
+      { n:'O(1)', f:'配列アクセス・ハッシュ参照（平均）' },
+      { n:'O(log n)', f:'二分探索・平衡木の探索' },
+      { n:'O(n)', f:'線形探索・配列の全走査' },
+      { n:'O(n log n)', f:'クイックソート・マージソート（実用の主流）' },
+      { n:'O(n²)', f:'バブル・選択・挿入ソート' },
+    ]},
+    { cat:'マネジメント／ストラテジ', items:[
+      { n:'クリティカルパス', f:'アローダイアグラムの最長経路＝全体日数を決める' },
+      { n:'SWOT', f:'強み(S)・弱み(W)・機会(O)・脅威(T)' },
+      { n:'PPM', f:'花形(高×高)／金のなる木(低×高)／問題児(高×低)／負け犬(低×低)' },
+      { n:'産業財産権4つ', f:'特許権・実用新案権・意匠権・商標権（著作権は含まない）' },
+    ]},
+  ],
+  lpic:[], aws:[],
+};
+
+/* ---------- フラッシュカード ---------- */
+const FLASHCARDS = {
+  fe: [
+    { id:'fc1',  chapter:'ch1', front:'2の補数', back:'全ビット反転して1を足したもの。負数の表現に使う。' },
+    { id:'fc2',  chapter:'ch1', front:'桁落ち', back:'近い値どうしの引き算で有効桁が大幅に減る誤差。' },
+    { id:'fc3',  chapter:'ch1', front:'情報落ち', back:'絶対値が大きく異なる数の加算で、小さい方の値が消える誤差。' },
+    { id:'fc4',  chapter:'ch2', front:'XOR', back:'排他的論理和。入力が異なるとき1。パリティチェックや暗号の基本。' },
+    { id:'fc5',  chapter:'ch2', front:'ド・モルガンの法則', back:'NOT(A AND B)=(NOT A) OR (NOT B)／NOT(A OR B)=(NOT A) AND (NOT B)' },
+    { id:'fc6',  chapter:'ch3', front:'スタック (LIFO)', back:'Last In First Out。後に入れたものから取り出される。' },
+    { id:'fc7',  chapter:'ch3', front:'キュー (FIFO)', back:'First In First Out。入れた順に取り出される。' },
+    { id:'fc8',  chapter:'ch3', front:'二分探索の計算量', back:'O(log n)。整列済みデータが前提。範囲を毎回半分に絞る。' },
+    { id:'fc9',  chapter:'ch4', front:'実効アクセス時間', back:'ヒット率×キャッシュ時間 +（1−ヒット率）×主記憶時間。' },
+    { id:'fc10', chapter:'ch4', front:'記憶階層（速い順）', back:'レジスタ ＞ キャッシュ ＞ 主記憶 ＞ 補助記憶。' },
+    { id:'fc11', chapter:'ch4', front:'仮想記憶', back:'主記憶＋補助記憶を仮想的に1つの大空間として扱う方式。' },
+    { id:'fc12', chapter:'ch4', front:'スラッシング', back:'ページの入れ替えが頻発し処理性能が著しく低下する現象。' },
+    { id:'fc13', chapter:'ch5', front:'稼働率', back:'MTBF ÷ (MTBF+MTTR)。MTBF=平均故障間隔、MTTR=平均修理時間。' },
+    { id:'fc14', chapter:'ch5', front:'並列稼働率', back:'1 −（1−各稼働率）の積。冗長化すると劇的に上がる。' },
+    { id:'fc15', chapter:'ch5', front:'フェールセーフ', back:'故障時に安全側に倒す設計。例：信号機が全方向赤になる。' },
+    { id:'fc16', chapter:'ch6', front:'TCPとUDPの違い', back:'TCP=信頼性(再送あり)／UDP=高速(コネクションレス)。' },
+    { id:'fc17', chapter:'ch6', front:'DNS', back:'ドメイン名とIPアドレスを相互変換する仕組み。' },
+    { id:'fc18', chapter:'ch6', front:'DHCP', back:'クライアントへIPアドレス等を自動で配布する仕組み。' },
+    { id:'fc19', chapter:'ch6', front:'ARP', back:'IPアドレスからMACアドレスを求める仕組み（同一LAN内）。' },
+    { id:'fc20', chapter:'ch7', front:'CIA（セキュリティ3要素）', back:'機密性(Confidentiality)・完全性(Integrity)・可用性(Availability)。' },
+    { id:'fc21', chapter:'ch7', front:'公開鍵暗号の鍵', back:'暗号化＝受信者の公開鍵で／復号＝受信者の秘密鍵で。' },
+    { id:'fc22', chapter:'ch7', front:'デジタル署名の鍵', back:'署名＝送信者の秘密鍵で／検証＝送信者の公開鍵で（暗号化と逆）。' },
+    { id:'fc23', chapter:'ch7', front:'SQLi対策', back:'プレースホルダ（バインド機構）でSQLを組み立て、入力を構文として解釈させない。' },
+    { id:'fc24', chapter:'ch7', front:'WAF', back:'Web Application Firewall。アプリ層でSQLi/XSS等の攻撃を防御。' },
+    { id:'fc25', chapter:'ch7', front:'リスク対応4種', back:'低減（脆弱性修正）／移転（保険）／回避（中止）／受容（許容）。' },
+    { id:'fc26', chapter:'ch8', front:'主キー', back:'行を一意に識別する項目。NULL・重複は不可。' },
+    { id:'fc27', chapter:'ch8', front:'ACID特性', back:'原子性・一貫性・独立性・耐久性。トランザクションの4性質。' },
+    { id:'fc28', chapter:'ch8', front:'正規化の目的', back:'データの重複と更新異常を防ぐためにデータを適切に分割すること。' },
+    { id:'fc29', chapter:'ch8', front:'デッドロック', back:'互いに相手のロック解放を待ち続け、進行不能になる状態。' },
+    { id:'fc30', chapter:'ch9', front:'クリティカルパス', back:'アローダイアグラムの最長経路。プロジェクト全体の所要日数を決める。' },
+    { id:'fc31', chapter:'ch9', front:'損益分岐点売上高', back:'固定費 ÷ (1 − 変動費率)。' },
+    { id:'fc32', chapter:'ch9', front:'産業財産権4つ', back:'特許権・実用新案権・意匠権・商標権（著作権は含まない）。' },
+    { id:'fc33', chapter:'ch10', front:'擬似言語：代入と比較', back:'代入：← ／ 比較：=, ≠, <, ≤, >, ≥ ／ 論理：and, or, not' },
+    { id:'fc34', chapter:'ch10', front:'擬似言語：for文', back:'for (i を 1 から n まで 1 ずつ増やす) ... endfor' },
+    { id:'fc35', chapter:'ch10', front:'トレース表のコツ', back:'紙に「行番号／変数1／変数2／出力」の列を作り、1行ずつ実行して値の変化を記入する。' },
+  ],
+  lpic:[], aws:[],
+};
+
+/* ---------- SRS（間隔反復）ヘルパ ---------- */
+const SRS_INTERVALS = [1, 3, 7, 14, 30]; // 日
+function srsNextDue(streak){
+  const i = Math.min(streak, SRS_INTERVALS.length-1);
+  const d = new Date(); d.setDate(d.getDate() + SRS_INTERVALS[i]);
+  return ymd(d);
+}
+function srsIsDue(item){
+  if(!item) return true;
+  if(typeof item === 'string') return item==='review';
+  return !item.due || item.due <= todayStr();
+}
+function srsFromResult(prev, result){
+  const old = (typeof prev === 'object' && prev) ? prev : { streak:0 };
+  if(result === 'ok'){
+    const streak = (old.streak||0) + 1;
+    return { result:'ok', streak, due:srsNextDue(streak), at:todayStr() };
+  }
+  return { result:'review', streak:0, due:todayStr(), at:todayStr() };
+}
+function srsResultOf(item){
+  if(!item) return null;
+  if(typeof item === 'string') return item;
+  return item.result || null;
+}
+
 /* ---------- 予定（スケジュール） ---------- */
 const REPEATS = [
   { v:'none',    l:'繰り返さない' },
@@ -1649,8 +1896,30 @@ function App({ account }){
   });
   const setQuizResult = (qid, result) => setStudy(s => {
     const q = {...(s.quiz||{})};
-    if(result==null) delete q[qid]; else q[qid] = result;
+    if(result==null){ delete q[qid]; }
+    else { q[qid] = srsFromResult(q[qid], result); }
     return {...s, quiz:q};
+  });
+  const setChapterNote = (chId, text) => setStudy(s => {
+    const notes = {...(s.notes||{})};
+    if(text) notes[chId] = text; else delete notes[chId];
+    return {...s, notes};
+  });
+  const addStudyMinutes = (mins) => setStudy(s => {
+    const t = todayStr();
+    const dl = {...(s.dailyLog||{})};
+    const day = {...(dl[t]||{minutes:0,questions:0})};
+    day.minutes = (day.minutes||0) + mins;
+    dl[t] = day;
+    return {...s, dailyLog:dl};
+  });
+  const recordQuizAttempt = ()=> setStudy(s => {
+    const t = todayStr();
+    const dl = {...(s.dailyLog||{})};
+    const day = {...(dl[t]||{minutes:0,questions:0})};
+    day.questions = (day.questions||0) + 1;
+    dl[t] = day;
+    return {...s, dailyLog:dl};
   });
 
   const savePlan = (data) => {
@@ -1691,7 +1960,8 @@ function App({ account }){
 
   const ctx = { habits, logs, settings, setSettings, isDone, toggleLog, toggleActive, setEditing,
                 shopping, toggleBought, deleteShopItem,
-                study, setStudyQual, toggleStudyTask, setQuizResult,
+                study, setStudy, setStudyQual, toggleStudyTask, setQuizResult,
+                setChapterNote, addStudyMinutes, recordQuizAttempt,
                 schedule, setPlanEditing, deletePlan, account };
 
   return (
@@ -1924,6 +2194,14 @@ function Settings({ settings, setSettings, account }){
       </div>
 
       <div className="setting-card">
+        <div className="field" style={{marginBottom:6}}>
+          <label>試験日（基本情報など）</label>
+          <input type="date" value={settings.examDate||''} onChange={e=>upd('examDate', e.target.value)} />
+        </div>
+        <div className="note" style={{marginTop:6}}>学習タブのダッシュボードに、試験日までのカウントダウンと推奨ペースが表示されます。</div>
+      </div>
+
+      <div className="setting-card">
         <div className="field" style={{marginBottom:10}}>
           <label>アカウント</label>
           <div style={{fontSize:14,color:'var(--sumi)',wordBreak:'break-all'}}>
@@ -1972,12 +2250,14 @@ function Settings({ settings, setSettings, account }){
 
 /* ---------- 買い物リスト ---------- */
 /* ---------- 資格学習ロードマップ ---------- */
-function Study({ study, setStudyQual, toggleStudyTask, setQuizResult }){
+function Study(props){
+  const { study, setStudyQual, toggleStudyTask, setQuizResult,
+          setChapterNote, addStudyMinutes, recordQuizAttempt, settings } = props;
   const qual = (study && study.qual) || 'fe';
   const done = (study && study.done) || {};
   const plan = STUDY_PLANS[qual] || { phases:[], materials:[], tips:[], overview:'', examInfo:[] };
   const qualInfo = QUALS.find(q=>q.id===qual) || QUALS[0];
-  const [mode, setMode] = useState('plan');
+  const [mode, setMode] = useState('dash');
 
   const phaseTasks = (p) => (p.blocks ? p.blocks.flatMap(b=>b.tasks) : (p.tasks||[]));
   const allTasks = plan.phases.flatMap(phaseTasks);
@@ -1985,17 +2265,28 @@ function Study({ study, setStudyQual, toggleStudyTask, setQuizResult }){
   const pct = allTasks.length ? Math.round(doneCount/allTasks.length*100) : 0;
   const quizCount = (QUIZ[qual] || []).length;
   const chCount = (CHAPTERS[qual] || []).length;
+  const fcCount = (FLASHCARDS[qual] || []).length;
 
-  const title = mode==='plan' ? '学習ロードマップ' : mode==='text' ? 'テキスト' : '問題演習';
-  const meta  = mode==='plan' ? (allTasks.length>0 ? `${doneCount}/${allTasks.length}・${pct}%` : '準備中')
-              : mode==='text' ? `${chCount}章`
-              : `${quizCount}問`;
+  const MODES = [
+    { k:'dash', l:'📊 ダッシュ' },
+    { k:'plan', l:'🗺 ロードマップ' },
+    { k:'text', l:'📖 テキスト' },
+    { k:'quiz', l:'✏️ 問題演習' },
+    { k:'mock', l:'📝 模試' },
+    { k:'card', l:'🃏 カード' },
+    { k:'cheat',l:'📐 公式' },
+  ];
+  const titleOf = { dash:'ダッシュボード', plan:'学習ロードマップ', text:'テキスト',
+                    quiz:'問題演習', mock:'模擬試験', card:'フラッシュカード', cheat:'公式チートシート' };
+  const metaOf  = { dash:'今日の状況', plan:(allTasks.length>0 ? `${doneCount}/${allTasks.length}・${pct}%` : '準備中'),
+                    text:`${chCount}章`, quiz:`${quizCount}問`, mock:`本番形式`,
+                    card:`${fcCount}枚`, cheat:'要点' };
 
   return (
     <div className="screen">
       <div className="topbar">
-        <div className="title">{title}</div>
-        <div className="date">{meta}</div>
+        <div className="title">{titleOf[mode]}</div>
+        <div className="date">{metaOf[mode]}</div>
       </div>
 
       <div className="study-tabs">
@@ -2009,16 +2300,18 @@ function Study({ study, setStudyQual, toggleStudyTask, setQuizResult }){
       </div>
 
       <div className="study-mode">
-        <button className={mode==='plan'?'on':''} onClick={()=>setMode('plan')}>ロードマップ</button>
-        <button className={mode==='text'?'on':''} onClick={()=>setMode('text')}>テキスト</button>
-        <button className={mode==='quiz'?'on':''} onClick={()=>setMode('quiz')}>問題演習</button>
+        { MODES.map(m=>(
+          <button key={m.k} className={mode===m.k?'on':''} onClick={()=>setMode(m.k)}>{m.l}</button>
+        )) }
       </div>
 
-      { mode==='quiz' ? (
-        <Quiz qual={qual} study={study} setQuizResult={setQuizResult} />
-      ) : mode==='text' ? (
-        <Textbook qual={qual} />
-      ) : (
+      { mode==='dash'  ? <Dashboard qual={qual} study={study} settings={settings} addStudyMinutes={addStudyMinutes} setMode={setMode} />
+      : mode==='quiz'  ? <Quiz qual={qual} study={study} setQuizResult={setQuizResult} recordQuizAttempt={recordQuizAttempt} />
+      : mode==='text'  ? <Textbook qual={qual} study={study} setChapterNote={setChapterNote} />
+      : mode==='mock'  ? <MockExam qual={qual} study={study} setQuizResult={setQuizResult} recordQuizAttempt={recordQuizAttempt} />
+      : mode==='card'  ? <Flashcards qual={qual} />
+      : mode==='cheat' ? <Cheatsheet qual={qual} />
+      : (
       <React.Fragment>
 
       <div className="study-overview">
@@ -2206,19 +2499,21 @@ function Study({ study, setStudyQual, toggleStudyTask, setQuizResult }){
 }
 
 /* ---------- 問題演習（クイズ） ---------- */
-function Quiz({ qual, study, setQuizResult }){
+function Quiz({ qual, study, setQuizResult, recordQuizAttempt }){
   const all = QUIZ[qual] || [];
   const chapters = CHAPTERS[qual] || [];
   const results = (study && study.quiz) || {};
-  const [filter, setFilter] = useState('all'); // all | unanswered | review
+  const [filter, setFilter] = useState('all'); // all | unanswered | due | review
   const [chFilter, setChFilter] = useState('all');
   const [idx, setIdx] = useState(0);
   const [picked, setPicked] = useState(null);
 
   const base = chFilter==='all' ? all : all.filter(q=>q.chapter===chFilter);
   const pool = base.filter(q=>{
-    if(filter==='unanswered') return !results[q.id];
-    if(filter==='review')     return results[q.id]==='review';
+    const r = results[q.id];
+    if(filter==='unanswered') return !r;
+    if(filter==='due')        return r && srsIsDue(r);
+    if(filter==='review')     return srsResultOf(r)==='review';
     return true;
   });
 
@@ -2257,7 +2552,11 @@ function Quiz({ qual, study, setQuizResult }){
   const correct = answered && picked===cur.answer;
   const LETTERS = ['ア','イ','ウ','エ','オ'];
 
-  const choose = (i)=>{ if(!answered) setPicked(i); };
+  const choose = (i)=>{
+    if(answered) return;
+    setPicked(i);
+    if(recordQuizAttempt) recordQuizAttempt();
+  };
   const grade = (result)=>{
     setQuizResult(cur.id, result);
     setPicked(null);
@@ -2314,22 +2613,361 @@ function Quiz({ qual, study, setQuizResult }){
 }
 
 function QuizFilter({ filter, setFilter, results, all }){
-  const cReview = all.filter(q=>results[q.id]==='review').length;
+  const cReview = all.filter(q=>srsResultOf(results[q.id])==='review').length;
   const cUnans  = all.filter(q=>!results[q.id]).length;
+  const cDue    = all.filter(q=>results[q.id] && srsIsDue(results[q.id])).length;
   return (
     <div className="quiz-filter">
       <button className={filter==='all'?'on':''} onClick={()=>setFilter('all')}>すべて {all.length}</button>
       <button className={filter==='unanswered'?'on':''} onClick={()=>setFilter('unanswered')}>未挑戦 {cUnans}</button>
+      <button className={filter==='due'?'on':''} onClick={()=>setFilter('due')}>復習日 {cDue}</button>
       <button className={filter==='review'?'on':''} onClick={()=>setFilter('review')}>要復習 {cReview}</button>
     </div>
   );
 }
 
+/* ---------- ダッシュボード（カウントダウン・弱点・タイマー・履歴） ---------- */
+function Dashboard({ qual, study, settings, addStudyMinutes, setMode }){
+  const examDate = settings && settings.examDate;
+  const dailyLog = (study && study.dailyLog) || {};
+  const quizState = (study && study.quiz) || {};
+  const all = QUIZ[qual] || [];
+  const chapters = CHAPTERS[qual] || [];
+
+  let daysLeft = null;
+  if(examDate){
+    const e = new Date(examDate+'T00:00');
+    const t = new Date(); t.setHours(0,0,0,0);
+    daysLeft = Math.ceil((e - t)/(1000*60*60*24));
+  }
+
+  const weaks = chapters.map(c=>{
+    const items = all.filter(q=>q.chapter===c.id);
+    const answered = items.filter(q=>quizState[q.id]);
+    const ok = answered.filter(q=>srsResultOf(quizState[q.id])==='ok').length;
+    const rate = answered.length ? Math.round(ok/answered.length*100) : null;
+    return { ch:c, total:items.length, answered:answered.length, ok, rate };
+  }).filter(w=>w.total>0);
+
+  const weakSorted = weaks.slice()
+    .filter(w=>w.answered>0)
+    .sort((a,b)=> a.rate - b.rate)
+    .slice(0,3);
+
+  const remainingQ = all.filter(q=>!quizState[q.id]).length;
+  const dailyTarget = (daysLeft && daysLeft>0)
+    ? Math.max(5, Math.ceil(remainingQ / Math.max(1, daysLeft)))
+    : null;
+
+  const history = useMemo(()=>{
+    const arr = [];
+    for(let i=6;i>=0;i--){
+      const d = new Date(); d.setDate(d.getDate()-i);
+      const k = ymd(d);
+      const day = dailyLog[k] || { minutes:0, questions:0 };
+      arr.push({ k, label:`${d.getMonth()+1}/${d.getDate()}`, ...day });
+    }
+    return arr;
+  }, [dailyLog]);
+  const maxMin = Math.max(30, ...history.map(h=>h.minutes||0));
+  const todayLog = dailyLog[todayStr()] || { minutes:0, questions:0 };
+
+  return (
+    <div>
+      <div className="dash-grid">
+        <div className="dash-card">
+          <div className="dash-label">試験日まで</div>
+          <div className="dash-big">{ daysLeft==null ? '—' : daysLeft<0 ? '終了' : daysLeft+'日' }</div>
+          <div className="dash-sub">{ examDate ? examDate : '設定タブで試験日を入力' }</div>
+        </div>
+        <div className="dash-card">
+          <div className="dash-label">今日の学習</div>
+          <div className="dash-big">{todayLog.minutes}<small>分</small></div>
+          <div className="dash-sub">問題 {todayLog.questions} 問</div>
+        </div>
+      </div>
+
+      { dailyTarget && (
+        <div className="dash-pace">📌 試験日から逆算した推奨ペース：1日 約 <b>{dailyTarget} 問</b>（未挑戦 {remainingQ}問 ÷ 残り {daysLeft}日）</div>
+      ) }
+
+      <Pomodoro addStudyMinutes={addStudyMinutes} />
+
+      <div className="dash-section-head">📈 直近7日の学習時間</div>
+      <div className="dash-chart">
+        { history.map((h,i)=>(
+          <div className="dash-bar-col" key={i}>
+            <div className="dash-bar-wrap">
+              <div className="dash-bar" style={{height:Math.round((h.minutes||0)/maxMin*100)+'%'}}></div>
+            </div>
+            <div className="dash-bar-lbl">{h.label}</div>
+            <div className="dash-bar-min">{h.minutes||0}</div>
+          </div>
+        )) }
+      </div>
+
+      <div className="dash-section-head">🎯 苦手分野（正答率の低い順）</div>
+      { weakSorted.length===0
+        ? <div className="note" style={{marginTop:0}}>問題演習を始めると、ここに弱点分野が表示されます。</div>
+        : weakSorted.map(w=>(
+            <div className="dash-weak" key={w.ch.id} onClick={()=>setMode && setMode('text')}>
+              <div className="dash-weak-name">{w.ch.title}</div>
+              <div className="dash-weak-bar"><div className="dash-weak-fill" style={{width:w.rate+'%'}}></div></div>
+              <div className="dash-weak-rate">{w.rate}% <span className="dash-weak-sub">({w.ok}/{w.answered})</span></div>
+            </div>
+          )) }
+      { weakSorted.length>0 &&
+        <div className="note" style={{marginTop:6}}>苦手な章をタップするとテキストで復習できます。</div> }
+    </div>
+  );
+}
+
+/* ---------- ポモドーロタイマー ---------- */
+function Pomodoro({ addStudyMinutes }){
+  const [mode, setMode] = useState('focus');
+  const [secs, setSecs] = useState(25*60);
+  const [running, setRunning] = useState(false);
+  const ref = React.useRef();
+
+  React.useEffect(()=>{
+    if(!running) return;
+    ref.current = setInterval(()=>{
+      setSecs(s=>{
+        if(s<=1){
+          clearInterval(ref.current);
+          setRunning(false);
+          if(mode==='focus' && addStudyMinutes) addStudyMinutes(25);
+          if('Notification' in window && Notification.permission==='granted'){
+            try { new Notification(mode==='focus' ? '集中完了！ 5分休憩' : '休憩終了。次の集中へ', {}); } catch(e){}
+          }
+          const next = mode==='focus' ? 'break' : 'focus';
+          setMode(next);
+          return next==='focus' ? 25*60 : 5*60;
+        }
+        return s-1;
+      });
+    }, 1000);
+    return ()=>clearInterval(ref.current);
+  }, [running, mode]);
+
+  const mm = Math.floor(secs/60).toString().padStart(2,'0');
+  const ss = (secs%60).toString().padStart(2,'0');
+  const reset = ()=>{ setRunning(false); setSecs(mode==='focus'?25*60:5*60); };
+  const switchMode = (m)=>{ setMode(m); setRunning(false); setSecs(m==='focus'?25*60:5*60); };
+
+  return (
+    <div className="pomo">
+      <div className="pomo-head">⏱ ポモドーロタイマー</div>
+      <div className="pomo-mode">
+        <button className={mode==='focus'?'on':''} onClick={()=>switchMode('focus')}>集中 25分</button>
+        <button className={mode==='break'?'on':''} onClick={()=>switchMode('break')}>休憩 5分</button>
+      </div>
+      <div className={'pomo-time '+(mode==='focus'?'focus':'break')}>{mm}:{ss}</div>
+      <div className="pomo-actions">
+        <button className="pomo-btn main" onClick={()=>setRunning(r=>!r)}>{ running ? '一時停止' : '開始' }</button>
+        <button className="pomo-btn sub"  onClick={reset}>リセット</button>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- 模擬試験 ---------- */
+function MockExam({ qual, study, setQuizResult, recordQuizAttempt }){
+  const all = QUIZ[qual] || [];
+  const [phase, setPhase] = useState('setup');
+  const [n, setN] = useState(20);
+  const [minutes, setMinutes] = useState(30);
+  const [pool, setPool] = useState([]);
+  const [answers, setAnswers] = useState({});
+  const [idx, setIdx] = useState(0);
+  const [remain, setRemain] = useState(0);
+  const ref = React.useRef();
+
+  React.useEffect(()=>{
+    if(phase!=='running') return;
+    ref.current = setInterval(()=>{
+      setRemain(r=>{
+        if(r<=1){ clearInterval(ref.current); setPhase('result'); return 0; }
+        return r-1;
+      });
+    }, 1000);
+    return ()=>clearInterval(ref.current);
+  }, [phase]);
+
+  const start = ()=>{
+    const shuf = all.slice().sort(()=>Math.random()-0.5).slice(0, Math.min(n, all.length));
+    setPool(shuf); setAnswers({}); setIdx(0); setRemain(minutes*60); setPhase('running');
+  };
+  const finish = ()=>{ setPhase('result'); };
+  const choose = (i)=>{
+    const q = pool[idx];
+    setAnswers(a=>({...a, [q.id]:i}));
+    if(recordQuizAttempt) recordQuizAttempt();
+  };
+
+  if(phase==='setup'){
+    return (
+      <div className="mock-card">
+        <div className="mock-h">模擬試験を開始</div>
+        <div className="mock-p">ランダム出題で時間内に解答。途中で答え合わせはしません。</div>
+        <div className="mock-row"><label>問題数</label>
+          <select value={n} onChange={e=>setN(Number(e.target.value))}>
+            {[10,20,30,40,60].map(v=><option key={v} value={v}>{v} 問</option>)}
+          </select></div>
+        <div className="mock-row"><label>制限時間</label>
+          <select value={minutes} onChange={e=>setMinutes(Number(e.target.value))}>
+            {[10,15,20,30,45,60,90].map(v=><option key={v} value={v}>{v} 分</option>)}
+          </select></div>
+        <button className="mock-start" onClick={start} disabled={all.length===0}>開始する</button>
+        <div className="note" style={{marginTop:8}}>本番（科目A）相当は「60問 / 90分」。慣れるまでは20問/30分から。</div>
+      </div>
+    );
+  }
+
+  if(phase==='running'){
+    const q = pool[idx]; if(!q) return null;
+    const LETTERS = ['ア','イ','ウ','エ','オ'];
+    const picked = answers[q.id];
+    const mm = Math.floor(remain/60).toString().padStart(2,'0');
+    const ss = (remain%60).toString().padStart(2,'0');
+    return (
+      <div>
+        <div className="mock-bar">
+          <div className="mock-progress">{idx+1} / {pool.length}</div>
+          <div className={'mock-timer '+(remain<60?'warn':'')}>残り {mm}:{ss}</div>
+        </div>
+        <div className="quiz-card">
+          <div className="quiz-source">{q.source}</div>
+          <div className="quiz-q">{q.q}</div>
+          { q.code && <pre className="quiz-code">{q.code}</pre> }
+          <div className="quiz-choices">
+            { q.choices.map((c,i)=>(
+              <button key={i} className={'quiz-choice'+(picked===i?' picked':'')} onClick={()=>choose(i)}>
+                <span className="quiz-letter">{LETTERS[i]}</span>
+                <span className="quiz-choice-text">{c}</span>
+              </button>
+            )) }
+          </div>
+        </div>
+        <div className="mock-nav">
+          <button onClick={()=>setIdx(i=>Math.max(0,i-1))} disabled={idx===0}>← 前</button>
+          { idx < pool.length-1
+            ? <button className="next" onClick={()=>setIdx(i=>i+1)}>次 →</button>
+            : <button className="next" onClick={finish}>採点する</button> }
+        </div>
+      </div>
+    );
+  }
+
+  const correct = pool.filter(q=>answers[q.id]===q.answer).length;
+  const score = pool.length>0 ? Math.round(correct/pool.length*1000) : 0;
+  const passed = score >= 600;
+  const LETTERS = ['ア','イ','ウ','エ','オ'];
+  return (
+    <div>
+      <div className={'mock-result '+(passed?'pass':'fail')}>
+        <div className="mock-result-h">{passed ? '◯ 合格ライン到達' : '✕ 合格ラインまであと一歩'}</div>
+        <div className="mock-result-score">{correct} / {pool.length}（換算 {score}/1000）</div>
+        <div className="mock-result-sub">{passed ? '600点以上は本番でも合格圏。安定して取れるまで繰り返しを。' : '間違えた問題を「要復習」に入れて潰しましょう。'}</div>
+      </div>
+      <div className="dash-section-head">📋 解答一覧</div>
+      { pool.map((q,i)=>{
+        const pi = answers[q.id];
+        const ok = pi===q.answer;
+        return (
+          <div className={'mock-item '+(ok?'ok':'ng')} key={q.id}>
+            <div className="mock-item-h">{i+1}. {q.topic}</div>
+            <div className="mock-item-q">{q.q.length>50 ? q.q.slice(0,50)+'…' : q.q}</div>
+            <div className="mock-item-r">あなた：{pi==null?'未解答':LETTERS[pi]}　／　正解：{LETTERS[q.answer]}</div>
+            { !ok &&
+              <button className="mock-add-review" onClick={()=>setQuizResult(q.id, 'review')}>要復習に追加</button> }
+          </div>
+        );
+      }) }
+      <button className="mock-start" onClick={()=>setPhase('setup')}>もう一度</button>
+    </div>
+  );
+}
+
+/* ---------- フラッシュカード ---------- */
+function Flashcards({ qual }){
+  const all = FLASHCARDS[qual] || [];
+  const chapters = CHAPTERS[qual] || [];
+  const [chFilter, setChFilter] = useState('all');
+  const [idx, setIdx] = useState(0);
+  const [flipped, setFlipped] = useState(false);
+
+  const pool = chFilter==='all' ? all : all.filter(c=>c.chapter===chFilter);
+  React.useEffect(()=>{ setIdx(0); setFlipped(false); }, [chFilter, qual]);
+
+  if(all.length===0){
+    return <div className="note" style={{marginTop:24}}>カードはまだ登録されていません。</div>;
+  }
+  if(pool.length===0){
+    return <div className="note" style={{marginTop:24}}>この章のカードはありません。</div>;
+  }
+
+  const cur = pool[idx % pool.length];
+  const next = ()=>{ setIdx(i=>(i+1)%pool.length); setFlipped(false); };
+
+  return (
+    <div>
+      <div className="quiz-chapter-pick">
+        <button className={chFilter==='all'?'on':''} onClick={()=>setChFilter('all')}>全章 {all.length}</button>
+        { chapters.map(c=>{
+          const cnt = all.filter(x=>x.chapter===c.id).length;
+          if(!cnt) return null;
+          const short = c.title.replace(/^第(\d+)章\s*/, '$1.');
+          return <button key={c.id} className={chFilter===c.id?'on':''} onClick={()=>setChFilter(c.id)}>{short} {cnt}</button>;
+        }) }
+      </div>
+      <div className="quiz-progress">{idx+1} / {pool.length}</div>
+      <div className={'flash-card '+(flipped?'back':'front')} onClick={()=>setFlipped(f=>!f)}>
+        <div className="flash-label">{flipped ? '意味' : '用語'}</div>
+        <div className="flash-text">{flipped ? cur.back : cur.front}</div>
+      </div>
+      <div className="flash-actions">
+        <button className="flash-flip" onClick={()=>setFlipped(f=>!f)}>{flipped?'用語に戻す':'答えを見る'}</button>
+        <button className="flash-next" onClick={next}>次のカード →</button>
+      </div>
+      <div className="note" style={{marginTop:12}}>カードをタップしても表裏を切り替えられます。通勤・休憩中の隙間時間にどうぞ。</div>
+    </div>
+  );
+}
+
+/* ---------- 公式チートシート ---------- */
+function Cheatsheet({ qual }){
+  const sheet = CHEATSHEET[qual] || [];
+  if(sheet.length===0){
+    return <div className="note" style={{marginTop:24}}>この資格のチートシートはまだ登録されていません。</div>;
+  }
+  return (
+    <div>
+      { sheet.map((cat,i)=>(
+        <div className="cheat-cat" key={i}>
+          <div className="cheat-cat-h">{cat.cat}</div>
+          { cat.items.map((it,j)=>(
+            <div className="cheat-item" key={j}>
+              <div className="cheat-n">{it.n}</div>
+              <div className="cheat-f">{it.f}</div>
+            </div>
+          )) }
+        </div>
+      )) }
+      <div className="note">試験直前にここを5分眺めるだけでも点数が変わります。</div>
+    </div>
+  );
+}
+
 /* ---------- テキスト（要点解説） ---------- */
-function Textbook({ qual }){
+function Textbook({ qual, study, setChapterNote }){
   const chapters = CHAPTERS[qual] || [];
   const book = TEXTBOOK[qual] || {};
   const [chId, setChId] = useState(chapters[0]?.id);
+  const notes = (study && study.notes) || {};
+  const [noteText, setNoteText] = useState(notes[chId] || '');
+
+  React.useEffect(()=>{ setNoteText(notes[chId] || ''); }, [chId]);
 
   if(chapters.length===0){
     return <div className="note" style={{marginTop:24}}>この資格のテキストはまだ登録されていません。</div>;
@@ -2337,6 +2975,7 @@ function Textbook({ qual }){
 
   const cur = book[chId] || { lead:'', sections:[], keys:[] };
   const chTitle = (chapters.find(c=>c.id===chId)||{}).title || '';
+  const saveNote = ()=> setChapterNote && setChapterNote(chId, noteText);
 
   return (
     <div>
@@ -2361,6 +3000,15 @@ function Textbook({ qual }){
         <div className="text-keys">
           <div className="text-keys-head">✓ この章のキーポイント</div>
           { cur.keys.map((k,i)=>(<div className="text-key" key={i}>・{k}</div>)) }
+        </div>
+      ) }
+
+      { setChapterNote && (
+        <div className="text-notes">
+          <div className="text-notes-head">📝 弱点ノート（この章）</div>
+          <textarea className="text-notes-area" value={noteText} onChange={e=>setNoteText(e.target.value)}
+            placeholder="自分の言葉で『要するに○○』とメモを残すと記憶に残ります。" />
+          <button className="text-notes-save" onClick={saveNote}>保存する</button>
         </div>
       ) }
 

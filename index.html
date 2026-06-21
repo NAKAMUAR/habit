@@ -389,6 +389,15 @@
   .rx-calc{font-family:'SFMono-Regular',Menlo,monospace;font-size:13px;line-height:1.55;
     background:var(--paper);border:1px solid var(--line);border-radius:10px;
     padding:13px 14px;margin:10px 2px;color:var(--sumi);overflow-x:auto;white-space:pre;}
+  .rx-truth{display:flex;flex-wrap:wrap;gap:10px;margin:10px 2px;}
+  .rx-tt{border-collapse:collapse;font-size:12px;border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+  .rx-tt th{background:var(--washi);color:var(--sumi-soft);font-weight:600;font-size:11px;
+    padding:5px 12px;border-bottom:1px solid var(--line);}
+  .rx-tt thead tr:first-child th{color:var(--sumi);background:var(--paper);font-size:11.5px;letter-spacing:.02em;}
+  .rx-tt td{text-align:center;padding:4px 12px;border-bottom:1px solid var(--line);
+    font-family:'SFMono-Regular',Menlo,monospace;color:var(--sumi-soft);}
+  .rx-tt tbody tr:last-child td{border-bottom:none;}
+  .rx-tt-out{font-weight:700;color:var(--naimen);background:var(--naimen-bg);}
 
   /* ダッシュボード */
   .dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
@@ -3147,6 +3156,30 @@ function RadixTool(){
 
         <div className="rx-doc-h">⑧ 試験で出る単位（2のべき乗）</div>
         <p>2<sup>10</sup>=1024≒1K、2<sup>20</sup>≒1M、2<sup>30</sup>≒1G。記憶容量やアドレス計算で頻出。nビットで表せる組合せは <b>2のn乗</b> 通り、表せる整数は <b>0〜(2<sup>n</sup>−1)</b> です。</p>
+
+        <div className="rx-doc-h">⑨ 論理演算（AND・OR・NOT・XOR）</div>
+        <p><b>AND</b>＝両方1のとき1、<b>OR</b>＝どちらか1なら1、<b>NOT</b>＝0と1を反転、<b>XOR（排他的論理和）</b>＝2つが異なれば1。1ビットごとの計算ルール（真理値表）は次のとおり。</p>
+        <div className="rx-truth">
+          { [
+              { n:'AND（論理積）', h:['A','B','出力'], rows:[[0,0,0],[0,1,0],[1,0,0],[1,1,1]] },
+              { n:'OR（論理和）',  h:['A','B','出力'], rows:[[0,0,0],[0,1,1],[1,0,1],[1,1,1]] },
+              { n:'XOR（排他的論理和）', h:['A','B','出力'], rows:[[0,0,0],[0,1,1],[1,0,1],[1,1,0]] },
+              { n:'NOT（否定）',   h:['A','出力'],   rows:[[0,1],[1,0]] },
+            ].map((t,i)=>(
+            <table className="rx-tt" key={i}>
+              <thead><tr><th colSpan={t.h.length}>{t.n}</th></tr>
+                <tr>{ t.h.map((c,j)=><th key={j}>{c}</th>) }</tr></thead>
+              <tbody>
+                { t.rows.map((r,j)=>(
+                  <tr key={j}>{ r.map((c,k)=>(
+                    <td key={k} className={k===r.length-1?'rx-tt-out':''}>{c}</td>
+                  )) }</tr>
+                )) }
+              </tbody>
+            </table>
+          )) }
+        </div>
+        <p className="rx-doc-cap">複数ビットは<b>桁ごと</b>に演算します。例：<b className="rx-mono">1100 AND 1010 = 1000</b>、<b className="rx-mono">1100 OR 1010 = 1110</b>、<b className="rx-mono">1100 XOR 1010 = 0110</b>。<br/>用途：AND＝<b>特定ビットの取り出し（マスク）</b>、OR＝<b>ビットを立てる</b>、XOR＝<b>ビット反転・同じ値を2回で元に戻る</b>（パリティや簡易暗号で頻出）。</p>
       </div>
 
       <div className="note">上の入力欄に数を入れると、その数の解き方が①②③に自動で表示されます。手を動かして覚えるのが近道です。</div>

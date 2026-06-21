@@ -1,0 +1,24 @@
+{
+  "name": "習慣の暦",
+  "short_name": "習慣の暦",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F6F1E7",
+  "theme_color": "#F6F1E7",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%23F6F1E7'/><text x='96' y='128' font-size='110' text-anchor='middle' font-family='serif' fill='%232B2722'>暦</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%23F6F1E7'/><text x='256' y='340' font-size='300' text-anchor='middle' font-family='serif' fill='%232B2722'>暦</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

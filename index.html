@@ -332,6 +332,27 @@
   .study-mode button.on{background:var(--sumi);color:var(--washi);}
 
   /* クイズ */
+  /* 章フィルタ（クイズ・テキスト共用） */
+  .quiz-chapter-pick, .text-chapter-pick{display:flex;gap:5px;margin-bottom:10px;
+    overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px;}
+  .quiz-chapter-pick button, .text-chapter-pick button{flex:0 0 auto;background:var(--paper);
+    border:1px solid var(--line);color:var(--sumi-soft);padding:6px 11px;border-radius:999px;
+    font-family:inherit;font-size:11px;cursor:pointer;white-space:nowrap;}
+  .quiz-chapter-pick button.on, .text-chapter-pick button.on{background:var(--sumi);color:var(--washi);border-color:var(--sumi);}
+
+  /* テキスト */
+  .text-chapter-title{font-size:16px;font-weight:600;letter-spacing:.06em;margin:14px 2px 8px;}
+  .text-lead{background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    padding:11px 13px;font-size:12px;color:var(--sumi);line-height:1.8;margin-bottom:14px;}
+  .text-section{margin-bottom:14px;}
+  .text-h{font-size:13.5px;font-weight:600;color:var(--sumi);letter-spacing:.04em;
+    margin:0 2px 6px;padding-left:9px;border-left:3px solid var(--kenko);}
+  .text-p{font-size:12px;color:var(--sumi);line-height:1.85;padding:0 2px;}
+  .text-keys{background:#FAF3E8;border:1px solid #EAD8B8;border-radius:10px;
+    padding:12px 14px;margin-top:8px;}
+  .text-keys-head{font-size:12px;font-weight:600;color:#9A7B3A;letter-spacing:.04em;margin-bottom:6px;}
+  .text-key{font-size:11.5px;color:var(--sumi);line-height:1.8;}
+
   .quiz-filter{display:flex;gap:6px;margin-bottom:14px;}
   .quiz-filter button{flex:1;background:var(--paper);border:1px solid var(--line);
     color:var(--sumi-soft);padding:7px 0;border-radius:8px;font-family:inherit;font-size:11.5px;cursor:pointer;}
@@ -788,27 +809,422 @@ const STUDY_PLANS = {
 };
 const seedStudy = () => ({ qual:'fe', done:{}, quiz:{} });
 
-/* ---------- 問題演習データ（IPA過去問。解説は要点を自作） ---------- */
+/* ---------- 章リスト（テキストと問題で共有） ---------- */
+const CHAPTERS = {
+  fe: [
+    { id:'ch1', title:'第1章 基数変換と数値表現' },
+    { id:'ch2', title:'第2章 論理演算と基本回路' },
+    { id:'ch3', title:'第3章 アルゴリズムとデータ構造' },
+    { id:'ch4', title:'第4章 コンピュータの構成要素' },
+    { id:'ch5', title:'第5章 システムの稼働率（信頼性）' },
+    { id:'ch6', title:'第6章 ネットワーク' },
+    { id:'ch7', title:'第7章 情報セキュリティ' },
+    { id:'ch8', title:'第8章 データベース' },
+    { id:'ch9', title:'第9章 マネジメント・ストラテジ' },
+  ],
+  lpic: [],
+  aws: [],
+};
+
+/* ---------- テキスト（要点解説） ---------- */
+const TEXTBOOK = {
+  fe: {
+    ch1: {
+      lead:'コンピュータは内部で2進数を使う。10進数・2進数・16進数の相互変換と、負の数の表現（2の補数）は科目Aの計算問題の土台になる。',
+      sections:[
+        { h:'基数変換のコツ',
+          p:'10進→2進は「2で割って余りを下から並べる」。2進→10進は「各桁に重み（…16,8,4,2,1）を掛けて足す」。16進は2進4桁が1桁に対応（0000〜1111 が 0〜F）。例：1101(2)=8+4+0+1=13(10)=D(16)。' },
+        { h:'2の補数（負数の表現）',
+          p:'全ビット反転（1の補数）して1を足すと負数になる。例：8ビットの 00010110(=22) → 反転 11101001 → +1 → 11101010(=-22)。これで引き算を足し算回路で処理できる。' },
+        { h:'浮動小数点と誤差',
+          p:'実数を「符号・指数・仮数」で表す方式。覚えるべき誤差は4つ：①桁あふれ ②情報落ち（大きい数＋小さい数で小さい方が消える）③丸め誤差（下位桁の切捨て）④桁落ち（近い値どうしの引き算で有効桁が減る）。' },
+      ],
+      keys:[
+        '2進4桁＝16進1桁。慣れれば暗算できる',
+        '2の補数＝ビット反転 + 1',
+        '誤差4種（桁あふれ・情報落ち・丸め・桁落ち）は名前と現象を結びつける',
+      ],
+    },
+    ch2: {
+      lead:'AND/OR/NOT/XORの真理値表が書ければ確実に解ける。式変形の道具としてド・モルガンの法則も覚える。',
+      sections:[
+        { h:'4つの基本演算',
+          p:'AND（両方1で1）／OR（どちらか1で1）／NOT（反転）／XOR（異なれば1）。XORは「ビットの違いを取り出す」と覚えると応用が利く（暗号・パリティ等）。' },
+        { h:'ド・モルガンの法則',
+          p:'NOT(A AND B) = (NOT A) OR (NOT B)／NOT(A OR B) = (NOT A) AND (NOT B)。否定の前の AND/OR は、否定を内側に入れると AND↔OR が入れ替わる。' },
+        { h:'論理ゲートの記号',
+          p:'AND（D字型）／OR（曲線の盾型）／NOT（三角＋小さい丸）／NAND・NOR（AND/ORの出力に小さい丸）。回路図から真理値表を書く問題が定番。' },
+      ],
+      keys:[
+        'XOR＝違いがあれば1（パリティチェック・暗号の基本）',
+        'ド・モルガン：否定を分配すると AND↔OR が入れ替わる',
+        '小さな丸＝NOT。記号末尾の丸はその出力の否定を意味する',
+      ],
+    },
+    ch3: {
+      lead:'データ構造の動きと、典型アルゴリズムの計算量（オーダー）を結びつけて覚える。科目Bにも直結する分野。',
+      sections:[
+        { h:'データ構造の基本',
+          p:'スタック＝LIFO（push/pop、最後に入れたものから出る）。キュー＝FIFO（enqueue/dequeue、入れた順に出る）。リスト＝挿入・削除が高速だがランダムアクセス不可。木＝親子関係のあるデータ。' },
+        { h:'探索アルゴリズムと計算量',
+          p:'線形探索：先頭から1個ずつ → O(n)。二分探索：整列済みデータを半分ずつ絞る → O(log n)。要素数が2倍になっても1ステップ増えるだけ＝桁違いに速い。' },
+        { h:'整列アルゴリズム',
+          p:'バブル／選択／挿入ソート＝O(n²)、シンプルだが遅い。クイック／マージ／ヒープソート＝平均 O(n log n)、本番では主流。' },
+      ],
+      keys:[
+        'スタック＝LIFO、キュー＝FIFO',
+        '二分探索は O(log n) — 整列済みが前提',
+        'O(n²) と O(n log n) の差は要素数が増えるほど劇的に開く',
+      ],
+    },
+    ch4: {
+      lead:'CPUの性能指標、記憶階層（速い順にレジスタ→キャッシュ→主記憶→補助記憶）、キャッシュの実効アクセス時間が頻出。',
+      sections:[
+        { h:'CPUの性能指標',
+          p:'クロック周波数（Hz）：1秒あたりのサイクル数。CPI：1命令あたりの平均サイクル数。MIPS：1秒あたり何百万命令実行できるか。実効性能は CPI と周波数の両方で決まる。' },
+        { h:'記憶階層',
+          p:'レジスタ＞キャッシュ（L1/L2/L3）＞主記憶（DRAM）＞補助記憶（SSD/HDD）の順に高速・小容量・高価。CPUに近いほど速い。' },
+        { h:'キャッシュの実効アクセス時間',
+          p:'実効アクセス時間 = ヒット率×キャッシュ時間 + (1−ヒット率)×主記憶時間。例：90%×10ns + 10%×100ns = 9+10 = 19ns。ヒット率が高いほど主記憶速度に引きずられない。' },
+      ],
+      keys:[
+        '記憶階層：速い順にレジスタ→キャッシュ→主記憶→補助記憶',
+        '実効アクセス時間の公式は丸暗記する（必出）',
+        'MIPS = クロック周波数(MHz) ÷ CPI',
+      ],
+    },
+    ch5: {
+      lead:'稼働率は MTBF と MTTR から求める。直列・並列の計算は機械的に当てはめれば必ず解ける。',
+      sections:[
+        { h:'稼働率の基本式',
+          p:'稼働率 = MTBF ÷ (MTBF + MTTR)。MTBF＝平均故障間隔（壊れずに動く時間の平均）、MTTR＝平均修理時間。例：MTBF 480h, MTTR 20h → 480÷500 = 0.96。' },
+        { h:'直列システム（全部動かないとダメ）',
+          p:'稼働率＝各装置の稼働率の積。直列にすると必ず元の稼働率より下がる。例：0.9 × 0.9 = 0.81。' },
+        { h:'並列システム（どれか動けばOK）',
+          p:'稼働率＝1 −（1−各装置の稼働率）の積。冗長化すると元より上がる。例：1−(1−0.9)×(1−0.9) = 1−0.01 = 0.99。' },
+      ],
+      keys:[
+        '稼働率 = MTBF ÷ (MTBF+MTTR)',
+        '直列＝積で減る／並列＝1から「壊れる確率の積」を引く',
+        '冗長化（並列）すると稼働率は劇的に上がる',
+      ],
+    },
+    ch6: {
+      lead:'OSI参照モデル7層、TCP/UDPの違い、IPアドレス、代表プロトコルの役割が定番。サブネット計算は2進数の知識を使う。',
+      sections:[
+        { h:'OSI 7層モデル',
+          p:'下から：物理層／データリンク／ネットワーク（IP）／トランスポート（TCP・UDP）／セッション／プレゼンテーション／アプリケーション（HTTP・SMTP等）。問題ではプロトコルがどの層かを問われる。' },
+        { h:'TCP と UDP',
+          p:'TCP＝コネクション型・再送あり・信頼性重視（HTTP・メール等）。UDP＝コネクションレス・再送なし・速度重視（DNS・動画ストリーミング・ゲーム等）。' },
+        { h:'代表プロトコルの役割',
+          p:'HTTP/HTTPS＝Web、DNS＝ドメイン名⇔IPアドレス変換、DHCP＝IPアドレス自動配布、SMTP＝メール送信、POP/IMAP＝メール受信、ARP＝IP⇔MACアドレス変換、ICMP＝疎通確認（ping）。' },
+      ],
+      keys:[
+        'TCP＝信頼性／UDP＝速度',
+        'DNS＝名前解決、DHCP＝IP配布、ARP＝IP→MAC',
+        'IPv4は32ビット、サブネットマスクで境界を切る',
+      ],
+    },
+    ch7: {
+      lead:'情報セキュリティは科目A・B双方で頻出。CIA・暗号方式・代表的攻撃と対策を体系的に覚える。',
+      sections:[
+        { h:'情報セキュリティの3要素（CIA）',
+          p:'機密性（Confidentiality：許可された人だけ見られる）／完全性（Integrity：改ざんされていない）／可用性（Availability：使いたい時に使える）。これに真正性・責任追跡性・否認防止・信頼性を加えて7要素とする場合もある。' },
+        { h:'共通鍵暗号と公開鍵暗号',
+          p:'共通鍵：同じ鍵で暗号化・復号。高速だが鍵配送が課題（AES等）。公開鍵：公開鍵で暗号化、秘密鍵で復号。鍵配送に強いが遅い（RSA等）。実用ではハイブリッド（公開鍵で共通鍵を配送→以降は共通鍵）。' },
+        { h:'デジタル署名',
+          p:'送信者の秘密鍵で署名し、受信者は送信者の公開鍵で検証。本人性（なりすまし防止）と完全性（改ざん検知）を実現。暗号化とは「使う鍵」が逆になることに注意。' },
+        { h:'代表的な攻撃と対策',
+          p:'SQLインジェクション→プレースホルダ使用、XSS→出力時エスケープ、CSRF→トークン埋め込み、フィッシング→URL確認・教育、DoS/DDoS→帯域確保・WAF、標的型攻撃→多層防御。' },
+      ],
+      keys:[
+        'CIA＝機密性・完全性・可用性',
+        '暗号化＝受信者の公開鍵／署名＝送信者の秘密鍵',
+        '攻撃と対策はセットで覚える',
+      ],
+    },
+    ch8: {
+      lead:'関係データベースの基本概念とSQL、正規化、トランザクションのACID特性が出る。SQLは構文を写経して覚える。',
+      sections:[
+        { h:'キーの種類',
+          p:'主キー：行を一意に識別。NULL・重複NG。候補キー：主キーになりうる項目の集合。外部キー：他の表の主キーを参照する。参照整合性により、外部キーが指す行を勝手に消せない。' },
+        { h:'SQLの基本',
+          p:'SELECT 列 FROM 表 WHERE 条件 GROUP BY 列 HAVING 集約条件 ORDER BY 列。JOIN（内部結合）は両方に存在する行のみ。LEFT JOIN は左の全行を残す。集約関数は COUNT/SUM/AVG/MAX/MIN。' },
+        { h:'正規化',
+          p:'第1正規形＝繰り返しをなくす。第2正規形＝主キーの一部に依存する列を分離。第3正規形＝主キー以外の列に依存する列を分離。重複と更新異常を防ぐのが目的。' },
+        { h:'トランザクションのACID',
+          p:'原子性（Atomicity：全部実行か全部取消）、一貫性（Consistency：制約を保つ）、独立性（Isolation：他のトランザクションから干渉されない）、耐久性（Durability：完了したら永続化）。' },
+      ],
+      keys:[
+        '主キー＝一意・NULL不可。外部キー＝参照',
+        'SQLは SELECT/WHERE/JOIN/GROUP BY が頻出',
+        'ACID：原子性・一貫性・独立性・耐久性',
+      ],
+    },
+    ch9: {
+      lead:'マネジメントはアローダイアグラム、ストラテジは経営分析手法・関連法規・損益分岐点が中心。暗記中心で深追いしない。',
+      sections:[
+        { h:'アローダイアグラムとクリティカルパス',
+          p:'作業を矢印、節目を○で結ぶ図。各経路の所要日数のうち最長のものがクリティカルパス＝プロジェクト全体の最短完了日数。クリティカルパス上の作業は1日でも遅れると全体が遅れる。' },
+        { h:'経営戦略の分析手法',
+          p:'SWOT＝強み・弱み・機会・脅威の4象限で内外環境を分析。PPM＝市場成長率と市場シェアで4分類（花形・金のなる木・問題児・負け犬）。' },
+        { h:'損益分岐点',
+          p:'損益分岐点売上高 = 固定費 ÷ (1 − 変動費率)。これを超えた売上から利益が出る。例：固定費300万円、変動費率0.4 → 300÷0.6 = 500万円。' },
+        { h:'関連法規',
+          p:'著作権：プログラムも対象、創作した人に自動発生（受託開発は委託契約で発注者に移転する取り決めが必要）。産業財産権＝特許権・実用新案権・意匠権・商標権の4つ（著作権は含まない）。不正アクセス禁止法／個人情報保護法も頻出。' },
+      ],
+      keys:[
+        'クリティカルパス＝最長経路＝全体日数を決める',
+        '損益分岐点 = 固定費 ÷ (1 − 変動費率)',
+        '産業財産権4つに著作権は含まれない',
+      ],
+    },
+  },
+  lpic:{}, aws:{},
+};
+
+/* ---------- 問題演習データ（科目A対策） ---------- */
 const QUIZ = {
   fe: [
-    {
-      id:'q-feh30s79',
-      topic:'ストラテジ系・法務（著作権）',
-      source:'FE 平成30年春 問79',
+    /* === 第1章 基数変換と数値表現 === */
+    { id:'q-ch1-01', chapter:'ch1', topic:'10進→2進変換', source:'対策問題',
+      q:'10進数の 45 を2進数で表したものはどれか。',
+      choices:['101100','101101','110101','111001'], answer:1,
+      explain:'45 を2で割り続け、余りを下から並べると 101101。検算：32+8+4+1=45。' },
+    { id:'q-ch1-02', chapter:'ch1', topic:'2進数の加算', source:'対策問題',
+      q:'2進数 1101 と 2進数 1011 の和を10進数で表すといくつか。',
+      choices:['22','23','24','25'], answer:2,
+      explain:'1101=8+4+1=13、1011=8+2+1=11、13+11=24。' },
+    { id:'q-ch1-03', chapter:'ch1', topic:'2の補数', source:'対策問題',
+      q:'8ビットで表現された2進数 00010110 の2の補数はどれか。',
+      choices:['11101001','11101010','11101011','11110110'], answer:1,
+      explain:'全ビット反転で 11101001、これに1を足して 11101010。元の数 22 の負数 −22 を表す。' },
+    { id:'q-ch1-04', chapter:'ch1', topic:'16進→10進変換', source:'対策問題',
+      q:'16進数 2A を10進数で表すといくつか。',
+      choices:['32','42','52','64'], answer:1,
+      explain:'2×16 + 10 = 32 + 10 = 42。A は10進の10。' },
+    { id:'q-ch1-05', chapter:'ch1', topic:'2進→16進変換', source:'対策問題',
+      q:'2進数 11010111 を16進数で表したものはどれか。',
+      choices:['B7','C7','D7','E7'], answer:2,
+      explain:'4ビットずつ区切る：1101=D、0111=7 → D7。2進4桁＝16進1桁の対応で機械的に解ける。' },
+    { id:'q-ch1-06', chapter:'ch1', topic:'数値表現の誤差', source:'対策問題',
+      q:'絶対値の大きく異なる2つの浮動小数点数を加算したとき、小さい方の値が結果に反映されない現象はどれか。',
+      choices:['桁あふれ','情報落ち','丸め誤差','桁落ち'], answer:1,
+      explain:'指数合わせのため小さい方の仮数を右シフトすると、有効桁から外れて消える＝情報落ち。桁落ちは「近い値の引き算で有効桁が減る」現象なので別物。' },
+
+    /* === 第2章 論理演算と基本回路 === */
+    { id:'q-ch2-01', chapter:'ch2', topic:'XOR演算', source:'対策問題',
+      q:'ビット列 10110011 と 01101010 の排他的論理和（XOR）はどれか。',
+      choices:['00011001','11011001','11011011','11111011'], answer:1,
+      explain:'各桁を「異なれば1」で計算：1⊕0=1, 0⊕1=1, 1⊕1=0, 1⊕0=1, 0⊕1=1, 0⊕0=0, 1⊕1=0, 1⊕0=1 → 11011001。' },
+    { id:'q-ch2-02', chapter:'ch2', topic:'XNORの理解', source:'対策問題',
+      q:'入力 A、B に対し、出力が「A と B が等しいときだけ1」となる回路はどれか。',
+      choices:['XOR','XOR の出力を NOT したもの（XNOR）','AND','OR'], answer:1,
+      explain:'XOR は異なるとき1なので、その否定（XNOR）は等しいとき1になる。' },
+    { id:'q-ch2-03', chapter:'ch2', topic:'ド・モルガンの法則', source:'対策問題',
+      q:'論理式 NOT(A AND B) と等しいものはどれか。',
+      choices:['A OR B','(NOT A) AND (NOT B)','(NOT A) OR (NOT B)','NOT A XOR NOT B'], answer:2,
+      explain:'ド・モルガンの法則：NOT(A AND B) = (NOT A) OR (NOT B)。否定を内側に入れると AND が OR に変わる。' },
+    { id:'q-ch2-04', chapter:'ch2', topic:'AND演算（ビットマスク）', source:'対策問題',
+      q:'8ビットの値 X の下位4ビットだけを取り出したい。X と AND を取るべき値はどれか（16進）。',
+      choices:['0F','F0','FF','0xAA'], answer:0,
+      explain:'下位4ビット＝00001111(2)＝0F(16)。AND は「両方1で1」なので、0の桁は必ず0になり、1の桁はそのまま残る＝マスク処理。' },
+    { id:'q-ch2-05', chapter:'ch2', topic:'NAND回路の出力', source:'対策問題',
+      q:'NANDゲート（AND の出力を NOT したもの）に入力 A=1, B=0 を与えたときの出力はどれか。',
+      choices:['0','1','不定','入力依存で決まらない'], answer:1,
+      explain:'AND(1,0)=0、NOT(0)=1。NAND は AND が0になる入力で1を出す。' },
+
+    /* === 第3章 アルゴリズムとデータ構造 === */
+    { id:'q-ch3-01', chapter:'ch3', topic:'二分探索の計算量', source:'対策問題',
+      q:'要素数 n の整列済み配列に対する二分探索の平均計算量はどれか。',
+      choices:['O(1)','O(log n)','O(n)','O(n²)'], answer:1,
+      explain:'探索範囲を毎回半分にするため O(log n)。n が1024倍になっても比較回数は10回しか増えない。' },
+    { id:'q-ch3-02', chapter:'ch3', topic:'スタックの動作', source:'対策問題',
+      q:'空のスタックに 1, 2, 3 の順で push した後、pop を2回行った。取り出される値の順序はどれか。',
+      choices:['1, 2','2, 1','3, 2','3, 1'], answer:2,
+      explain:'スタックは後入れ先出し（LIFO）。最後に入れた3、次に2が取り出される。' },
+    { id:'q-ch3-03', chapter:'ch3', topic:'キューの動作', source:'対策問題',
+      q:'空のキューに A, B, C の順で enqueue した後、dequeue を1回行うと取り出される値はどれか。',
+      choices:['A','B','C','取り出せない'], answer:0,
+      explain:'キューは先入れ先出し（FIFO）。最初に入れたAが最初に取り出される。' },
+    { id:'q-ch3-04', chapter:'ch3', topic:'計算量の比較', source:'対策問題',
+      q:'要素数が10倍になったとき、処理時間が約100倍に増えるアルゴリズムの計算量はどれか。',
+      choices:['O(log n)','O(n)','O(n log n)','O(n²)'], answer:3,
+      explain:'O(n²) は n が10倍になると n²＝100倍になる。バブル・選択・挿入ソートが該当。' },
+    { id:'q-ch3-05', chapter:'ch3', topic:'線形探索 vs 二分探索', source:'対策問題',
+      q:'要素数 1,000,000 の整列済み配列で値を探すとき、二分探索が必要とする最大比較回数はおよそ何回か。',
+      choices:['10回','20回','1,000回','1,000,000回'], answer:1,
+      explain:'log₂(1,000,000) ≒ 20。2^20 ≒ 100万。要素が増えてもlog で抑えられるのが二分探索の強み。' },
+    { id:'q-ch3-06', chapter:'ch3', topic:'木構造', source:'対策問題',
+      q:'2分木で、ノード数が n のとき、完全2分木の高さはおよそ何か。',
+      choices:['log₂ n','n','n log n','n²'], answer:0,
+      explain:'完全2分木は各階層で2倍に増えるため、高さは log₂ n。二分探索木の探索効率の根拠でもある。' },
+
+    /* === 第4章 コンピュータの構成要素 === */
+    { id:'q-ch4-01', chapter:'ch4', topic:'実効アクセス時間', source:'対策問題',
+      q:'キャッシュメモリのアクセス時間が 10ナノ秒、主記憶が 100ナノ秒、ヒット率が 90% のとき、実効アクセス時間は何ナノ秒か。',
+      choices:['19','20','55','91'], answer:0,
+      explain:'0.9×10 + 0.1×100 = 9 + 10 = 19ナノ秒。公式：ヒット率×キャッシュ時間 +（1−ヒット率）×主記憶時間。' },
+    { id:'q-ch4-02', chapter:'ch4', topic:'記憶階層', source:'対策問題',
+      q:'次の記憶装置を「アクセスが速い順」に並べたものはどれか。',
+      choices:['主記憶 → キャッシュ → レジスタ → 補助記憶','レジスタ → キャッシュ → 主記憶 → 補助記憶','キャッシュ → レジスタ → 主記憶 → 補助記憶','補助記憶 → 主記憶 → キャッシュ → レジスタ'], answer:1,
+      explain:'CPUに近いほど速い：レジスタ＞キャッシュ（L1/L2/L3）＞主記憶（DRAM）＞補助記憶（SSD/HDD）。' },
+    { id:'q-ch4-03', chapter:'ch4', topic:'MIPSの計算', source:'対策問題',
+      q:'クロック周波数 2GHz、平均CPI が 4 のCPUの処理性能はおよそ何 MIPS か。',
+      choices:['125','250','500','2,000'], answer:2,
+      explain:'MIPS = クロック周波数(MHz) ÷ CPI = 2,000 ÷ 4 = 500 MIPS。' },
+    { id:'q-ch4-04', chapter:'ch4', topic:'キャッシュの目的', source:'対策問題',
+      q:'キャッシュメモリを設ける主な目的はどれか。',
+      choices:['主記憶の容量を増やす','CPUと主記憶の速度差を埋める','補助記憶の信頼性を高める','データの暗号化を行う'], answer:1,
+      explain:'CPUの動作は主記憶よりはるかに速い。両者の速度差を埋め、よく使うデータを高速に提供するのがキャッシュの役割。' },
+    { id:'q-ch4-05', chapter:'ch4', topic:'パイプライン処理', source:'対策問題',
+      q:'パイプライン処理の説明として最も適切なものはどれか。',
+      choices:['複数のCPUを並列に動かす','1つの命令を複数のCPUで分割実行する','命令の各ステージを重ねて実行し、見かけ上の処理速度を上げる','処理を一旦キャッシュに溜めて連続実行する'], answer:2,
+      explain:'命令の「フェッチ→デコード→実行→書戻し」を重ね合わせ、1命令あたりの見かけの実行時間を短縮する。分岐などで乱れる（ハザード）と効果が下がる。' },
+    { id:'q-ch4-06', chapter:'ch4', topic:'ストレージ種別', source:'対策問題',
+      q:'SSD（Solid State Drive）の特徴として適切なものはどれか。',
+      choices:['磁気ディスクで構成され大容量','フラッシュメモリで構成され高速・耐衝撃','磁気テープで順次アクセス','光ディスクで読み出しのみ'], answer:1,
+      explain:'SSDはフラッシュメモリ（半導体）で構成され、HDDより高速・耐衝撃・低消費電力。書換え回数に上限がある点に注意。' },
+
+    /* === 第5章 システムの稼働率 === */
+    { id:'q-ch5-01', chapter:'ch5', topic:'稼働率の計算', source:'対策問題',
+      q:'MTBF が 480時間、MTTR が 20時間のシステムの稼働率はどれか。',
+      choices:['0.94','0.96','0.98','0.99'], answer:1,
+      explain:'稼働率 = MTBF ÷ (MTBF+MTTR) = 480 ÷ 500 = 0.96。' },
+    { id:'q-ch5-02', chapter:'ch5', topic:'並列接続の稼働率', source:'対策問題',
+      q:'稼働率 0.9 の装置を2台並列に接続したシステム全体の稼働率はどれか。',
+      choices:['0.81','0.90','0.99','1.00'], answer:2,
+      explain:'並列＝どちらか動けばOK。1−(1−0.9)×(1−0.9) = 1−0.01 = 0.99。冗長化で大きく改善する。' },
+    { id:'q-ch5-03', chapter:'ch5', topic:'直列接続の稼働率', source:'対策問題',
+      q:'稼働率 0.9 の装置を2台直列に接続したシステム全体の稼働率はどれか。',
+      choices:['0.72','0.81','0.90','0.99'], answer:1,
+      explain:'直列＝全部動かないとダメ。0.9 × 0.9 = 0.81。直列にすると必ず下がる。' },
+    { id:'q-ch5-04', chapter:'ch5', topic:'MTBF/MTTRの意味', source:'対策問題',
+      q:'MTBF が表すものはどれか。',
+      choices:['平均修理時間','平均故障間隔（故障せず動く時間の平均）','故障から復旧までの最大時間','年間の総稼働時間'], answer:1,
+      explain:'MTBF = Mean Time Between Failures。故障と故障の間（つまり正常稼働時間）の平均。MTTRは平均修理時間。' },
+    { id:'q-ch5-05', chapter:'ch5', topic:'複合構成の稼働率', source:'対策問題',
+      q:'稼働率 0.9 の装置を並列接続したペアを、さらに直列に2組接続したシステム全体の稼働率はおよそいくらか。',
+      choices:['0.90','0.96','0.98','0.99'], answer:2,
+      explain:'並列ペアの稼働率＝1−0.1×0.1 = 0.99。これを直列で2組＝0.99×0.99 ≒ 0.9801。' },
+
+    /* === 第6章 ネットワーク === */
+    { id:'q-ch6-01', chapter:'ch6', topic:'UDPの特徴', source:'対策問題',
+      q:'コネクションレス型で、信頼性より転送速度を優先するトランスポート層プロトコルはどれか。',
+      choices:['TCP','UDP','IP','ICMP'], answer:1,
+      explain:'UDPはコネクションレスで再送制御をしない代わりに高速。動画ストリーミング・DNS・ゲーム等で使われる。' },
+    { id:'q-ch6-02', chapter:'ch6', topic:'DNSの役割', source:'対策問題',
+      q:'ドメイン名とIPアドレスの対応づけを行うしくみはどれか。',
+      choices:['DHCP','DNS','NAT','ARP'], answer:1,
+      explain:'DNS（Domain Name System）がドメイン名とIPアドレスを相互変換する。DHCPはIP配布、ARPはIP→MAC変換、NATはアドレス変換。' },
+    { id:'q-ch6-03', chapter:'ch6', topic:'OSI参照モデル', source:'対策問題',
+      q:'OSI基本参照モデルでネットワーク層に位置するプロトコルはどれか。',
+      choices:['HTTP','TCP','IP','イーサネット'], answer:2,
+      explain:'下から：物理／データリンク（イーサネット）／ネットワーク（IP）／トランスポート（TCP/UDP）／…／アプリケーション（HTTP等）。' },
+    { id:'q-ch6-04', chapter:'ch6', topic:'IPv4アドレス', source:'対策問題',
+      q:'IPv4アドレスのビット長として正しいものはどれか。',
+      choices:['16ビット','32ビット','64ビット','128ビット'], answer:1,
+      explain:'IPv4は32ビット（約43億通り）。枯渇対策として128ビットのIPv6が普及中。' },
+    { id:'q-ch6-05', chapter:'ch6', topic:'サブネットマスク', source:'対策問題',
+      q:'IPアドレス 192.168.1.100、サブネットマスク 255.255.255.0 のとき、ネットワークアドレスはどれか。',
+      choices:['192.168.0.0','192.168.1.0','192.168.1.100','192.168.255.0'], answer:1,
+      explain:'マスクが1の桁（上位24ビット）がネットワーク部。ホスト部の8ビットを0にして 192.168.1.0。' },
+    { id:'q-ch6-06', chapter:'ch6', topic:'メールプロトコル', source:'対策問題',
+      q:'電子メールの送信に使われるプロトコルはどれか。',
+      choices:['SMTP','POP3','IMAP','HTTP'], answer:0,
+      explain:'送信＝SMTP、受信＝POP3（端末にダウンロード）またはIMAP（サーバ上で管理）。' },
+    { id:'q-ch6-07', chapter:'ch6', topic:'DHCPの役割', source:'対策問題',
+      q:'DHCPの主な役割はどれか。',
+      choices:['ドメイン名の解決','クライアントへのIPアドレスの自動割当','MACアドレスからIPを求める','パケットの暗号化'], answer:1,
+      explain:'DHCP（Dynamic Host Configuration Protocol）はIPアドレスやデフォルトゲートウェイ等を自動で配布する。' },
+
+    /* === 第7章 情報セキュリティ === */
+    { id:'q-ch7-01', chapter:'ch7', topic:'情報セキュリティの3要素', source:'対策問題',
+      q:'情報セキュリティの3要素に含まれないものはどれか。',
+      choices:['機密性','完全性','可用性','即時性'], answer:3,
+      explain:'CIA＝機密性・完全性・可用性。即時性は含まれない。' },
+    { id:'q-ch7-02', chapter:'ch7', topic:'公開鍵暗号の利用', source:'対策問題',
+      q:'公開鍵暗号方式で、送信者が受信者に暗号文を送る場合に暗号化で使う鍵はどれか。',
+      choices:['送信者の秘密鍵','送信者の公開鍵','受信者の秘密鍵','受信者の公開鍵'], answer:3,
+      explain:'受信者だけが持つ秘密鍵で復号できるよう、受信者の公開鍵で暗号化する。署名は逆（送信者の秘密鍵で署名）。' },
+    { id:'q-ch7-03', chapter:'ch7', topic:'デジタル署名', source:'対策問題',
+      q:'デジタル署名で送信者が署名に使う鍵はどれか。',
+      choices:['送信者の秘密鍵','送信者の公開鍵','受信者の秘密鍵','受信者の公開鍵'], answer:0,
+      explain:'署名は送信者の秘密鍵で行い、受信者は送信者の公開鍵で検証する。これで本人性と改ざん検知を実現。' },
+    { id:'q-ch7-04', chapter:'ch7', topic:'SQLインジェクション対策', source:'対策問題',
+      q:'SQLインジェクション攻撃への対策として最も適切なものはどれか。',
+      choices:['通信を暗号化する','SQL文をプレースホルダ（バインド機構）で組み立てる','パスワードを定期的に変更する','アクセスログを取得する'], answer:1,
+      explain:'文字列連結でSQLを組み立てない＝プレースホルダで値を渡せば、攻撃者の入力がSQL構文として解釈されない。' },
+    { id:'q-ch7-05', chapter:'ch7', topic:'XSS対策', source:'対策問題',
+      q:'クロスサイトスクリプティング（XSS）の対策として適切なものはどれか。',
+      choices:['通信のSSL化','入力値の出力時にHTMLエスケープを行う','データベースの暗号化','ファイアウォールの導入'], answer:1,
+      explain:'ユーザー入力をWebページに出力する際、< > & " 等をエスケープすることでスクリプトとして実行されないようにする。' },
+    { id:'q-ch7-06', chapter:'ch7', topic:'共通鍵 vs 公開鍵', source:'対策問題',
+      q:'共通鍵暗号方式の特徴として正しいものはどれか。',
+      choices:['暗号化と復号で異なる鍵を使う','処理が高速だが、鍵の安全な配送が課題','RSAが代表的なアルゴリズム','鍵を全員に公開してよい'], answer:1,
+      explain:'共通鍵は同じ鍵で暗号化・復号する高速方式（AES等）。ただし鍵を安全に共有する手段が別途必要。' },
+    { id:'q-ch7-07', chapter:'ch7', topic:'マルウェアの分類', source:'対策問題',
+      q:'自身を複製して他のプログラムやファイルに感染し、宿主を必要とするマルウェアはどれか。',
+      choices:['ウイルス','ワーム','トロイの木馬','スパイウェア'], answer:0,
+      explain:'ウイルス＝宿主に寄生して感染。ワーム＝宿主不要で自己増殖。トロイの木馬＝正規プログラムに偽装。スパイウェア＝情報を盗む。' },
+    { id:'q-ch7-08', chapter:'ch7', topic:'認証の3要素', source:'対策問題',
+      q:'多要素認証の「要素」として一般的に分類されないものはどれか。',
+      choices:['知識情報（パスワード等）','所持情報（ICカード等）','生体情報（指紋等）','位置情報'], answer:3,
+      explain:'認証の3要素は「知識・所持・生体」。位置情報は補助的に使うことはあるが、3要素には含まれない。' },
+
+    /* === 第8章 データベース === */
+    { id:'q-ch8-01', chapter:'ch8', topic:'主キーの役割', source:'対策問題',
+      q:'関係データベースで、表の各行を一意に識別するために設定する項目はどれか。',
+      choices:['外部キー','主キー','候補キー','副キー'], answer:1,
+      explain:'主キーが行を一意に識別。NULL・重複は不可。外部キーは他表の主キーを参照する項目。' },
+    { id:'q-ch8-02', chapter:'ch8', topic:'ACID特性（原子性）', source:'対策問題',
+      q:'トランザクションの「途中で中断したら全部なかったことにする」性質を表すものはどれか。',
+      choices:['原子性','一貫性','独立性','耐久性'], answer:0,
+      explain:'原子性（Atomicity）は「全部実行か、全部取消（ロールバック）」のどちらかになる性質。' },
+    { id:'q-ch8-03', chapter:'ch8', topic:'SQL の SELECT', source:'対策問題',
+      q:'社員表（社員番号, 氏名, 部署）から「営業部の氏名のみ」を取り出すSQLはどれか。',
+      choices:['SELECT 氏名 FROM 社員 WHERE 部署 = \'営業部\'','SELECT * FROM 社員 WHERE 氏名 = \'営業部\'','SELECT 部署 FROM 社員 WHERE 氏名 = \'営業部\'','SELECT 氏名 FROM 営業部'], answer:0,
+      explain:'SELECT 列 FROM 表 WHERE 条件 が基本形。「営業部の氏名」なので 氏名 を SELECT、条件は 部署=\'営業部\'。' },
+    { id:'q-ch8-04', chapter:'ch8', topic:'正規化', source:'対策問題',
+      q:'関係データベースの正規化を行う主な目的はどれか。',
+      choices:['検索を高速化する','データの重複と更新異常を防ぐ','ストレージ容量を増やす','ユーザーのアクセス権を管理する'], answer:1,
+      explain:'正規化はデータを適切に分割し、冗長性をなくして更新時の矛盾（更新異常）を防ぐのが目的。' },
+    { id:'q-ch8-05', chapter:'ch8', topic:'JOIN（結合）', source:'対策問題',
+      q:'2つの表で、結合条件に合致する行だけを返す結合はどれか。',
+      choices:['内部結合（INNER JOIN）','左外部結合（LEFT JOIN）','右外部結合（RIGHT JOIN）','完全外部結合（FULL JOIN）'], answer:0,
+      explain:'内部結合は両方に存在する行のみ返す。外部結合は片方（または両方）に存在しない行も NULL で返す。' },
+    { id:'q-ch8-06', chapter:'ch8', topic:'デッドロック', source:'対策問題',
+      q:'2つのトランザクションが互いに相手の持つロックの解放を待ち続け、処理が進まなくなる状態はどれか。',
+      choices:['デッドロック','ライブロック','ロールバック','コミット'], answer:0,
+      explain:'デッドロックは相互の待ち合わせで進行不能になる状態。検出時はどちらかを強制ロールバックして解消する。' },
+
+    /* === 第9章 マネジメント・ストラテジ === */
+    { id:'q-ch9-01', chapter:'ch9', topic:'損益分岐点の計算', source:'対策問題',
+      q:'固定費が 300万円、変動費率が 0.4 のとき、損益分岐点売上高はいくらか。',
+      choices:['420万円','500万円','600万円','750万円'], answer:1,
+      explain:'損益分岐点売上高 = 固定費 ÷ (1 − 変動費率) = 300 ÷ (1−0.4) = 300 ÷ 0.6 = 500万円。' },
+    { id:'q-ch9-02', chapter:'ch9', topic:'クリティカルパス', source:'対策問題',
+      q:'アローダイアグラムにおいて、全体の所要日数を決定する最長の経路を何と呼ぶか。',
+      choices:['マイルストーン','クリティカルパス','ボトルネック','リードタイム'], answer:1,
+      explain:'クリティカルパス＝最長経路。この上の作業が1日でも遅れるとプロジェクト全体が遅れる。' },
+    { id:'q-ch9-03', chapter:'ch9', topic:'著作権の原始的帰属', source:'FE 平成30年春 問79',
       q:'A社は，B社と著作物の権利に関する特段の取決めをせず，A社の要求仕様に基づいて，販売管理システムのプログラム作成をB社に委託した。この場合のプログラム著作権の原始的帰属はどれか。',
       choices:['A社とB社が話し合って決定する。','A社とB社の共有となる。','A社に帰属する。','B社に帰属する。'],
       answer:3,
-      explain:'著作権は原則として「実際に著作物（プログラム）を創作した者」に発生する。契約で著作権の帰属を特に取り決めていない場合、たとえ発注者（A社）が仕様を出していても、実際に作成した受託者（B社）に著作権が原始的に帰属する。発注者へ移すには契約での明示が必要。よって正解はエ。',
-    },
-    {
-      id:'q-fer0620',
-      topic:'ストラテジ系・法務（知的財産権）',
-      source:'FE 令和6年 問20',
+      explain:'著作権は原則として実際に創作した者（B社）に発生する。契約で帰属を取り決めていない以上、発注者（A社）が仕様を出していても受託者（B社）に原始的に帰属する。発注者へ移すには契約での明示が必要。' },
+    { id:'q-ch9-04', chapter:'ch9', topic:'産業財産権', source:'FE 令和6年 問20',
       q:'日本において，産業財産権と総称される四つの権利はどれか。',
       choices:['意匠権，実用新案権，商標権，特許権','意匠権，実用新案権，著作権，特許権','意匠権，商標権，著作権，特許権','実用新案権，商標権，著作権，特許権'],
       answer:0,
-      explain:'産業財産権は「特許権・実用新案権・意匠権・商標権」の4つで、いずれも特許庁へ出願・登録して得る権利。著作権はこれらと異なり創作した時点で自動的に発生する権利で、産業財産権には含まれない。著作権を含むイ・ウ・エは誤り。よって正解はア。',
-    },
+      explain:'産業財産権は「特許権・実用新案権・意匠権・商標権」の4つで、いずれも特許庁へ出願・登録して得る権利。著作権は創作した時点で自動的に発生する権利で、産業財産権には含まれない。' },
+    { id:'q-ch9-05', chapter:'ch9', topic:'SWOT分析', source:'対策問題',
+      q:'SWOT分析で「機会（Opportunities）」に分類されるものはどれか。',
+      choices:['自社の高い技術力','社員の高齢化','市場の急成長','競合の新規参入'], answer:2,
+      explain:'SWOTは強み(S)・弱み(W)・機会(O)・脅威(T)。機会は外部環境のプラス要因。技術力は内部の強み、高齢化は内部の弱み、競合参入は外部の脅威。' },
+    { id:'q-ch9-06', chapter:'ch9', topic:'PPM（プロダクトポートフォリオ）', source:'対策問題',
+      q:'PPM分析で「市場成長率：低、市場シェア：高」に位置づけられる事業の名称はどれか。',
+      choices:['花形','金のなる木','問題児','負け犬'], answer:1,
+      explain:'金のなる木＝成熟市場でシェア高。投資を抑えつつ安定収益が見込め、他事業の原資になる。花形＝成長×高シェア、問題児＝成長×低シェア、負け犬＝低×低。' },
   ],
   lpic: [],
   aws: [],
@@ -1248,14 +1664,18 @@ function Study({ study, setStudyQual, toggleStudyTask, setQuizResult }){
   const doneCount = allTasks.filter(t=>done[t.id]).length;
   const pct = allTasks.length ? Math.round(doneCount/allTasks.length*100) : 0;
   const quizCount = (QUIZ[qual] || []).length;
+  const chCount = (CHAPTERS[qual] || []).length;
+
+  const title = mode==='plan' ? '学習ロードマップ' : mode==='text' ? 'テキスト' : '問題演習';
+  const meta  = mode==='plan' ? (allTasks.length>0 ? `${doneCount}/${allTasks.length}・${pct}%` : '準備中')
+              : mode==='text' ? `${chCount}章`
+              : `${quizCount}問`;
 
   return (
     <div className="screen">
       <div className="topbar">
-        <div className="title">{ mode==='plan' ? '学習ロードマップ' : '問題演習' }</div>
-        <div className="date">{ mode==='plan'
-            ? (allTasks.length>0 ? `${doneCount}/${allTasks.length}・${pct}%` : '準備中')
-            : `${quizCount}問` }</div>
+        <div className="title">{title}</div>
+        <div className="date">{meta}</div>
       </div>
 
       <div className="study-tabs">
@@ -1270,11 +1690,14 @@ function Study({ study, setStudyQual, toggleStudyTask, setQuizResult }){
 
       <div className="study-mode">
         <button className={mode==='plan'?'on':''} onClick={()=>setMode('plan')}>ロードマップ</button>
+        <button className={mode==='text'?'on':''} onClick={()=>setMode('text')}>テキスト</button>
         <button className={mode==='quiz'?'on':''} onClick={()=>setMode('quiz')}>問題演習</button>
       </div>
 
       { mode==='quiz' ? (
         <Quiz qual={qual} study={study} setQuizResult={setQuizResult} />
+      ) : mode==='text' ? (
+        <Textbook qual={qual} />
       ) : (
       <React.Fragment>
 
@@ -1465,26 +1888,43 @@ function Study({ study, setStudyQual, toggleStudyTask, setQuizResult }){
 /* ---------- 問題演習（クイズ） ---------- */
 function Quiz({ qual, study, setQuizResult }){
   const all = QUIZ[qual] || [];
+  const chapters = CHAPTERS[qual] || [];
   const results = (study && study.quiz) || {};
   const [filter, setFilter] = useState('all'); // all | unanswered | review
+  const [chFilter, setChFilter] = useState('all');
   const [idx, setIdx] = useState(0);
-  const [picked, setPicked] = useState(null);  // 選んだ選択肢のindex
+  const [picked, setPicked] = useState(null);
 
-  const pool = all.filter(q=>{
+  const base = chFilter==='all' ? all : all.filter(q=>q.chapter===chFilter);
+  const pool = base.filter(q=>{
     if(filter==='unanswered') return !results[q.id];
     if(filter==='review')     return results[q.id]==='review';
     return true;
   });
 
-  React.useEffect(()=>{ setIdx(0); setPicked(null); }, [filter, qual]);
+  React.useEffect(()=>{ setIdx(0); setPicked(null); }, [filter, chFilter, qual]);
 
   if(all.length===0){
-    return <div className="note" style={{marginTop:24}}>この資格の問題はまだ登録されていません。問題のスクリーンショットを送ってもらえれば追加できます。</div>;
+    return <div className="note" style={{marginTop:24}}>この資格の問題はまだ登録されていません。</div>;
   }
+
+  const ChapterPicker = (
+    <div className="quiz-chapter-pick">
+      <button className={chFilter==='all'?'on':''} onClick={()=>setChFilter('all')}>全章 {all.length}</button>
+      { chapters.map(c=>{
+        const cnt = all.filter(q=>q.chapter===c.id).length;
+        if(!cnt) return null;
+        const short = c.title.replace(/^第(\d+)章\s*/, '$1.');
+        return <button key={c.id} className={chFilter===c.id?'on':''} onClick={()=>setChFilter(c.id)}>{short} {cnt}</button>;
+      }) }
+    </div>
+  );
+
   if(pool.length===0){
     return (
       <div>
-        <QuizFilter filter={filter} setFilter={setFilter} results={results} all={all} />
+        {ChapterPicker}
+        <QuizFilter filter={filter} setFilter={setFilter} results={results} all={base} />
         <div className="note" style={{marginTop:20}}>
           { filter==='review' ? '「要復習」の問題はありません。よくできています。' : '該当する問題がありません。' }
         </div>
@@ -1506,7 +1946,8 @@ function Quiz({ qual, study, setQuizResult }){
 
   return (
     <div>
-      <QuizFilter filter={filter} setFilter={setFilter} results={results} all={all} />
+      {ChapterPicker}
+      <QuizFilter filter={filter} setFilter={setFilter} results={results} all={base} />
 
       <div className="quiz-progress">{Math.min(idx+1,pool.length)} / {pool.length}　<span className="quiz-topic">{cur.topic}</span></div>
 
@@ -1559,6 +2000,50 @@ function QuizFilter({ filter, setFilter, results, all }){
       <button className={filter==='all'?'on':''} onClick={()=>setFilter('all')}>すべて {all.length}</button>
       <button className={filter==='unanswered'?'on':''} onClick={()=>setFilter('unanswered')}>未挑戦 {cUnans}</button>
       <button className={filter==='review'?'on':''} onClick={()=>setFilter('review')}>要復習 {cReview}</button>
+    </div>
+  );
+}
+
+/* ---------- テキスト（要点解説） ---------- */
+function Textbook({ qual }){
+  const chapters = CHAPTERS[qual] || [];
+  const book = TEXTBOOK[qual] || {};
+  const [chId, setChId] = useState(chapters[0]?.id);
+
+  if(chapters.length===0){
+    return <div className="note" style={{marginTop:24}}>この資格のテキストはまだ登録されていません。</div>;
+  }
+
+  const cur = book[chId] || { lead:'', sections:[], keys:[] };
+  const chTitle = (chapters.find(c=>c.id===chId)||{}).title || '';
+
+  return (
+    <div>
+      <div className="text-chapter-pick">
+        { chapters.map(c=>{
+          const short = c.title.replace(/^第(\d+)章\s*/, '第$1章');
+          return <button key={c.id} className={chId===c.id?'on':''} onClick={()=>setChId(c.id)}>{short}</button>;
+        }) }
+      </div>
+
+      <div className="text-chapter-title">{chTitle}</div>
+      { cur.lead && <div className="text-lead">{cur.lead}</div> }
+
+      { cur.sections.map((s,i)=>(
+        <div className="text-section" key={i}>
+          <div className="text-h">{s.h}</div>
+          <div className="text-p">{s.p}</div>
+        </div>
+      )) }
+
+      { cur.keys && cur.keys.length>0 && (
+        <div className="text-keys">
+          <div className="text-keys-head">✓ この章のキーポイント</div>
+          { cur.keys.map((k,i)=>(<div className="text-key" key={i}>・{k}</div>)) }
+        </div>
+      ) }
+
+      <div className="note">読み終えたら「問題演習」タブで同じ章の問題を解くと定着します。</div>
     </div>
   );
 }

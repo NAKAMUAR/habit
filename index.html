@@ -339,6 +339,66 @@
     font-family:inherit;font-size:11.5px;letter-spacing:.04em;color:var(--sumi-soft);cursor:pointer;white-space:nowrap;}
   .study-mode button.on{background:var(--sumi);color:var(--washi);}
 
+  /* 基数変換ツール */
+  .rx-seg{display:flex;gap:6px;margin:4px 0 10px;}
+  .rx-seg button{flex:1;padding:9px 4px;border:1px solid var(--line-strong);border-radius:9px;
+    background:var(--paper);font-family:inherit;font-size:12px;color:var(--sumi-soft);cursor:pointer;}
+  .rx-seg button.on{background:var(--sumi);color:var(--paper);border-color:var(--sumi);}
+  .rx-input{width:100%;padding:13px 14px;border:1px solid var(--line-strong);border-radius:10px;
+    background:var(--paper);font-family:'SFMono-Regular',Menlo,monospace;font-size:20px;
+    letter-spacing:.08em;color:var(--sumi);}
+  .rx-warn{font-size:11.5px;color:var(--gaiken);margin-top:7px;line-height:1.6;}
+  .rx-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:14px 0 4px;}
+  .rx-card{background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:11px 9px;text-align:center;}
+  .rx-k{font-size:10px;color:var(--sumi-soft);letter-spacing:.04em;margin-bottom:5px;}
+  .rx-v{font-size:18px;font-weight:600;color:var(--sumi);word-break:break-all;line-height:1.3;}
+  .rx-mono{font-family:'SFMono-Regular',Menlo,monospace;letter-spacing:.02em;}
+
+  .rx-explain{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:14px 14px 16px;margin:14px 0;}
+  .rx-ex-h{font-size:13px;font-weight:600;letter-spacing:.04em;margin-bottom:10px;}
+  .rx-ex-sub{font-size:12px;font-weight:600;color:var(--sumi);margin:14px 0 8px;line-height:1.6;}
+  .rx-ex-sub:first-of-type{margin-top:4px;}
+  .rx-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .rx-table th{font-weight:500;color:var(--sumi-soft);font-size:11px;padding:5px 4px;border-bottom:1px solid var(--line);}
+  .rx-table td{text-align:center;padding:5px 4px;border-bottom:1px solid var(--line);font-family:'SFMono-Regular',Menlo,monospace;}
+  .rx-table .rx-r{color:var(--kenko);font-weight:700;}
+  .rx-note{font-size:12px;color:var(--sumi-soft);line-height:1.7;margin-top:8px;}
+  .rx-note b{color:var(--sumi);}
+  .rx-bits{display:flex;gap:5px;flex-wrap:wrap;}
+  .rx-bit{flex:0 0 auto;min-width:38px;border:1px solid var(--line);border-radius:8px;overflow:hidden;text-align:center;}
+  .rx-bit-w{font-size:10px;color:var(--sumi-soft);background:var(--washi);padding:3px 4px;}
+  .rx-bit-b{font-size:16px;font-weight:600;padding:5px 4px;font-family:'SFMono-Regular',Menlo,monospace;color:var(--line-strong);}
+  .rx-bit.on .rx-bit-b{color:var(--sumi);}
+  .rx-bit.on .rx-bit-w{background:var(--kenko-bg);color:var(--kenko);font-weight:600;}
+  .rx-nib{display:flex;gap:10px;flex-wrap:wrap;}
+  .rx-nib-cell{text-align:center;}
+  .rx-nib-b{font-size:15px;font-weight:600;color:var(--sumi);}
+  .rx-nib-arrow{font-size:11px;color:var(--sumi-soft);margin:1px 0;}
+  .rx-nib-h{font-size:17px;font-weight:700;color:var(--naimen);font-family:'SFMono-Regular',Menlo,monospace;}
+
+  .rx-doc{margin-top:18px;}
+  .rx-doc-h{font-size:13px;font-weight:600;letter-spacing:.03em;margin:18px 2px 8px;
+    padding-left:9px;border-left:3px solid var(--line-strong);}
+  .rx-doc p{font-size:12.5px;color:var(--sumi-soft);line-height:1.95;margin:0 2px;}
+  .rx-doc p b{color:var(--sumi);font-weight:600;}
+  .rx-conv{border-collapse:collapse;font-size:12px;margin:6px 2px 2px;}
+  .rx-conv th{font-weight:500;color:var(--sumi-soft);font-size:11px;padding:4px 10px;border-bottom:1px solid var(--line);}
+  .rx-conv td{text-align:center;padding:3px 10px;border-bottom:1px solid var(--line);}
+  .rx-doc-cap{font-size:12px;color:var(--sumi-soft);line-height:1.85;margin:8px 2px 2px;}
+  .rx-doc-cap b{color:var(--sumi);}
+  .rx-calc{font-family:'SFMono-Regular',Menlo,monospace;font-size:13px;line-height:1.55;
+    background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    padding:13px 14px;margin:10px 2px;color:var(--sumi);overflow-x:auto;white-space:pre;}
+  .rx-truth{display:flex;flex-wrap:wrap;gap:10px;margin:10px 2px;}
+  .rx-tt{border-collapse:collapse;font-size:12px;border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+  .rx-tt th{background:var(--washi);color:var(--sumi-soft);font-weight:600;font-size:11px;
+    padding:5px 12px;border-bottom:1px solid var(--line);}
+  .rx-tt thead tr:first-child th{color:var(--sumi);background:var(--paper);font-size:11.5px;letter-spacing:.02em;}
+  .rx-tt td{text-align:center;padding:4px 12px;border-bottom:1px solid var(--line);
+    font-family:'SFMono-Regular',Menlo,monospace;color:var(--sumi-soft);}
+  .rx-tt tbody tr:last-child td{border-bottom:none;}
+  .rx-tt-out{font-weight:700;color:var(--naimen);background:var(--naimen-bg);}
+
   /* ダッシュボード */
   .dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
   .dash-card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 16px;}
@@ -2335,13 +2395,14 @@ function Study(props){
     { k:'quiz', l:'✏️ 問題演習' },
     { k:'mock', l:'📝 模試' },
     { k:'card', l:'🃏 カード' },
+    { k:'radix',l:'🔢 基数変換' },
     { k:'cheat',l:'📐 公式' },
   ];
   const titleOf = { dash:'ダッシュボード', plan:'学習ロードマップ', text:'テキスト',
-                    quiz:'問題演習', mock:'模擬試験', card:'フラッシュカード', cheat:'公式チートシート' };
+                    quiz:'問題演習', mock:'模擬試験', card:'フラッシュカード', radix:'2進数・16進数', cheat:'公式チートシート' };
   const metaOf  = { dash:'今日の状況', plan:(allTasks.length>0 ? `${doneCount}/${allTasks.length}・${pct}%` : '準備中'),
                     text:`${chCount}章`, quiz:`${quizCount}問`, mock:`本番形式`,
-                    card:`${fcCount}枚`, cheat:'要点' };
+                    card:`${fcCount}枚`, radix:'計算＋変換ツール', cheat:'要点' };
 
   return (
     <div className="screen">
@@ -2371,6 +2432,7 @@ function Study(props){
       : mode==='text'  ? <Textbook qual={qual} study={study} setChapterNote={setChapterNote} />
       : mode==='mock'  ? <MockExam qual={qual} study={study} setQuizResult={setQuizResult} recordQuizAttempt={recordQuizAttempt} />
       : mode==='card'  ? <Flashcards qual={qual} />
+      : mode==='radix' ? <RadixTool />
       : mode==='cheat' ? <Cheatsheet qual={qual} />
       : (
       <React.Fragment>
@@ -2992,6 +3054,196 @@ function Flashcards({ qual }){
         <button className="flash-next" onClick={next}>次のカード →</button>
       </div>
       <div className="note" style={{marginTop:12}}>カードをタップしても表裏を切り替えられます。通勤・休憩中の隙間時間にどうぞ。</div>
+    </div>
+  );
+}
+
+/* ---------- 2進数・16進数（基数変換）---------- */
+function RadixTool(){
+  const [base, setBase] = useState(10);   // 入力の基数 10 / 2 / 16
+  const [raw, setRaw]   = useState('46');
+
+  const cfg = { 10:{ re:/[^0-9]/g,        ph:'例: 46',     lbl:'10進数' },
+                2 :{ re:/[^01]/g,         ph:'例: 101110', lbl:'2進数'  },
+                16:{ re:/[^0-9a-fA-F]/g,  ph:'例: 2E',     lbl:'16進数' } };
+  const clean = raw.replace(cfg[base].re, '');
+  const val   = clean==='' ? null : parseInt(clean, base);
+  const ok    = val!==null && !isNaN(val) && val>=0 && val<=4294967295;
+
+  const bin = ok ? val.toString(2) : '—';
+  const hex = ok ? val.toString(16).toUpperCase() : '—';
+  const dec = ok ? String(val) : '—';
+
+  // 10→2 の割り算ステップ
+  const divSteps = [];
+  if(ok){
+    let n = val;
+    if(n===0) divSteps.push({ n:0, q:0, r:0 });
+    while(n>0){ divSteps.push({ n, q:Math.floor(n/2), r:n%2 }); n=Math.floor(n/2); }
+  }
+  // 2→10 の重み付け
+  const bits = ok ? bin.split('') : [];
+  const weights = bits.map((b,i)=>({ b:+b, w:Math.pow(2, bits.length-1-i) }));
+  const weightSum = weights.filter(x=>x.b).map(x=>x.w);
+
+  // 2進4桁 ↔ 16進
+  const padded = ok ? bin.padStart(Math.ceil(bin.length/4)*4, '0') : '';
+  const nibbles = [];
+  for(let i=0;i<padded.length;i+=4) nibbles.push(padded.slice(i,i+4));
+
+  return (
+    <div>
+      {/* 変換ツール */}
+      <div className="study-section-head">🔁 進数変換ツール</div>
+      <div className="rx-seg">
+        { [10,2,16].map(b=>(
+          <button key={b} className={base===b?'on':''}
+            onClick={()=>{ setBase(b); setRaw(''); }}>{cfg[b].lbl}で入力</button>
+        )) }
+      </div>
+      <input className="rx-input" inputMode={base===16?'text':'numeric'}
+        value={raw} placeholder={cfg[base].ph}
+        onChange={e=>setRaw(e.target.value)} />
+      { raw!=='' && !ok &&
+        <div className="rx-warn">入力できる文字: {base===10?'0〜9':base===2?'0と1':'0〜9 と A〜F'}（0以上の整数）</div> }
+
+      <div className="rx-cards">
+        <div className="rx-card"><div className="rx-k">10進数 (DEC)</div><div className="rx-v">{dec}</div></div>
+        <div className="rx-card"><div className="rx-k">2進数 (BIN)</div><div className="rx-v rx-mono">{bin}</div></div>
+        <div className="rx-card"><div className="rx-k">16進数 (HEX)</div><div className="rx-v rx-mono">{hex}</div></div>
+      </div>
+
+      {/* ステップ解説（入力値に連動）*/}
+      { ok && (
+        <div className="rx-explain">
+          <div className="rx-ex-h">この数の解き方</div>
+
+          <div className="rx-ex-sub">① 10進「{dec}」→ 2進　… 2で割り続けて余りを下から読む</div>
+          <table className="rx-table">
+            <thead><tr><th>割られる数</th><th>÷2 の商</th><th>余り</th></tr></thead>
+            <tbody>
+              { divSteps.map((s,i)=>(
+                <tr key={i}><td>{s.n}</td><td>{s.q}</td><td className="rx-r">{s.r}</td></tr>
+              )) }
+            </tbody>
+          </table>
+          <div className="rx-note">余りを下から上へ並べると <b className="rx-mono">{bin}</b></div>
+
+          <div className="rx-ex-sub">② 2進「{bin}」→ 10進　… 各桁に重み（2のn乗）を掛けて合計</div>
+          <div className="rx-bits">
+            { weights.map((x,i)=>(
+              <div key={i} className={'rx-bit'+(x.b?' on':'')}>
+                <div className="rx-bit-w">{x.w}</div>
+                <div className="rx-bit-b">{x.b}</div>
+              </div>
+            )) }
+          </div>
+          <div className="rx-note">
+            1 の桁の重みを足す：{weightSum.length? weightSum.join(' + ')+' = '+dec : '0'}
+          </div>
+
+          <div className="rx-ex-sub">③ 2進「{bin}」→ 16進　… 右から4桁ずつ区切って変換</div>
+          <div className="rx-nib">
+            { nibbles.map((nb,i)=>(
+              <div key={i} className="rx-nib-cell">
+                <div className="rx-nib-b rx-mono">{nb}</div>
+                <div className="rx-nib-arrow">↓</div>
+                <div className="rx-nib-h">{parseInt(nb,2).toString(16).toUpperCase()}</div>
+              </div>
+            )) }
+          </div>
+          <div className="rx-note">つなげて <b className="rx-mono">{hex}</b>（4桁の2進=16進1桁）</div>
+        </div>
+      ) }
+
+      {/* 教科書的な解説 */}
+      <div className="rx-doc">
+        <div className="rx-doc-h">基礎：なぜ2進数・16進数を使うの？</div>
+        <p>コンピュータは電気のON(1)／OFF(0)しか扱えないため、内部はすべて<b>2進数</b>で動きます。ただし2進数は桁が長くなりすぎて人間が読みにくいので、4桁をまとめて1桁で表せる<b>16進数</b>を「読み書き用」に使います。</p>
+
+        <table className="rx-conv">
+          <thead><tr><th>10進</th><th>2進</th><th>16進</th></tr></thead>
+          <tbody>
+            { Array.from({length:16},(_,i)=>(
+              <tr key={i}>
+                <td>{i}</td>
+                <td className="rx-mono">{i.toString(2).padStart(4,'0')}</td>
+                <td className="rx-mono">{i.toString(16).toUpperCase()}</td>
+              </tr>
+            )) }
+          </tbody>
+        </table>
+
+        <div className="rx-doc-h">① 10進数 → 2進数（2で割っていく）</div>
+        <p>数を2で割り、出た<b>余り（0か1）</b>をメモします。商が0になるまで繰り返し、余りを<b>下から上に</b>読むと2進数の完成です。例：<b className="rx-mono">13</b> → 余りが 1,0,1,1 → 下から読んで <b className="rx-mono">1101</b>。</p>
+
+        <div className="rx-doc-h">② 2進数 → 10進数（重みを足す）</div>
+        <p>2進数は右の桁から <b>1, 2, 4, 8, 16 …（2のn乗）</b> の重みを持ちます。桁が「1」のところの重みだけを合計します。例：<b className="rx-mono">1101</b> = 8 + 4 + 0 + 1 = <b>13</b>。</p>
+
+        <div className="rx-doc-h">③ 2進数 ↔ 16進数（4桁ずつ区切る）</div>
+        <p>16進数の1桁は、ちょうど2進数の4桁に対応します（0000〜1111 = 0〜F）。2進→16進は<b>右から4桁ずつ</b>区切って各かたまりを変換、16進→2進は<b>1桁を4桁</b>に展開します。例：<b className="rx-mono">10 1110</b> →（0010）（1110）→ <b className="rx-mono">2E</b>。</p>
+
+        <div className="rx-doc-h">④ 2進数の足し算</div>
+        <p>各桁を足し、<b>2になったら桁上がり（繰り上げ）</b>します。「1+1=10（0を書いて1繰り上げ）」がポイント。例：<b className="rx-mono">1011 + 0110 = 10001</b>。10進で確かめると 11 + 6 = 17 で一致。</p>
+
+        <div className="rx-doc-h">⑤ 2進数の掛け算</div>
+        <p>九九は不要で、<b>各桁が0か1だけ</b>なのでとても簡単。掛ける数の桁が <b>1なら相手をそのまま、0なら全部0</b> を書き、10進と同じように桁をずらして足すだけです。下の例は <b className="rx-mono">101 × 11</b>（5 × 3 = 15）。</p>
+        <pre className="rx-calc">{
+`     1 0 1
+×      1 1
+─────────
+     1 0 1   ← 101 × 1（1の位）
+   1 0 1     ← 101 × 1（左へ1桁ずらす）
+─────────
+   1 1 1 1   ← 合計 = 15`}</pre>
+        <p className="rx-doc-cap">部分積を左に1桁ずらして足すだけ。ちなみに <b>左へ1桁シフト＝2倍</b>、右へ1桁シフト＝÷2 になります。</p>
+
+        <div className="rx-doc-h">⑥ 2進数の割り算</div>
+        <p>10進の筆算と同じ「<b>立てる・掛ける・引く・おろす</b>」の繰り返し。割る数が引けるなら商に<b>1</b>、引けなければ<b>0</b>を立てます。下の例は <b className="rx-mono">1111 ÷ 11</b>（15 ÷ 3 = 5）。</p>
+        <pre className="rx-calc">{
+`        1 0 1   ← 商
+      ───────
+1 1 ) 1 1 1 1
+      1 1
+      ─────
+        0 1 1   ← 1をおろす
+          1 1
+          ───
+            0   ← 余り0`}</pre>
+        <p className="rx-doc-cap">商 <b className="rx-mono">101</b>（=5）、余り <b className="rx-mono">0</b>。難しければ<b>10進に直して計算し、答えを2進に戻す</b>のが確実です。</p>
+
+        <div className="rx-doc-h">⑦ 補数（負の数・引き算）</div>
+        <p>コンピュータは引き算を「<b>2の補数</b>を足す」ことで行います。2の補数は「<b>全ビット反転して1を足す</b>」で作ります。例（8ビット）：5 = <b className="rx-mono">00000101</b> → 反転 <b className="rx-mono">11111010</b> → +1 = <b className="rx-mono">11111011</b>。これが −5 を表します。</p>
+
+        <div className="rx-doc-h">⑧ 試験で出る単位（2のべき乗）</div>
+        <p>2<sup>10</sup>=1024≒1K、2<sup>20</sup>≒1M、2<sup>30</sup>≒1G。記憶容量やアドレス計算で頻出。nビットで表せる組合せは <b>2のn乗</b> 通り、表せる整数は <b>0〜(2<sup>n</sup>−1)</b> です。</p>
+
+        <div className="rx-doc-h">⑨ 論理演算（AND・OR・NOT・XOR）</div>
+        <p><b>AND</b>＝両方1のとき1、<b>OR</b>＝どちらか1なら1、<b>NOT</b>＝0と1を反転、<b>XOR（排他的論理和）</b>＝2つが異なれば1。1ビットごとの計算ルール（真理値表）は次のとおり。</p>
+        <div className="rx-truth">
+          { [
+              { n:'AND（論理積）', h:['A','B','出力'], rows:[[0,0,0],[0,1,0],[1,0,0],[1,1,1]] },
+              { n:'OR（論理和）',  h:['A','B','出力'], rows:[[0,0,0],[0,1,1],[1,0,1],[1,1,1]] },
+              { n:'XOR（排他的論理和）', h:['A','B','出力'], rows:[[0,0,0],[0,1,1],[1,0,1],[1,1,0]] },
+              { n:'NOT（否定）',   h:['A','出力'],   rows:[[0,1],[1,0]] },
+            ].map((t,i)=>(
+            <table className="rx-tt" key={i}>
+              <thead><tr><th colSpan={t.h.length}>{t.n}</th></tr>
+                <tr>{ t.h.map((c,j)=><th key={j}>{c}</th>) }</tr></thead>
+              <tbody>
+                { t.rows.map((r,j)=>(
+                  <tr key={j}>{ r.map((c,k)=>(
+                    <td key={k} className={k===r.length-1?'rx-tt-out':''}>{c}</td>
+                  )) }</tr>
+                )) }
+              </tbody>
+            </table>
+          )) }
+        </div>
+        <p className="rx-doc-cap">複数ビットは<b>桁ごと</b>に演算します。例：<b className="rx-mono">1100 AND 1010 = 1000</b>、<b className="rx-mono">1100 OR 1010 = 1110</b>、<b className="rx-mono">1100 XOR 1010 = 0110</b>。<br/>用途：AND＝<b>特定ビットの取り出し（マスク）</b>、OR＝<b>ビットを立てる</b>、XOR＝<b>ビット反転・同じ値を2回で元に戻る</b>（パリティや簡易暗号で頻出）。</p>
+      </div>
+
+      <div className="note">上の入力欄に数を入れると、その数の解き方が①②③に自動で表示されます。手を動かして覚えるのが近道です。</div>
     </div>
   );
 }
